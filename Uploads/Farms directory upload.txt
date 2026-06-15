@@ -1,0 +1,20 @@
+Bilar-Breeder|\\172.16.220.1\Programs\Bilar_Breeder-Invoicing\PO-MONITORING
+Bilar-Hatchery|\\172.16.217.10\programs\Bilar_Hatchery-INV\PO-MONITORING
+Rizal Breeder|\\172.16.217.11\Rizal_Breeder\RIZAL_BREEDER-INV\PO-MONITORING
+Canhayupon|\\172.16.220.223\Canhayupon_Database\Canhayupon_INV\PO-MONITORING
+Lapsaon|\\172.16.220.222\database_lapsaon\Lapsaon-INV\PO-MONITORING
+Feedmill|\\172.16.104.12\MIC3_Share\In_House_System\Feedmill_Database\Feedmill-INV\PO-MONITORING
+Grow-out|\\172.16.104.1\U_Growout\Grow_Out-INV\PO-MONITORING
+Manure Ubay|\\172.16.104.1\U_ManureFermentation\Manure_Fermentation_Plant-INV\PO-MONITORING
+Manure Cortes|\\172.16.104.1\C_Manure\Manure_Fermentation_Plant-INV-Cortes\PO-MONITORING
+Meat Processing|\\172.16.104.12\MIC3_Share\MeatProcessing-INV\PO-MONITORING
+BMC|\\172.16.217.201\programs\BMC-SI_2020\PO-MONITORING
+CABO|\\172.16.217.25\programs\CABO-SI_2020\PO-MONITORING
+Lila Bmhi|\\172.16.217.71\programs\LILA_BMHI-SI_2020\PO-MONITORING
+Maribojoc|\\172.16.217.236\programs\MARIBOJOC-SI_2020\PO-MONITORING
+Ortigas|\\172.16.217.110\programs\ORTIGAS-SI_2020\PO-MONITORING
+Tilapia|\\172.16.217.25\programs\TILAPIA-SI\PO-MONITORING
+Tipcan|\\172.16.217.201\programs\TIPCAN-SI_2020\PO-MONITORING
+Piggery Untaga|\\172.16.104.1\Piggery_Untaga\Piggery_Untaga-INV\PO-MONITORING
+Poultry Cortes|\\172.16.192.57\C_Poultry\PO-MONITORING
+Piggery Cortes|\\172.16.192.57\C_Piggery\PO-MONITORING
