@@ -11,7 +11,6 @@
 
 
 
-
 </head>
 <style>
 * {
@@ -342,7 +341,9 @@ body {
 
                 <p class="subtitle"></p>
 
+
                 <form action="<?= base_url('sign_in') ?>" method="POST">
+
                     <div class="input-container">
                         <i class="fa-regular fa-user input-icon"></i>
                         <input type="text" name="username" placeholder="Username" required>
@@ -362,14 +363,15 @@ body {
                             <span class="custom-checkbox"></span>
                             Remember me
                         </label>
+
                         <a href="#" class="forgot-link">Forgot Password?</a>
                     </div>
 
-                    <button type="submit" class="submit-btn primary-btn">Login</button>
-
+                    <button type="submit" class="submit-btn primary-btn">
+                        Login
+                    </button>
 
                 </form>
-
                 <div class="signup-prompt">
                     Don't have an account? <a href="#">Sign Up</a>
                 </div>
@@ -377,6 +379,8 @@ body {
         </div>
 
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
     function togglePasswordVisibility() {
@@ -398,7 +402,19 @@ body {
 
 
 
-
+    <?php if ($this->session->flashdata('error')) : ?>
+    <script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Login Failed',
+        text: '<?= $this->session->flashdata('error'); ?>',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#dc3545', 
+        allowOutsideClick: false,
+        allowEscapeKey: true
+    });
+    </script>
+    <?php endif; ?>
 </body>
 
 </html>
