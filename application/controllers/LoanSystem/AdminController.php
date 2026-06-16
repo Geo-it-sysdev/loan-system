@@ -1,6 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+/** @property CI_DB_query_builder $db */
 class AdminController extends CI_Controller {
 
     public function __construct()
@@ -478,11 +479,14 @@ class AdminController extends CI_Controller {
     {
         $id = $this->input->post('id');
 
-        $data = $this->db->get_where('tbl_borrower', ['id' => $id])->row();
+        $data = $this->db
+            ->where('id', $id)
+            ->get('tbl_borrower')
+            ->row();
 
         echo json_encode([
             'status' => true,
-            'data' => $data
+            'data'   => $data
         ]);
     }
 
