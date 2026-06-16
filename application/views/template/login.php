@@ -332,11 +332,15 @@ body {
         </div>
 
         <div class="form-panel">
-            <div class="corner-circle"></div>
 
             <div class="form-content">
-                <h2>Sign in</h2>
-                <p class="subtitle"> </p>
+
+                <div class="text-center mb-3">
+                    <img src="<?= base_url('assets/images/GeonLoan.png'); ?>" alt="Logo" class="img-fluid"
+                        style="max-width: 330px;">
+                </div>
+
+                <p class="subtitle"></p>
 
                 <form action="<?= base_url('sign_in') ?>" method="POST">
                     <div class="input-container">
