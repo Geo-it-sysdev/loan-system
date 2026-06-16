@@ -326,7 +326,7 @@ body {
 
             <div class="welcome-content">
                 <h1>WELCOME</h1>
-                <h2>YOUR HEADLINE NAME</h2>
+                <h2>EZ GEON - LOAN</h2>
 
             </div>
         </div>
