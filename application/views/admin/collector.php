@@ -25,7 +25,7 @@
 
             <div class="row g-3">
                 <!-- ================= LEFT SIDE ================= -->
-                <div class="col-12 col-lg-3">
+                <div class="col-12 col-lg-4">
                     <!-- PHOTO CARD -->
                     <div class="card mb-3">
 
@@ -58,34 +58,104 @@
 
                                 <input type="file" id="photo" name="photo" accept="image/*" hidden>
                                 <input type="hidden" name="collector_id" id="collector_id">
-
-                                <div class="mb-2">
-                                    <label>Full Name</label>
-                                    <input type="text" name="fullname" class="form-control "
+                                <h6 class="fw-semibold text-primary mb-3">Personal Information</h6>
+                                <!-- Full Name -->
+                                <div class="mb-3">
+                                    <label class="form-label">Full Name</label>
+                                    <input type="text" name="fullname" class="form-control"
                                         placeholder="Enter full name" required>
                                 </div>
 
-                                <div class="mb-2">
-                                    <label>Address</label>
-                                    <textarea name="address" class="form-control " placeholder="Enter complete address"
-                                        rows="3" required></textarea>
+                                <!-- Username & Collector Type -->
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Username</label>
+                                        <input type="text" name="username" class="form-control"
+                                            placeholder="Enter username" required>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Collector Type</label>
+                                        <select name="collector_type" class="form-select" required>
+                                            <option value="">Select Collector Type</option>
+                                            <option value="Admin">Admin</option>
+                                            <option value="User">User</option>
+                                        </select>
+                                    </div>
                                 </div>
 
-                                <div class="mb-2">
-                                    <label>Email</label>
-                                    <input type="email" name="email" class="form-control "
-                                        placeholder="Enter email address" required>
+                                <!-- Address -->
+                                <div class="mt-3">
+                                    <h6 class="fw-semibold text-primary mb-3">Address Information</h6>
+
+                                    <div class="row g-3">
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Province</label>
+                                            <input type="text" class="form-control" value="Bohol" readonly
+                                                style="cursor:not-allowed;">
+                                            <input type="hidden" name="Province" value="Bohol">
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Municipality</label>
+                                            <select id="municipality" class="form-select" required>
+                                                <option value="">Select Municipality</option>
+                                            </select>
+                                            <input type="hidden" name="municipalities" id="municipality_name">
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Barangay</label>
+                                            <select name="baranggay" id="barangay" class="form-select" required>
+                                                <option value="">Select Barangay</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Purok</label>
+                                            <select name="Purok" class="form-select" required>
+                                                <option value="">Select Purok</option>
+                                                <option value="Purok 1">Purok 1</option>
+                                                <option value="Purok 2">Purok 2</option>
+                                                <option value="Purok 3">Purok 3</option>
+                                                <option value="Purok 4">Purok 4</option>
+                                                <option value="Purok 5">Purok 5</option>
+                                                <option value="Purok 6">Purok 6</option>
+                                                <option value="Purok 7">Purok 7</option>
+                                            </select>
+                                        </div>
+
+                                    </div>
                                 </div>
 
-                                <div class="mb-3">
-                                    <label>Contact No.</label>
-                                    <input type="text" name="contact" class="form-control "
-                                        placeholder="Enter contact number" required>
+                                <!-- Contact Information -->
+                                <div class="mt-4">
+                                    <h6 class="fw-semibold text-primary mb-3">Contact Information</h6>
+
+                                    <div class="row g-3">
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Email Address</label>
+                                            <input type="email" name="email" class="form-control"
+                                                placeholder="Enter email address" required>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Contact Number</label>
+                                            <input type="text" name="contact" class="form-control"
+                                                placeholder="Enter contact number" required>
+                                        </div>
+
+                                    </div>
                                 </div>
 
-                                <button type="submit" class="btn btn-primary btn-sm w-100">
-                                    <i class="ri-add-line"></i> Add Collector
-                                </button>
+                                <!-- Submit Button -->
+                                <div class="mt-4">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="ri-add-line me-1"></i> Add Collector
+                                    </button>
+                                </div>
 
                             </form>
 
@@ -94,18 +164,21 @@
                 </div>
 
                 <!-- ================= RIGHT SIDE ================= -->
-                <div class="col-12 col-lg-9">
+                <div class="col-12 col-lg-8">
 
                     <div class="card">
                         <div class="card-body">
 
                             <div class="table-responsive">
-                                <table class="table table-striped align-middle" id="CollectorTable">
+
+                                <table class="table table-striped align-middle w-100 nowrap" id="CollectorTable">
 
                                     <thead class="table-light">
                                         <tr>
                                             <th>Photo</th>
                                             <th>Full Name</th>
+                                            <th>Username</th>
+                                            <th>Collector Type</th>
                                             <th>Address</th>
                                             <th>Email</th>
                                             <th>Contact No.</th>
@@ -175,22 +248,25 @@
             columns: [{
                     data: "photo",
                     render: function(data) {
-
-                        let photo = data ?
-                            data :
-                            "<?= base_url('assets/images/user.png') ?>";
+                        let photo = data ? data : "<?= base_url('assets/images/user.png') ?>";
 
                         return `
-                        <img src="${photo}"
-                            width="45"
-                            height="45"
-                            class="rounded-circle border"
-                            style="object-fit:cover;">
-                    `;
+                    <img src="${photo}"
+                        width="45"
+                        height="45"
+                        class="rounded-circle border"
+                        style="object-fit:cover;">
+                `;
                     }
                 },
                 {
                     data: "fullname"
+                },
+                {
+                    data: "username"
+                },
+                {
+                    data: "collector_type"
                 },
                 {
                     data: "address"
@@ -201,32 +277,44 @@
                 {
                     data: "contact_no"
                 },
+
+                {
+                    data: "date_created",
+                    visible: false,
+                    searchable: false
+                },
+
                 {
                     data: null,
                     orderable: false,
                     render: function(data, type, row) {
-
                         return `
-                        <button type="button"
-                            class="btn btn-sm btn-primary btn-edit"
-                            data-id="${row.id}"
-                            data-fullname="${row.fullname}"
-                            data-address="${row.address}"
-                            data-email="${row.email}"
-                            data-contact="${row.contact_no}"
-                            data-photo="${row.photo}">
-                            <i class="ri-edit-line me-1"></i> Edit
-                        </button>
+                    <button type="button"
+                        class="btn btn-sm btn-primary btn-edit me-1"
+                        data-id="${row.id}"
+                        data-fullname="${row.fullname}"
+                        data-username="${row.username}"
+                        data-collector_type="${row.collector_type}"
+                        data-address="${row.address}"
+                        data-email="${row.email}"
+                        data-contact="${row.contact_no}"
+                        data-photo="${row.photo}">
+                        <i class="ri-edit-line me-2"></i> Edit
+                    </button>
 
-                        <button type="button"
-                            class="btn btn-sm btn-danger btn-delete"
-                            data-id="${row.id}"
-                            data-photo="${row.photo}">
-                            <i class="ri-delete-bin-line me-1"></i> Delete
-                        </button>
-                    `;
+                    <button type="button"
+                        class="btn btn-sm btn-danger btn-delete"
+                        data-id="${row.id}"
+                        data-photo="${row.photo}">
+                        <i class="ri-delete-bin-line me-2"></i> Delete
+                    </button>
+                `;
                     }
                 }
+            ],
+
+            order: [
+                [7, "asc"]
             ]
         });
 
@@ -236,6 +324,8 @@
 
             let id = $(this).data('id');
             let fullname = $(this).data('fullname');
+            let username = $(this).data('username');
+            let collector_type = $(this).data('collector_type');
             let address = $(this).data('address');
             let email = $(this).data('email');
             let contact = $(this).data('contact');
@@ -244,17 +334,81 @@
             $('#collector_id').val(id);
 
             $('input[name="fullname"]').val(fullname);
-            $('textarea[name="address"]').val(address);
+            $('input[name="username"]').val(username);
+            $('select[name="collector_type"]').val(collector_type);
             $('input[name="email"]').val(email);
             $('input[name="contact"]').val(contact);
 
-            if (photo && photo !== '') {
+
+            if (address) {
+
+                let parts = address.split(',');
+
+                let purok = $.trim(parts[0]);
+                let barangay = $.trim(parts[1]);
+                let municipality = $.trim(parts[2]);
+
+                $('select[name="Purok"]').val(purok);
+
+                // Municipality
+                $('#municipality option').each(function() {
+
+                    if ($(this).data('name') == municipality) {
+
+                        $(this).prop('selected', true);
+
+                        $('#municipality_name').val(municipality);
+
+                        let municipality_id = $(this).val();
+
+                        // Load barangays
+                        $.ajax({
+
+                            url: "<?= base_url('get_barangays') ?>",
+                            type: "POST",
+                            data: {
+                                municipality_id: municipality_id
+                            },
+                            dataType: "json",
+
+                            success: function(res) {
+
+                                let html =
+                                    '<option value="">Select Barangay</option>';
+
+                                $.each(res, function(i, row) {
+
+                                    html += `
+                                <option value="${row.name}">
+                                    ${row.name}
+                                </option>`;
+                                });
+
+                                $('#barangay').html(html);
+
+                                $('#barangay').val(barangay);
+
+                            }
+
+                        });
+
+                    }
+
+                });
+
+            }
+
+            if (photo && photo != '') {
+
                 $('#photoPreview').attr('src', photo);
+
             } else {
+
                 $('#photoPreview').attr(
                     'src',
-                    '<?= base_url("assets/images/user.png") ?>'
+                    "<?= base_url('assets/images/user.png') ?>"
                 );
+
             }
 
             $('button[type="submit"]')
@@ -262,14 +416,15 @@
                 .addClass('btn-success')
                 .html('<i class="ri-save-line me-1"></i> Update Collector');
 
-            $('html, body').animate({
-                scrollTop: $("#collectorForm").offset().top - 100
+            $('html,body').animate({
+                scrollTop: $('#collectorForm').offset().top - 100
             }, 500);
+
         });
 
 
         // FORM SUBMIT (ADD / UPDATE)
-        $('#collectorForm').on('submit', function(e) {
+        $('#collectorForm').submit(function(e) {
 
             e.preventDefault();
 
@@ -281,39 +436,31 @@
 
             let formData = new FormData(this);
 
-            let photoFile = $('#photo')[0].files[0];
-
-            if (photoFile) {
-                formData.append('photo', photoFile);
-            }
-
             $.ajax({
 
                 url: url,
                 type: "POST",
                 data: formData,
-                contentType: false,
                 processData: false,
-                cache: false,
+                contentType: false,
                 dataType: "json",
 
                 beforeSend: function() {
 
                     $('button[type="submit"]')
                         .prop('disabled', true)
-                        .html(
-                            '<i class="ri-loader-4-line ri-spin me-1"></i> Saving...'
-                        );
+                        .html('<i class="ri-loader-4-line ri-spin"></i> Saving...');
+
                 },
 
-                success: function(response) {
+                success: function(res) {
 
-                    if (response.status === 'success') {
+                    if (res.status == "success") {
 
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: response.message,
+                            text: res.message,
                             timer: 1500,
                             showConfirmButton: false
                         });
@@ -322,19 +469,21 @@
 
                         $('#collector_id').val('');
 
+                        $('#municipality_name').val('');
+
+                        $('#barangay').html('<option value="">Select Barangay</option>');
+
                         $('#photo').val('');
 
                         $('#photoPreview').attr(
                             'src',
-                            '<?= base_url("assets/images/user.png") ?>'
+                            "<?= base_url('assets/images/user.png')?>"
                         );
 
                         $('button[type="submit"]')
                             .removeClass('btn-success')
                             .addClass('btn-primary')
-                            .html(
-                                '<i class="ri-add-line me-1"></i> Add Collector'
-                            );
+                            .html('<i class="ri-add-line"></i> Add Collector');
 
                         table.ajax.reload(null, false);
 
@@ -343,9 +492,11 @@
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
-                            text: response.message
+                            text: res.message
                         });
+
                     }
+
                 },
 
                 error: function(xhr) {
@@ -354,36 +505,123 @@
 
                     Swal.fire({
                         icon: 'error',
-                        title: 'Request Failed',
+                        title: 'Error',
                         text: 'Something went wrong.'
                     });
+
                 },
 
                 complete: function() {
 
-                    let isEdit = $('#collector_id').val() !== '';
+                    $('button[type="submit"]')
+                        .prop('disabled', false);
 
-                    if (isEdit) {
+                    if ($('#collector_id').val()) {
 
-                        $('button[type="submit"]')
-                            .prop('disabled', false)
-                            .html(
-                                '<i class="ri-save-line me-1"></i> Update Collector'
-                            );
+                        $('button[type="submit"]').html(
+                            '<i class="ri-save-line"></i> Update Collector');
 
                     } else {
 
-                        $('button[type="submit"]')
-                            .prop('disabled', false)
-                            .html(
-                                '<i class="ri-add-line me-1"></i> Add Collector'
-                            );
+                        $('button[type="submit"]').html(
+                            '<i class="ri-add-line"></i> Add Collector');
+
                     }
+
                 }
+
             });
 
         });
 
+
+        $(document).ready(function() {
+
+            $.ajax({
+                url: "<?= site_url('get_municipalities') ?>",
+                type: "GET",
+                dataType: "json",
+
+                success: function(res) {
+
+                    console.log(res); 
+
+                    let html = '<option value="">Select Municipality</option>';
+
+                    $.each(res, function(i, row) {
+
+                        html += `
+                    <option value="${row.id}" data-name="${row.name}">
+                        ${row.name}
+                    </option>
+                `;
+
+                    });
+
+                    $('#municipality').html(html);
+
+                },
+
+                error: function(xhr) {
+
+                    console.log(xhr.responseText);
+
+                }
+
+            });
+
+        });
+
+
+        $('#municipality').change(function() {
+
+            let municipality_id = $(this).val();
+
+            let municipality_name = $(this).find(':selected').data('name');
+
+            $('#municipality_name').val(municipality_name);
+
+            $.ajax({
+
+                url: "<?= site_url('get_barangays') ?>",
+
+                type: "POST",
+
+                data: {
+                    municipality_id: municipality_id
+                },
+
+                dataType: "json",
+
+                success: function(res) {
+
+                    console.log(res); 
+
+                    let html = '<option value="">Select Barangay</option>';
+
+                    $.each(res, function(i, row) {
+
+                        html += `
+                    <option value="${row.name}">
+                        ${row.name}
+                    </option>
+                `;
+
+                    });
+
+                    $('#barangay').html(html);
+
+                },
+
+                error: function(xhr) {
+
+                    console.log(xhr.responseText);
+
+                }
+
+            });
+
+        });
 
         // CANCEL EDIT
         $('#btnCancelEdit').on('click', function() {

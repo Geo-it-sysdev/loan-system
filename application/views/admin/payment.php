@@ -35,125 +35,134 @@
 
                             <form id="BorrowerForm" enctype="multipart/form-data">
 
-                                <input type="hidden" id="total_overall_paid">
-                                <label class="form-label fw-bold">
-                                    <i class="ri-file-add-line me-1"></i>
-                                    Add Payment
-                                </label>
-
-
-                                <div class="row g-2 mt-1">
-
-                                    <div class="col-md-4">
-                                        <label class="form-label">Reference Number</label>
-                                        <input type="text" id="reference_number" name="reference_number"
-                                            class="form-control" placeholder="000000" required>
-                                    </div>
-
-                                    <div class="col-md-8">
-                                        <label class="form-label">Borrower Name</label>
-                                        <input type="text" id="borrower_name" class="form-control" readonly
-                                            style="cursor: not-allowed;">
-                                    </div>
-
-                                </div>
-
-
-                                <div class="row g-2 mt-2">
-
-                                    <div class="col-md-4">
-                                        <label class="form-label">Monthly Payment</label>
-                                        <input type="text" id="monthly_payment" class="form-control" readonly
-                                            style="cursor: not-allowed;">
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <label class="form-label">Remaining Balance</label>
-                                        <input type="text" id="remaining_balance" class="form-control" readonly
-                                            style="cursor: not-allowed;">
-                                    </div>
-
-                                    <!-- <div class="col-md-3">
-                                        <label class="form-label">Effective Date</label>
-                                        <input type="text" id="effective_date" class="form-control" readonly
-                                            style="cursor: not-allowed;">
-                                    </div> -->
-
-                                    <div class="col-md-4">
-                                        <label class="form-label">Due Date</label>
-                                        <input type="text" id="due_date" class="form-control" readonly
-                                            style="cursor: not-allowed;">
-                                    </div>
-
-                                </div>
-
-
-                                <div class="row g-2 mt-2">
-
-                                    <div class="col-md-6">
-                                        <label class="form-label">Paid Cycles</label>
-                                        <input type="text" id="paid_cycles" class="form-control" readonly
-                                            style="cursor: not-allowed;">
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <label class="form-label">Penalty (₱1/day)</label>
-                                        <input type="text" id="penalty_amount" name="penalty_amount"
-                                            class="form-control" readonly style="cursor: not-allowed;">
-                                    </div>
-
-                                </div>
-
-
-                                <div class="row g-2 mt-2">
-
-                                    <div class="col-md-6">
-                                        <label class="form-label">Amount Paid</label>
-                                        <input type="text" id="amount_paid" name="amount_paid" class="form-control"
-                                            required>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <label class="form-label">Payment Date</label>
-                                        <input type="text" name="payment_date" class="form-control"
-                                            value="<?= date('Y-m-d') ?>" readonly style="cursor: not-allowed;">
-                                    </div>
-
-                                </div>
-
-
-                                <div class="row g-2 mt-2">
-
-                                    <div class="col-md-6">
-                                        <label class="form-label">Payment Method</label>
-                                        <select name="payment_method" class="form-select" required>
-                                            <option value="">Select Method</option>
-                                            <option value="Cash">Cash</option>
-                                            <option value="GCash">GCash</option>
-                                            <option value="Bank Transfer">Bank Transfer</option>
-                                            <option value="Maya">Maya</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <label class="form-label">Collected By</label>
-                                        <select name="collector" id="collector" class="form-select" required>
-                                            <option value="">Loading Collectors...</option>
-                                        </select>
-                                    </div>
-
-                                </div>
-
-
                                 <input type="hidden" id="loan_id" name="loan_id">
                                 <input type="hidden" id="borrower_id" name="borrower_id">
+                                <input type="hidden" id="total_overall_paid">
 
+                                <!-- Loan Information -->
+                                <div class="mb-4">
+                                    <h6 class="fw-semibold text-primary mb-3">
+                                        <i class="ri-file-list-3-line me-1"></i>
+                                        Loan Information
+                                    </h6>
 
-                                <button type="submit" id="btnSave" class="btn btn-primary w-100 mt-3">
+                                    <div class="row g-3">
 
+                                        <div class="col-md-4">
+                                            <label class="form-label">Reference Number</label>
+                                            <input type="text" id="reference_number" name="reference_number"
+                                                class="form-control" placeholder="Enter reference number" required>
+                                        </div>
+
+                                        <div class="col-md-8">
+                                            <label class="form-label">Borrower Name</label>
+                                            <input type="text" id="borrower_name" class="form-control bg-light"
+                                                readonly>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="form-label">Monthly Payment</label>
+                                            <input type="text" id="monthly_payment" class="form-control bg-light"
+                                                readonly>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="form-label">Remaining Balance</label>
+                                            <input type="text" id="remaining_balance" class="form-control bg-light"
+                                                readonly>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="form-label">Due Date</label>
+                                            <input type="text" id="due_date" class="form-control bg-light" readonly>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <!-- Payment Details -->
+                                <div class="mb-4">
+                                    <h6 class="fw-semibold text-primary mb-3">
+                                        <i class="ri-money-dollar-circle-line me-1"></i>
+                                        Payment Details
+                                    </h6>
+
+                                    <div class="row g-3">
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Paid Cycles</label>
+                                            <input type="text" id="paid_cycles" class="form-control bg-light" readonly>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Penalty (₱1/day)</label>
+                                            <input type="text" id="penalty_amount" name="penalty_amount"
+                                                class="form-control bg-light" readonly>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Amount Paid</label>
+                                            <input type="text" id="amount_paid" name="amount_paid" class="form-control"
+                                                placeholder="Enter payment amount" required>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Payment Date</label>
+                                            <input type="text" name="payment_date" class="form-control bg-light"
+                                                value="<?= date('Y-m-d') ?>" readonly>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <!-- Collection Information -->
+                                <div class="mb-4">
+                                    <h6 class="fw-semibold text-primary mb-3">
+                                        <i class="ri-user-received-line me-1"></i>
+                                        Collection Information
+                                    </h6>
+
+                                    <div class="row g-3">
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Payment Method</label>
+                                            <select name="payment_method" class="form-select" required>
+                                                <option value="">Select Payment Method</option>
+                                                <option value="Cash">Cash</option>
+                                                <option value="GCash">GCash</option>
+                                                <option value="Bank Transfer">Bank Transfer</option>
+                                                <option value="Maya">Maya</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Collected By</label>
+                                            <select name="collector" id="collector" class="form-select" required>
+                                                <option value="">Loading Collectors...</option>
+                                            </select>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <!-- Payment Summary -->
+                                <div class="alert alert-info border-0 mb-4">
+                                    <div class="d-flex align-items-center">
+                                        <i class="ri-information-line fs-5 me-2"></i>
+                                        <div>
+                                            <strong>Payment Summary</strong><br>
+                                            <small>
+                                                The payment amount, penalty, remaining balance, and paid cycles
+                                                will automatically update after the payment is processed.
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Submit -->
+                                <button type="submit" id="btnSave" class="btn btn-primary w-100">
                                     <i class="ri-save-line me-1"></i>
                                     Save Payment
-
                                 </button>
 
                             </form>
@@ -686,9 +695,7 @@
 
             let isEditing = row.data('editing') === true;
 
-            // =========================
             // SAVE
-            // =========================
             if (isEditing) {
 
                 let collector = row.find('.collector-input').val();
@@ -770,9 +777,7 @@
                 return;
             }
 
-            // =========================
             // RESET OTHER ROWS
-            // =========================
             $('#PaymentHistoryTable tbody tr').each(function() {
 
                 let tr = $(this);
@@ -804,9 +809,7 @@
                 }
             });
 
-            // =========================
             // ENTER EDIT MODE
-            // =========================
             row.data('editing', true);
 
             let collectorText = row.find('.collector-text').text().trim();
@@ -870,7 +873,6 @@
 
             let ref_no = $(this).val().trim();
 
-            // If modified/removed reference number
             if (loadedRefNo && ref_no !== loadedRefNo) {
 
                 $('#loan_id').val('');
@@ -888,8 +890,6 @@
 
                 $('#view_total_paid').val('');
                 $('#view_total_remaining').val('');
-
-                // HIDE AMOUNT PAID
                 $('#amount_paid').val('');
                 $('#amount_paid').hide();
 
@@ -897,7 +897,6 @@
                 loadedRefNo = '';
             }
 
-            // If empty input
             if (!ref_no) {
 
                 $('#amount_paid').val('');
@@ -937,7 +936,6 @@
                         $('#view_total_paid').val('');
                         $('#view_total_remaining').val('');
 
-                        // HIDE AMOUNT PAID
                         $('#amount_paid').val('');
                         $('#amount_paid').hide();
 
@@ -1175,19 +1173,19 @@
 
 
         function printReceipt(
-                refNo,
-                borrower,
-                loanAmount,
-                remainingBalance,
-                penalty,
-                amountPaid,
-                paymentMethod,
-                collector,
-                paymentDate,
-                totalPaid
-                ) {
+            refNo,
+            borrower,
+            loanAmount,
+            remainingBalance,
+            penalty,
+            amountPaid,
+            paymentMethod,
+            collector,
+            paymentDate,
+            totalPaid
+        ) {
 
-                    let receipt = `
+            let receipt = `
             <html>
             <head>
                 <title>Receipt</title>
@@ -1304,10 +1302,10 @@
             </html>
             `;
 
-                    let win = window.open('', '', 'width=400,height=600');
-                    win.document.write(receipt);
-                    win.document.close();
-                }
+            let win = window.open('', '', 'width=400,height=600');
+            win.document.write(receipt);
+            win.document.close();
+        }
 
 
     }); // End Document 

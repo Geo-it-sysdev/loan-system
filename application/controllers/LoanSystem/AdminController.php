@@ -11,176 +11,238 @@ class AdminController extends CI_Controller {
     }
 
 
-    // ===== Collectors ======
+    // ===== Collectors function======
 	public function add_collector()
-	{
-		$fullname   = $this->input->post('fullname', true);
-		$email      = $this->input->post('email', true);
-		$contact_no = $this->input->post('contact', true);
-		$address    = $this->input->post('address', true);
+    {
+        $fullname       = $this->input->post('fullname', true);
+        $username       = $this->input->post('username', true);
+        $collector_type = $this->input->post('collector_type', true);
 
-		if ($this->db->where('fullname', $fullname)->get('tbl_collector')->row()) {
-			echo json_encode([
-				'status' => 'error',
-				'message' => 'Full name already exists'
-			]);
-			return;
-		}
+        $email      = $this->input->post('email', true);
+        $contact_no = $this->input->post('contact', true);
 
-		if ($this->db->where('email', $email)->get('tbl_collector')->row()) {
-			echo json_encode([
-				'status' => 'error',
-				'message' => 'Email already exists'
-			]);
-			return;
-		}
+        $province     = $this->input->post('Province', true);
+        $municipality = $this->input->post('municipalities', true);
+        $barangay     = $this->input->post('baranggay', true);
+        $purok        = $this->input->post('Purok', true);
 
-		if ($this->db->where('contact_no', $contact_no)->get('tbl_collector')->row()) {
-			echo json_encode([
-				'status' => 'error',
-				'message' => 'Contact number already exists'
-			]);
-			return;
-		}
+        $address = $purok . ', ' . $barangay . ', ' . $municipality . ', ' . $province;
 
-		$photo_path = null;
+        $password = password_hash('143', PASSWORD_DEFAULT);
 
-		if (!empty($_FILES['photo']['name'])) {
+        if ($this->db->where('fullname', $fullname)->get('tbl_collector')->row()) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Full name already exists'
+            ]);
+            return;
+        }
 
-			$upload_path = FCPATH . 'assets/collector/';
+        if ($this->db->where('username', $username)->get('tbl_collector')->row()) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Username already exists'
+            ]);
+            return;
+        }
 
-			if (!is_dir($upload_path)) {
-				mkdir($upload_path, 0777, true);
-			}
+        if ($this->db->where('email', $email)->get('tbl_collector')->row()) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Email already exists'
+            ]);
+            return;
+        }
 
-			$filename = preg_replace('/[^A-Za-z0-9]/', '_', $fullname);
+        if ($this->db->where('contact_no', $contact_no)->get('tbl_collector')->row()) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Contact number already exists'
+            ]);
+            return;
+        }
 
-			$config['upload_path']   = $upload_path;
-			$config['allowed_types'] = 'jpg|jpeg|png';
-			$config['file_name']     = $filename;
-			$config['overwrite']     = true;
+        $photo_path = null;
 
-			$this->load->library('upload');
-			$this->upload->initialize($config);
+        if (!empty($_FILES['photo']['name'])) {
 
-			if ($this->upload->do_upload('photo')) {
+            $upload_path = FCPATH . 'assets/collector/';
 
-				$file = $this->upload->data();
+            if (!is_dir($upload_path)) {
+                mkdir($upload_path, 0777, true);
+            }
 
-				$photo_path = 'assets/collector/' . $file['file_name'];
+            $filename = preg_replace('/[^A-Za-z0-9]/', '_', $fullname);
 
-			} else {
+            $config['upload_path']   = $upload_path;
+            $config['allowed_types'] = 'jpg|jpeg|png';
+            $config['file_name']     = $filename;
+            $config['overwrite']     = true;
 
-				echo json_encode([
-					'status' => 'error',
-					'message' => strip_tags($this->upload->display_errors())
-				]);
-				return;
-			}
-		}
+            $this->load->library('upload');
+            $this->upload->initialize($config);
 
-		$data = [
-			'fullname'     => $fullname,
-			'address'      => $address,
-			'email'        => $email,
-			'contact_no'   => $contact_no,
-			'photo'        => $photo_path,
-			'date_created' => date('Y-m-d')
-		];
+            if ($this->upload->do_upload('photo')) {
 
-		$insert = $this->db->insert('tbl_collector', $data);
+                $file = $this->upload->data();
+                $photo_path = 'assets/collector/' . $file['file_name'];
 
-		echo json_encode([
-			'status'  => $insert ? 'success' : 'error',
-			'message' => $insert
-				? 'Collector added successfully'
-				: 'Failed to add collector'
-		]);
-	}
+            } else {
+
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => strip_tags($this->upload->display_errors())
+                ]);
+                return;
+            }
+        }
+
+        $data = [
+            'fullname'       => $fullname,
+            'username'       => $username,
+            'password'       => $password,
+            'collector_type' => $collector_type,
+            'address'        => $address,
+            'email'          => $email,
+            'contact_no'     => $contact_no,
+            'photo'          => $photo_path,
+            'date_created'   => date('Y-m-d')
+        ];
+
+        $insert = $this->db->insert('tbl_collector', $data);
+
+        echo json_encode([
+            'status' => $insert ? 'success' : 'error',
+            'message' => $insert
+                ? 'Collector added successfully. Default password is 143.'
+                : 'Failed to add collector'
+        ]);
+    }
 
 	public function update_collector()
-	{
-		$id         = $this->input->post('collector_id');
-		$fullname   = $this->input->post('fullname', true);
-		$email      = $this->input->post('email', true);
-		$contact_no = $this->input->post('contact', true);
-		$address    = $this->input->post('address', true);
+    {
+        $id = $this->input->post('collector_id');
 
-		$collector = $this->db
-			->where('id', $id)
-			->get('tbl_collector')
-			->row();
+        $fullname       = $this->input->post('fullname', true);
+        $username       = $this->input->post('username', true);
+        $collector_type = $this->input->post('collector_type', true);
 
-		if (!$collector) {
-			echo json_encode([
-				'status' => 'error',
-				'message' => 'Collector not found'
-			]);
-			return;
-		}
+        $email      = $this->input->post('email', true);
+        $contact_no = $this->input->post('contact', true);
 
-		$photo_path = $collector->photo;
+        $province     = $this->input->post('Province', true);
+        $municipality = $this->input->post('municipalities', true);
+        $barangay     = $this->input->post('baranggay', true);
+        $purok        = $this->input->post('Purok', true);
 
-		if (!empty($_FILES['photo']['name'])) {
+        $address = $purok . ', ' . $barangay . ', ' . $municipality . ', ' . $province;
 
-			$upload_path = FCPATH . 'assets/collector/';
+        $collector = $this->db
+            ->where('id', $id)
+            ->get('tbl_collector')
+            ->row();
 
-			if (!is_dir($upload_path)) {
-				mkdir($upload_path, 0777, true);
-			}
+        if (!$collector) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Collector not found'
+            ]);
+            return;
+        }
 
-			$filename = preg_replace('/[^A-Za-z0-9]/', '_', $fullname);
 
-			$config['upload_path']   = $upload_path;
-			$config['allowed_types'] = 'jpg|jpeg|png';
-			$config['file_name']     = $filename;
-			$config['overwrite']     = true;
+        if ($this->db->where('fullname', $fullname)->where('id !=', $id)->get('tbl_collector')->row()) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Full name already exists'
+            ]);
+            return;
+        }
 
-			$this->load->library('upload');
-			$this->upload->initialize($config);
+        if ($this->db->where('username', $username)->where('id !=', $id)->get('tbl_collector')->row()) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Username already exists'
+            ]);
+            return;
+        }
 
-			if ($this->upload->do_upload('photo')) {
+        if ($this->db->where('email', $email)->where('id !=', $id)->get('tbl_collector')->row()) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Email already exists'
+            ]);
+            return;
+        }
 
-				if (
-					!empty($collector->photo) &&
-					file_exists(FCPATH . $collector->photo)
-				) {
-					unlink(FCPATH . $collector->photo);
-				}
+        if ($this->db->where('contact_no', $contact_no)->where('id !=', $id)->get('tbl_collector')->row()) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Contact number already exists'
+            ]);
+            return;
+        }
 
-				$file = $this->upload->data();
+        $photo_path = $collector->photo;
 
-				$photo_path = 'assets/collector/' . $file['file_name'];
+        if (!empty($_FILES['photo']['name'])) {
 
-			} else {
+            $upload_path = FCPATH . 'assets/collector/';
 
-				echo json_encode([
-					'status' => 'error',
-					'message' => strip_tags($this->upload->display_errors())
-				]);
-				return;
-			}
-		}
+            if (!is_dir($upload_path)) {
+                mkdir($upload_path, 0777, true);
+            }
 
-		$data = [
-			'fullname'   => $fullname,
-			'address'    => $address,
-			'email'      => $email,
-			'contact_no' => $contact_no,
-			'photo'      => $photo_path
-		];
+            $filename = preg_replace('/[^A-Za-z0-9]/', '_', $fullname);
 
-		$update = $this->db
-			->where('id', $id)
-			->update('tbl_collector', $data);
+            $config['upload_path']   = $upload_path;
+            $config['allowed_types'] = 'jpg|jpeg|png';
+            $config['file_name']     = $filename;
+            $config['overwrite']     = true;
 
-		echo json_encode([
-			'status' => $update ? 'success' : 'error',
-			'message' => $update
-				? 'Collector updated successfully'
-				: 'Failed to update collector'
-		]);
-	}
+            $this->load->library('upload');
+            $this->upload->initialize($config);
+
+            if ($this->upload->do_upload('photo')) {
+
+                if (!empty($collector->photo) && file_exists(FCPATH . $collector->photo)) {
+                    unlink(FCPATH . $collector->photo);
+                }
+
+                $file = $this->upload->data();
+                $photo_path = 'assets/collector/' . $file['file_name'];
+
+            } else {
+
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => strip_tags($this->upload->display_errors())
+                ]);
+                return;
+            }
+        }
+
+        $data = [
+            'fullname'       => $fullname,
+            'username'       => $username,
+            'collector_type' => $collector_type,
+            'address'        => $address,
+            'email'          => $email,
+            'contact_no'     => $contact_no,
+            'photo'          => $photo_path
+        ];
+
+        $update = $this->db
+            ->where('id', $id)
+            ->update('tbl_collector', $data);
+
+        echo json_encode([
+            'status' => $update ? 'success' : 'error',
+            'message' => $update
+                ? 'Collector updated successfully.'
+                : 'Failed to update collector'
+        ]);
+    }
 
 
 	public function delete_collector()
@@ -1111,64 +1173,67 @@ class AdminController extends CI_Controller {
     }
 
 
- public function update_payment()
-{
-    $id = $this->input->post('id');
+    public function update_payment()
+    {
+        $id = $this->input->post('id');
 
-    $payment_amount = str_replace(
-        ['₱', ','],
-        '',
-        $this->input->post('payment_amount')
-    );
+        $payment_amount = str_replace(
+            ['₱', ','],
+            '',
+            $this->input->post('payment_amount')
+        );
 
-    $data = [
-        'collector'      => $this->input->post('collector'),
-        'payment_method' => $this->input->post('payment_method'),
-        'payment_amount' => $payment_amount
-    ];
+        $data = [
+            'collector'      => $this->input->post('collector'),
+            'payment_method' => $this->input->post('payment_method'),
+            'payment_amount' => $payment_amount
+        ];
 
-    $this->db->where('id', $id);
-    $update = $this->db->update('tbl_payment', $data);
+        $this->db->where('id', $id);
+        $update = $this->db->update('tbl_payment', $data);
 
-    if ($update) {
+        if ($update) {
 
-        $payment = $this->db->select('loan_id')
-            ->from('tbl_payment')
-            ->where('id', $id)
-            ->get()
-            ->row();
-
-        if ($payment) {
-
-            $loan_id = $payment->loan_id;
-
-            $total_paid = $this->db->select_sum('payment_amount')
+            $payment = $this->db->select('loan_id')
                 ->from('tbl_payment')
-                ->where('loan_id', $loan_id)
-                ->get()
-                ->row()
-                ->payment_amount;
-
-            $loan = $this->db->select('total_balance')
-                ->from('tbl_loan')
-                ->where('id', $loan_id)
+                ->where('id', $id)
                 ->get()
                 ->row();
 
-            $remaining = $loan->total_balance - $total_paid;
+            if ($payment) {
 
-            $status = ($remaining <= 0) ? 'Fully' : 'Partial';
+                $loan_id = $payment->loan_id;
 
-            $this->db->where('id', $loan_id);
-            $this->db->update('tbl_loan', [
-                'status' => $status
-            ]);
+                $total_paid = $this->db->select_sum('payment_amount')
+                    ->from('tbl_payment')
+                    ->where('loan_id', $loan_id)
+                    ->get()
+                    ->row()
+                    ->payment_amount;
+
+                $loan = $this->db->select('total_balance')
+                    ->from('tbl_loan')
+                    ->where('id', $loan_id)
+                    ->get()
+                    ->row();
+
+                $remaining = $loan->total_balance - $total_paid;
+
+                $status = ($remaining <= 0) ? 'Fully' : 'Partial';
+
+                $this->db->where('id', $loan_id);
+                $this->db->update('tbl_loan', [
+                    'status' => $status
+                ]);
+            }
         }
+
+        echo json_encode([
+            'success' => $update
+        ]);
     }
 
-    echo json_encode([
-        'success' => $update
-    ]);
-}
+
+
 
 }

@@ -33,155 +33,171 @@
 
                             <form id="BorrowerForm" enctype="multipart/form-data">
 
-                                <!-- PHOTO -->
-                                <div class="card mb-3">
-                                    <div class="card-body text-center p-4">
+                                <!-- Borrower Photo -->
+                                <div class="card shadow-sm mb-4">
+                                    <div class="card-body text-center">
 
                                         <div class="position-relative d-inline-block">
 
                                             <img id="photoPreview" src="<?= base_url('assets/images/user.png') ?>"
                                                 class="rounded-circle img-thumbnail"
-                                                style="width:140px;height:140px;object-fit:cover;" alt="photo">
+                                                style="width:140px;height:140px;object-fit:cover;" alt="Borrower Photo">
 
                                             <button type="button" class="btn btn-primary btn-sm position-absolute"
-                                                style="bottom:6px;right:6px;width:32px;height:32px;
-                                                    border-radius:50%;display:flex;align-items:center;justify-content:center;"
+                                                style="bottom:6px;right:6px;width:35px;height:35px;border-radius:50%;"
                                                 onclick="document.getElementById('photo').click();">
-
                                                 <i class="ri-camera-line"></i>
                                             </button>
 
                                         </div>
 
                                         <h6 class="mt-3 mb-0">Borrower Photo</h6>
-                                        <small class="text-muted">Click camera to upload</small>
+                                        <small class="text-muted">Click the camera icon to upload</small>
 
                                         <input type="file" id="photo" name="photo" hidden>
                                     </div>
                                 </div>
 
-                                <!-- NAME -->
-                                <div class="row g-2">
+                                <!-- Personal Information -->
+                                <h6 class="fw-semibold text-primary mb-3">Personal Information</h6>
 
-                                    <div class="col-12 col-md-4">
+                                <div class="row g-3">
+
+                                    <div class="col-md-4">
                                         <label class="form-label">First Name</label>
                                         <input type="text" name="first_name" class="form-control"
-                                            placeholder="First name" required>
+                                            placeholder="Enter first name" required>
                                     </div>
 
-                                    <div class="col-12 col-md-4">
-                                        <label class="form-label">Last Name</label>
-                                        <input type="text" name="last_name" class="form-control" placeholder="Last name"
-                                            required>
-                                    </div>
-
-                                    <div class="col-12 col-md-4">
+                                    <div class="col-md-4">
                                         <label class="form-label">Middle Name</label>
                                         <input type="text" name="middle_name" class="form-control"
-                                            placeholder="Middle name" required>
+                                            placeholder="Enter middle name">
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label">Last Name</label>
+                                        <input type="text" name="last_name" class="form-control"
+                                            placeholder="Enter last name" required>
                                     </div>
 
                                 </div>
 
+                                <!-- Address Information -->
+                                <div class="mt-4">
+                                    <h6 class="fw-semibold text-primary mb-3">Address Information</h6>
 
+                                    <div class="row g-3">
 
-                                <div class="row g-2 mt-1">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Province</label>
 
-                                    <div class="col-12 col-md-6">
-                                        <label class="form-label">Province</label>
+                                            <input type="text" class="form-control" value="Bohol" readonly
+                                                style="cursor:not-allowed;">
 
-                                        <input type="text" class="form-control" value="Bohol" readonly
-                                            style="cursor: not-allowed">
+                                            <input type="hidden" name="Province" value="Bohol">
+                                        </div>
 
-                                        <input type="hidden" name="Province" value="Bohol">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Municipality</label>
+
+                                            <select id="municipality" class="form-select" required>
+                                                <option value="">Select Municipality</option>
+                                            </select>
+
+                                            <input type="hidden" name="municipalities" id="municipality_name">
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Barangay</label>
+
+                                            <select name="baranggay" id="barangay" class="form-select" required>
+                                                <option value="">Select Barangay</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Purok</label>
+
+                                            <select name="Purok" class="form-select" required>
+                                                <option value="">Select Purok</option>
+                                                <option value="Purok 1">Purok 1</option>
+                                                <option value="Purok 2">Purok 2</option>
+                                                <option value="Purok 3">Purok 3</option>
+                                                <option value="Purok 4">Purok 4</option>
+                                                <option value="Purok 5">Purok 5</option>
+                                                <option value="Purok 6">Purok 6</option>
+                                                <option value="Purok 7">Purok 7</option>
+                                            </select>
+                                        </div>
+
                                     </div>
-
-                                    <div class="col-12 col-md-6">
-                                        <label class="form-label">Municipality</label>
-
-                                        <select id="municipality" class="form-select" required>
-                                            <option value="">Select Municipality</option>
-                                        </select>
-
-                                        <input type="hidden" name="municipalities" id="municipality_name">
-                                    </div>
-
-                                    <div class="col-12 col-md-6">
-                                        <label class="form-label">Barangay</label>
-                                        <select name="baranggay" id="barangay" class="form-select" required>
-                                            <option value="">Select Barangay</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="col-12 col-md-6">
-                                        <label class="form-label">Purok</label>
-                                        <select name="Purok" class="form-select" required>
-                                            <option value="" selected>Select Purok</option>
-                                            <option value="Purok 1">Purok 1</option>
-                                            <option value="Purok 2">Purok 2</option>
-                                            <option value="Purok 3">Purok 3</option>
-                                            <option value="Purok 4">Purok 4</option>
-                                            <option value="Purok 5">Purok 5</option>
-                                            <option value="Purok 6">Purok 6</option>
-                                            <option value="Purok 7">Purok 7</option>
-                                        </select>
-                                    </div>
-
                                 </div>
 
-                                <!-- CONTACT -->
-                                <div class="row g-2 mt-1">
+                                <!-- Contact Information -->
+                                <div class="mt-4">
+                                    <h6 class="fw-semibold text-primary mb-3">Contact Information</h6>
 
-                                    <div class="col-12 col-md-6">
-                                        <label class="form-label">Email</label>
-                                        <input type="email" name="email" class="form-control"
-                                            placeholder="Email address" required>
+                                    <div class="row g-3">
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Email Address</label>
+                                            <input type="email" name="email" class="form-control"
+                                                placeholder="Enter email address" required>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Contact Number</label>
+                                            <input type="text" name="contact" class="form-control"
+                                                placeholder="Enter contact number" required>
+                                        </div>
+
                                     </div>
-
-                                    <div class="col-12 col-md-6">
-                                        <label class="form-label">Contact No.</label>
-                                        <input type="number" name="contact" class="form-control"
-                                            placeholder="Contact number" required>
-                                    </div>
-
                                 </div>
 
-                                <!-- ID TYPE -->
-                                <div class="row g-2 mt-1">
+                                <!-- Identification -->
+                                <div class="mt-4">
+                                    <h6 class="fw-semibold text-primary mb-3">Identification</h6>
 
-                                    <div class="col-12 col-md-6">
-                                        <label class="form-label">Type of ID</label>
-                                        <select name="id_type" class="form-select" required>
-                                            <option value="">-- Select ID Type --</option>
-                                            <option value="Philippine National ID">Philippine National ID</option>
-                                            <option value="Driver's License">Driver's License</option>
-                                            <option value="Passport">Passport</option>
-                                            <option value="UMID">UMID</option>
-                                            <option value="SSS ID">SSS ID</option>
-                                            <option value="GSIS ID">GSIS ID</option>
-                                            <option value="Postal ID">Postal ID</option>
-                                            <option value="Voter's ID">Voter's ID</option>
-                                            <option value="PRC ID">PRC ID</option>
-                                            <option value="TIN ID">TIN ID</option>
-                                            <option value="Senior Citizen ID">Senior Citizen ID</option>
-                                        </select>
+                                    <div class="row g-3">
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Type of Valid ID</label>
+
+                                            <select name="id_type" class="form-select" required>
+                                                <option value="">Select ID Type</option>
+                                                <option value="Philippine National ID">Philippine National ID</option>
+                                                <option value="Driver's License">Driver's License</option>
+                                                <option value="Passport">Passport</option>
+                                                <option value="UMID">UMID</option>
+                                                <option value="SSS ID">SSS ID</option>
+                                                <option value="GSIS ID">GSIS ID</option>
+                                                <option value="Postal ID">Postal ID</option>
+                                                <option value="Voter's ID">Voter's ID</option>
+                                                <option value="PRC ID">PRC ID</option>
+                                                <option value="TIN ID">TIN ID</option>
+                                                <option value="Senior Citizen ID">Senior Citizen ID</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Valid ID Number</label>
+                                            <input type="text" name="valid_id" class="form-control"
+                                                placeholder="Enter ID number" required>
+                                        </div>
+
                                     </div>
-
-                                    <div class="col-12 col-md-6">
-                                        <label class="form-label">Valid ID No.</label>
-                                        <input type="text" name="valid_id" class="form-control"
-                                            placeholder="Enter ID number" required>
-                                    </div>
-
                                 </div>
 
-                                <!-- BUTTON -->
-                                <button type="submit" class="btn btn-primary w-100 mt-3">
-                                    <i class="ri-add-line me-1"></i> Add Borrower
-                                </button>
+                                <!-- Submit -->
+                                <div class="mt-4">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="ri-add-line me-1"></i>
+                                        Add Borrower
+                                    </button>
+                                </div>
 
                             </form>
-
                         </div>
                     </div>
 
@@ -329,9 +345,7 @@
             });
         });
 
-        // =========================
         // BORROWER DATATABLE
-        // =========================
         borrowerTable = $('#BorrowerTable').DataTable({
             serverSide: true,
             processing: true,
@@ -384,7 +398,7 @@
                         </button>
 
                         <button class="btn btn-sm btn-danger btn-delete" data-id="${id}">
-                            <i class="ri-delete-bin-line"></i>
+                            <i class="ri-delete-bin-line"></i> Delete
                         </button>
                     `;
                     }
@@ -392,9 +406,7 @@
             ]
         });
 
-        // =========================
         // LOAD MUNICIPALITIES
-        // =========================
         $.ajax({
             url: "<?= base_url('get_municipalities') ?>",
             type: "GET",
@@ -417,9 +429,7 @@
 
     });
 
-    // =========================
     // MUNICIPALITY CHANGE
-    // =========================
     $('#municipality').on('change', function() {
 
         let municipality_id = $(this).val();
@@ -453,9 +463,7 @@
         });
     });
 
-    // =========================
     // EDIT BORROWER
-    // =========================
     $(document).on('click', '.btn-edit', function() {
 
         let id = $(this).data('id');
@@ -550,9 +558,7 @@
         });
     });
 
-    // =========================
     // DELETE BORROWER
-    // =========================
     $(document).on('click', '.btn-delete', function() {
 
         let id = $(this).data('id');

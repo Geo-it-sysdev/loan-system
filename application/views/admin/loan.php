@@ -1,7 +1,4 @@
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <div class="main-content">
 
@@ -40,120 +37,118 @@
 
                             <form id="BorrowerForm" enctype="multipart/form-data">
 
-                                <label class="form-label">
-                                    <i class="ri-file-add-line me-1"></i>
-                                    Apply for a New Loan
-                                </label>
-
-
-                                <div class="row g-2 mt-1">
-
-                                    <!-- BORROWER SEARCH -->
-                                    <div class="col-12 col-md-6 position-relative">
-                                        <label class="form-label">Borrower Name</label>
-
-                                        <input type="text" id="borrower_search" class="form-select"
-                                            placeholder="Select borrower..." autocomplete="off">
-
-                                        <input type="hidden" name="borrower_id" id="borrower_id">
-
-                                        <div id="borrower_list" class="list-group position-absolute w-100"
-                                            style="z-index:999; max-height:200px; overflow-y:auto; display:none;">
-                                        </div>
-                                    </div>
-
-                                    <!-- CO MAKER -->
-                                    <div class="col-12 col-md-6">
-                                        <label class="form-label">Co-Maker (Full Name)</label>
-                                        <input type="text" name="co_maker_name" class="form-control"
-                                            placeholder="Enter Co-Maker name" required>
-                                    </div>
-
-                                </div>
-
-                                <div class="row g-2 mt-1">
-
-                                    <!-- LOAN PLAN -->
-                                    <div class="col-12 col-md-6">
-                                        <label class="form-label">Loan Plan</label>
-                                        <select name="loan_plan" class="form-select" required>
-                                            <option value="">Select Loan Plan</option>
-                                            <option value="1 month">1 Month</option>
-                                            <option value="2 months">2 Months</option>
-                                            <option value="3 months">3 Months</option>
-                                            <option value="4 months">4 Months</option>
-                                            <option value="5 months">5 Months</option>
-                                            <option value="6 months">6 Months</option>
-                                            <option value="7 months">7 Months</option>
-                                            <option value="8 months">8 Months</option>
-                                            <option value="9 months">9 Months</option>
-                                        </select>
-                                    </div>
-
-                                    <!-- EFFECTIVE DATE -->
-                                    <div class="col-12 col-md-6">
-                                        <label class="form-label">Effective Date</label>
-                                        <input type="date" name="effective_date" class="form-control" required>
-                                    </div>
-
-
-
-                                </div>
-
-                                <div class="row g-2 mt-1">
-
-                                    <!-- PRINCIPAL -->
-                                    <div class="col-12 col-md-6">
-                                        <label class="form-label">Principal Amount</label>
-                                        <input type="text" id="principal_amount" name="principal_amount"
-                                            class="form-control" required>
-                                    </div>
-
-                                    <!-- INTEREST -->
-                                    <div class="col-12 col-md-6">
-                                        <label class="form-label">Interest Rate</label>
-                                        <select name="interest_rate" id="interest_rate" class="form-control" required>
-                                            <option value="">-- Select Interest Rate --</option>
-                                        </select>
-                                    </div>
-
-
-
-                                </div>
-
-                                <div class="row g-2 mt-1">
-
-                                    <!-- MONTHLY PAYMENT -->
-                                    <div class="col-12 col-md-4">
-                                        <label class="form-label">Monthly Payment</label>
-                                        <input type="text" name="monthly_payment" class="form-control" readonly
-                                            style="cursor: not-allowed;">
-                                    </div>
-
-
-                                    <!-- UNEARNED -->
-                                    <div class="col-12 col-md-4">
-                                        <label class="form-label">Unearned Interest</label>
-                                        <input type="number" name="unearned_interest" class="form-control" readonly
-                                            style="cursor: not-allowed;">
-                                    </div>
-
-                                    <!-- TOTAL -->
-                                    <div class="col-12 col-md-4">
-                                        <label class="form-label">Total Balance</label>
-                                        <input type="number" name="total_balance" class="form-control" readonly
-                                            style="cursor: not-allowed;">
-                                    </div>
-                                </div>
-
-
-
                                 <input type="hidden" id="loan_id" name="loan_id">
 
-                                <button type="submit" id="btnSave" class="btn btn-primary w-100 mt-3">
-                                    <i class="ri-add-line me-1"></i> Add Loan
-                                </button>
+                                <!-- Borrower Information -->
+                                <div class="mb-4">
+                                    <h6 class="fw-semibold text-primary mb-3">
+                                        <i class="ri-user-line me-1"></i> Borrower Information
+                                    </h6>
 
+                                    <div class="row g-3">
+
+                                        <div class="col-md-6 position-relative">
+                                            <label class="form-label">Borrower Name</label>
+
+                                            <input type="text" id="borrower_search" class="form-control"
+                                                placeholder="Search borrower..." autocomplete="off">
+
+                                            <input type="hidden" name="borrower_id" id="borrower_id">
+
+                                            <div id="borrower_list" class="list-group position-absolute w-100 shadow"
+                                                style="z-index:999;max-height:220px;overflow-y:auto;display:none;">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Co-Maker</label>
+                                            <input type="text" name="co_maker_name" class="form-control"
+                                                placeholder="Enter co-maker's full name" required>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <!-- Loan Details -->
+                                <div class="mb-4">
+                                    <h6 class="fw-semibold text-primary mb-3">
+                                        <i class="ri-bank-card-line me-1"></i> Loan Details
+                                    </h6>
+
+                                    <div class="row g-3">
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Loan Plan</label>
+                                            <select name="loan_plan" class="form-select" required>
+                                                <option value="">Select Loan Plan</option>
+                                                <option value="1 month">1 Month</option>
+                                                <option value="2 months">2 Months</option>
+                                                <option value="3 months">3 Months</option>
+                                                <option value="4 months">4 Months</option>
+                                                <option value="5 months">5 Months</option>
+                                                <option value="6 months">6 Months</option>
+                                                <option value="7 months">7 Months</option>
+                                                <option value="8 months">8 Months</option>
+                                                <option value="9 months">9 Months</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Effective Date</label>
+                                            <input type="date" name="effective_date" class="form-control" required>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Principal Amount</label>
+                                            <input type="text" id="principal_amount" name="principal_amount"
+                                                class="form-control" placeholder="0.00" required>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Interest Rate</label>
+                                            <select name="interest_rate" id="interest_rate" class="form-select"
+                                                required>
+                                                <option value="">Select Interest Rate</option>
+                                            </select>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <!-- Loan Summary -->
+                                <div class="mb-4">
+                                    <h6 class="fw-semibold text-primary mb-3">
+                                        <i class="ri-calculator-line me-1"></i> Loan Summary
+                                    </h6>
+
+                                    <div class="row g-3">
+
+                                        <div class="col-md-4">
+                                            <label class="form-label">Monthly Payment</label>
+                                            <input type="text" name="monthly_payment" class="form-control bg-light"
+                                                readonly>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="form-label">Unearned Interest</label>
+                                            <input type="text" name="unearned_interest" class="form-control bg-light"
+                                                readonly>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="form-label">Total Balance</label>
+                                            <input type="text" name="total_balance"
+                                                class="form-control bg-light fw-bold" readonly>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <!-- Submit -->
+                                <button type="submit" id="btnSave" class="btn btn-primary w-100">
+                                    <i class="ri-add-line me-1"></i>
+                                    Add Loan
+                                </button>
 
                             </form>
 
@@ -228,9 +223,7 @@
     let mode = "add";
     let loanTable;
 
-    // =========================
     // NUMBER FORMAT HELPERS
-    // =========================
     function formatNumber(x) {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
@@ -239,9 +232,7 @@
         return x ? x.toString().replace(/,/g, '') : '';
     }
 
-    // =========================
     // BORROWER SEARCH LIST
-    // =========================
     $(document).ready(function() {
 
         function loadBorrowers() {
@@ -301,9 +292,7 @@
             }
         });
 
-        // =========================
         // INTEREST RATES
-        // =========================
         function loadInterestRates() {
             $.ajax({
                 url: "<?= base_url('get_interest_rates') ?>",
@@ -326,9 +315,7 @@
 
         loadInterestRates();
 
-        // =========================
         // LOAN CALCULATION
-        // =========================
         function getMonths(plan) {
             switch (plan) {
                 case "1 month":
@@ -397,9 +384,7 @@
 
     });
 
-    // =========================
     // LOAN TABLE
-    // =========================
     $(document).ready(function() {
 
         loanTable = $('#LoanTable').DataTable({
@@ -492,7 +477,7 @@
                             </button>
 
                             <button class="btn btn-danger btn-sm btn-delete" data-id="${id}">
-                                <i class="ri-delete-bin-2-fill"></i>
+                                <i class="ri-delete-bin-2-fill"></i> Delete
                             </button>
                         </div>
                     `;
@@ -512,9 +497,7 @@
 
     });
 
-    // =========================
-    // FORM SUBMIT (ADD / EDIT / VIEW LOGIC PRESERVED)
-    // =========================
+    // FORM SUBMIT (ADD / EDIT / VIEW )
     $(document).on('submit', '#BorrowerForm', function(e) {
 
         e.preventDefault();
@@ -559,8 +542,7 @@
                     Swal.fire({
                         icon: 'success',
                         title: (mode === "edit") ?
-                            'Loan Updated Successfully' :
-                            'Loan Added Successfully',
+                            'Loan Updated Successfully' : 'Loan Added Successfully',
                         timer: 1500,
                         showConfirmButton: false
                     });
@@ -583,9 +565,7 @@
         });
     });
 
-    // =========================
     // VIEW LOAN
-    // =========================
     $(document).on('click', '.btn-view', function() {
 
         let id = $(this).data('id');
@@ -633,9 +613,7 @@
         });
     });
 
-    // =========================
     // EDIT LOAN
-    // =========================
     $(document).on('click', '.btn-edit', function() {
 
         let id = $(this).data('id');
@@ -680,9 +658,7 @@
         });
     });
 
-    // =========================
     // DELETE LOAN
-    // =========================
     $(document).on('click', '.btn-delete', function() {
 
         let id = $(this).data('id');
