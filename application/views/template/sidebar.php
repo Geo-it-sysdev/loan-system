@@ -70,6 +70,7 @@
                     </a>
                 </li>
 
+                <?php if ($this->session->userdata('role') == 'Admin') : ?>
                 <li class="nav-item">
                     <a class="nav-link menu-link <?= ($this->uri->segment(1) == 'Collector') ? 'text-secondary' : ''; ?>"
                         href="<?= base_url('Collector'); ?>">
@@ -83,6 +84,7 @@
                         <i class="ri-percent-fill"></i> Interest Rates
                     </a>
                 </li>
+                <?php endif; ?>
 
                 <li class="nav-item">
                     <a class="nav-link menu-link <?= ($this->uri->segment(1) == 'Borrowers') ? 'text-secondary' : ''; ?>"

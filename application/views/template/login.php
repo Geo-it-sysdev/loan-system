@@ -8,7 +8,7 @@
     <link rel="shortcut icon" href="<?php echo base_url('assets/images/GeonLoan.png'); ?>" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
- 
+
 
 
 
@@ -327,7 +327,7 @@ body {
             <div class="welcome-content">
                 <h1>WELCOME</h1>
                 <h2>YOUR HEADLINE NAME</h2>
-                
+
             </div>
         </div>
 
@@ -336,18 +336,20 @@ body {
 
             <div class="form-content">
                 <h2>Sign in</h2>
-                <p class="subtitle">    </p>
+                <p class="subtitle"> </p>
 
-                <form action="#" method="POST">
+                <form action="<?= base_url('sign_in') ?>" method="POST">
                     <div class="input-container">
                         <i class="fa-regular fa-user input-icon"></i>
-                        <input type="text" placeholder="Username" required>
+                        <input type="text" name="username" placeholder="Username" required>
                     </div>
 
                     <div class="input-container">
                         <i class="fa-solid fa-lock input-icon"></i>
-                        <input type="password" id="passwordInput" placeholder="Password" required>
-                        <button type="button" class="toggle-password" onclick="togglePasswordVisibility()">Show</button>
+                        <input type="password" name="password" id="passwordInput" placeholder="Password" required>
+
+                        <i class="fa-solid fa-eye toggle-password" id="toggleIcon"
+                            onclick="togglePasswordVisibility()"></i>
                     </div>
 
                     <div class="form-options">
@@ -361,7 +363,7 @@ body {
 
                     <button type="submit" class="submit-btn primary-btn">Login</button>
 
-                   
+
                 </form>
 
                 <div class="signup-prompt">
@@ -375,10 +377,16 @@ body {
     <script>
     function togglePasswordVisibility() {
         const passInput = document.getElementById('passwordInput');
+        const icon = document.getElementById('toggleIcon');
+
         if (passInput.type === 'password') {
             passInput.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
         } else {
             passInput.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
         }
     }
     </script>

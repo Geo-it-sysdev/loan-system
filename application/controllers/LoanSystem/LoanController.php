@@ -7,8 +7,12 @@ class LoanController extends CI_Controller {
 	public function __construct()
 	{
 		parent::__construct();
-		$this->load->database();
+
+		if (!$this->session->userdata('logged_in')) {
+			redirect('LoginController/logout');
+		}
 	}
+
 
 	public function dashboard()
 	{
@@ -20,6 +24,9 @@ class LoanController extends CI_Controller {
 
 	public function collector()
 	{
+		if ($this->session->userdata('role') !== 'Admin') {
+			redirect('Dashboard'); 
+		}
 		$this->load->view('template/header');
 		$this->load->view('template/sidebar');
 		$this->load->view('admin/collector');
@@ -28,6 +35,9 @@ class LoanController extends CI_Controller {
 
 	public function interest_rates()
 	{
+		if ($this->session->userdata('role') !== 'Admin') {
+			redirect('Dashboard'); 
+		}
 		$this->load->view('template/header');
 		$this->load->view('template/sidebar');
 		$this->load->view('admin/interest_rates');
@@ -105,6 +115,14 @@ class LoanController extends CI_Controller {
 		$this->load->view('template/footer');
 	}
 
+
+	public function profile()
+	{
+		$this->load->view('template/header');
+		$this->load->view('template/sidebar');
+		$this->load->view('template/profile');
+		$this->load->view('template/footer');
+	}
 
 
 

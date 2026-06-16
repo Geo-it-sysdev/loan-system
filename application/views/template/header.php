@@ -539,25 +539,41 @@ Date Downloaded: 5/7/2026 11:26:03 AM !-->
                         <div class="dropdown ms-sm-3 header-item topbar-user">
                             <button type="button" class="btn" id="page-header-user-dropdown" data-bs-toggle="dropdown"
                                 aria-haspopup="true" aria-expanded="false">
+
                                 <span class="d-flex align-items-center">
+
                                     <img class="rounded-circle header-profile-user"
-                                        src="assets/images/users/avatar-1.jpg" alt="Header Avatar" />
+                                        src="<?= base_url($this->session->userdata('photo') ? $this->session->userdata('photo') : 'assets/images/users/avatar-1.jpg'); ?>"
+                                        alt="Header Avatar" />
+
                                     <span class="text-start ms-xl-2">
-                                        <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text">Geovanne Daganato
+
+                                        <!-- FULLNAME -->
+                                        <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text">
+                                            <?= $this->session->userdata('fullname'); ?>
                                         </span>
-                                        <span class="d-none d-xl-block ms-1 fs-12 user-name-sub-text">Admin </span>
+
+                                        <!-- ROLE -->
+                                        <span class="d-none d-xl-block ms-1 fs-12 user-name-sub-text">
+                                            <?= ucfirst($this->session->userdata('role')); ?>
+                                        </span>
+
                                     </span>
                                 </span>
                             </button>
                             <div class="dropdown-menu dropdown-menu-end">
                                 <!-- item-->
-                                <h6 class="dropdown-header">Welcome Anna! </h6>
-                                <a class="dropdown-item" href="pages-profile.html"><i
-                                        class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i> <span
-                                        class="align-middle">Profile </span></a>
-                                <a class="dropdown-item" href="auth-logout-basic.html"><i
-                                        class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i> <span
-                                        class="align-middle" data-key="t-logout">Logout </span></a>
+                                <h6 class="dropdown-header">
+                                    Welcome <?= htmlspecialchars($this->session->userdata('username')); ?>!
+                                </h6>
+                                <a class="dropdown-item" href="<?= base_url('Profile'); ?>">
+                                    <i class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i>
+                                    <span class="align-middle">Profile</span>
+                                </a>
+                                <a class="dropdown-item" href="<?= base_url('logout'); ?>">
+                                    <i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i>
+                                    <span class="align-middle">Logout</span>
+                                </a>
                             </div>
                         </div>
                     </div>

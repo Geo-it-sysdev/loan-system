@@ -5,6 +5,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 // For View files
 $route['default_controller']            = 'LoginController/login';
+$route['Login']                         = 'LoginController/login';
 $route['Dashboard']                     = 'LoanSystem/LoanController/dashboard';
 $route['Collector']                     = 'LoanSystem/LoanController/collector';
 $route['Interest-Rates']                = 'LoanSystem/LoanController/interest_rates';
@@ -18,6 +19,11 @@ $route['Payment-Collection']            = 'LoanSystem/LoanController/payment_col
 $route['Fully-Paid']                    = 'LoanSystem/LoanController/fully_paid';
 $route['Loan-Release']                  = 'LoanSystem/LoanController/loan_release';
 $route['Monthly-Collection']            = 'LoanSystem/LoanController/monthly_collection';
+// Authentication
+$route['sign_in']                       = 'LoginController/sign_in';
+$route['logout']                        = 'LoginController/logout';
+// Dashboard Count
+$route['get_dashboard_stats']           = 'LoanSystem/AdminController/get_dashboard_stats';
 // Collectors 
 $route['get_collectors']                = 'LoanSystem/AdminController/get_collectors';
 $route['add_collector']                 = 'LoanSystem/AdminController/add_collector';
@@ -50,17 +56,14 @@ $route['add_payment']                   = 'LoanSystem/AdminController/add_paymen
 $route['fetch_the_collectors']          = 'LoanSystem/AdminController/fetch_the_collectors';
 $route['get_payment_history']           = 'LoanSystem/AdminController/get_payment_history';
 $route['update_payment']                = 'LoanSystem/AdminController/update_payment';
-// Overdue Reports
+// All reports 
 $route['overdue_loans']                 = 'LoanSystem/ReportController/overdue_loans';
-// Outstanding Balance Reports
 $route['outstanding_loans']             = 'LoanSystem/ReportController/outstanding_loans';
-// Payment Collection Reports
 $route['payment_collection']            = 'LoanSystem/ReportController/payment_collection';
-// Fully Paid Loan Reports
 $route['fully_paid_loans']              = 'LoanSystem/ReportController/fully_paid_loans';
+// Profile
+$route['Profile']                       = 'LoanSystem/LoanController/profile';
 
-// Dashboard Count
-$route['get_dashboard_stats']              = 'LoanSystem/AdminController/get_dashboard_stats';
 //=============================== End Loan System  ===================================\\
 
 

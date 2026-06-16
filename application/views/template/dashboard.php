@@ -153,25 +153,29 @@
         <!-- End Page-content -->
 
         <script>
-        function loadDashboardStats() {
-            $.ajax({
-                url: "<?= base_url('get_dashboard_stats') ?>",
-                type: "GET",
-                dataType: "json",
-                success: function(res) {
-                    if (res.status) {
+        $(document).ready(function() {
 
-                        $('[data-target-borrowers]').text(res.total_borrowers);
+            function loadDashboardStats() {
+                $.ajax({
+                    url: "<?= base_url('get_dashboard_stats') ?>",
+                    type: "GET",
+                    dataType: "json",
+                    success: function(res) {
+                        if (res.status) {
 
-                        $('[data-target-release]').text(res.total_release);
+                            $('[data-target-borrowers]').text(res.total_borrowers);
 
-                        $('[data-target-remaining]').text(res.remaining_balance);
+                            $('[data-target-release]').text(res.total_release);
 
-                        $('[data-target-paid]').text(res.total_paid);
+                            $('[data-target-remaining]').text(res.remaining_balance);
+
+                            $('[data-target-paid]').text(res.total_paid);
+                        }
                     }
-                }
-            });
-        }
+                });
+            }
 
-        loadDashboardStats();
+            loadDashboardStats();
+
+        });
         </script>

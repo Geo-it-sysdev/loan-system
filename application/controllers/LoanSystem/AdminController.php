@@ -9,6 +9,9 @@ class AdminController extends CI_Controller {
         parent::__construct();
         $this->load->database();
         $this->load->library('upload');
+        if (!$this->session->userdata('logged_in')) {
+            redirect('LoginController/logout');
+        }
     }
 
     // Dashboard
