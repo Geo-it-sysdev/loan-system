@@ -1,6 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+/** @property CI_DB_query_builder $db */
 class LoginController extends CI_Controller {
 
 	public function __construct()
@@ -25,9 +26,10 @@ class LoginController extends CI_Controller {
 		$username = trim($this->input->post('username'));
 		$password = $this->input->post('password');
 
-		$user = $this->db->get_where('tbl_collector', [
-			'username' => $username
-		])->row();
+		$user = $this->db
+		->where('username', $username)
+		->get('tbl_collector')
+		->row();
 
 		if (!$user || !password_verify($password, $user->password)) {
 			$this->session->set_flashdata('error', 'Invalid username or password.');
