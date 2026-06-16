@@ -58,6 +58,9 @@ $route['outstanding_loans']             = 'LoanSystem/ReportController/outstandi
 $route['payment_collection']            = 'LoanSystem/ReportController/payment_collection';
 // Fully Paid Loan Reports
 $route['fully_paid_loans']              = 'LoanSystem/ReportController/fully_paid_loans';
+
+// Dashboard Count
+$route['get_dashboard_stats']              = 'LoanSystem/AdminController/get_dashboard_stats';
 //=============================== End Loan System  ===================================\\
 
 

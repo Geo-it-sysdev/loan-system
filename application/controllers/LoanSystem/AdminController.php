@@ -11,6 +11,35 @@ class AdminController extends CI_Controller {
         $this->load->library('upload');
     }
 
+    // Dashboard
+    public function get_dashboard_stats()
+    {
+        // Total Borrowers
+        $total_borrowers = $this->db->count_all('tbl_borrower');
+
+        // Total Loan Release
+        $total_release = $this->db->count_all('tbl_loan');
+
+        // Remaining Balance
+        $this->db->from('tbl_loan');
+        $this->db->where_in('status', ['pending', 'Partial']);
+        $remaining_balance = $this->db->count_all_results();
+
+        // Total Paid
+        $this->db->from('tbl_loan');
+        $this->db->where('status', 'fully');
+        $total_paid = $this->db->count_all_results();
+
+        echo json_encode([
+            'status' => true,
+            'total_borrowers' => $total_borrowers,
+            'total_release' => $total_release,
+            'remaining_balance' => $remaining_balance,
+            'total_paid' => $total_paid
+        ]);
+    }
+
+
 
     // ===== Collectors function======
 	public function add_collector()
@@ -1236,6 +1265,10 @@ class AdminController extends CI_Controller {
             'success' => $update
         ]);
     }
+
+
+
+    
 
 
 

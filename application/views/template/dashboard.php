@@ -1,4 +1,3 @@
-
 <!-- ============================================================== -->
 <!-- Start right Content here -->
 <!-- ============================================================== -->
@@ -32,20 +31,49 @@
                         <div class="col-md-3">
                             <div class="card card-animate">
                                 <div class="card-body">
+                                    <a href="<?= base_url('Borrowers') ?>" class="text-decoration-none">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <p class="fw-medium text-muted mb-0">Total Borrowers </p>
+                                                <h2 class="mt-4 ff-secondary fw-semibold"><span class="counter-value"
+                                                        data-target-borrowers>0</span>
+                                                </h2>
+                                                <p class="mb-0 text-muted"><span
+                                                        class="badge bg-light text-primary mb-0"><i
+                                                            class="ri-arrow-up-line align-middle"></i>total active
+                                                        borrowers
+                                                    </span> </p>
+                                            </div>
+                                            <div>
+                                                <div class="avatar-sm flex-shrink-0">
+                                                    <span class="avatar-title bg-primary-subtle rounded-circle fs-2">
+                                                        <i class="ri-group-fill text-primary"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div><!-- end card body -->
+                            </div> <!-- end card-->
+                        </div> <!-- end col-->
+
+                        <div class="col-md-3">
+                            <div class="card card-animate">
+                                <div class="card-body">
                                     <div class="d-flex justify-content-between">
                                         <div>
-                                            <p class="fw-medium text-muted mb-0">Users </p>
+                                            <p class="fw-medium text-muted mb-0">Total Loan Release</p>
                                             <h2 class="mt-4 ff-secondary fw-semibold"><span class="counter-value"
-                                                    data-target="28.05">0 </span>k
+                                                    data-target-release>0</span>
                                             </h2>
-                                            <p class="mb-0 text-muted"><span class="badge bg-light text-success mb-0"><i
-                                                        class="ri-arrow-up-line align-middle"></i> 16.24 %
-                                                </span> vs. previous month </p>
+                                            <p class="mb-0 text-muted"><span class="badge bg-light text-secondary mb-0">
+                                                    <i class="ri-line-chart-line align-middle"></i> total loan release
+                                                </span></p>
                                         </div>
                                         <div>
                                             <div class="avatar-sm flex-shrink-0">
                                                 <span class="avatar-title bg-secondary-subtle rounded-circle fs-2">
-                                                    <i class="ri-group-fill text-secondary"></i>
+                                                    <i class="ri-hand-coin-line text-secondary"></i>
                                                 </span>
                                             </div>
                                         </div>
@@ -57,75 +85,63 @@
                         <div class="col-md-3">
                             <div class="card card-animate">
                                 <div class="card-body">
-                                    <div class="d-flex justify-content-between">
-                                        <div>
-                                            <p class="fw-medium text-muted mb-0">Sessions </p>
-                                            <h2 class="mt-4 ff-secondary fw-semibold"><span class="counter-value"
-                                                    data-target="97.66">0 </span>k
-                                            </h2>
-                                            <p class="mb-0 text-muted"><span class="badge bg-light text-danger mb-0"> <i
-                                                        class="ri-arrow-down-line align-middle"></i> 3.96 %
-                                                </span> vs. previous month </p>
-                                        </div>
-                                        <div>
-                                            <div class="avatar-sm flex-shrink-0">
-                                                <span class="avatar-title bg-secondary-subtle rounded-circle fs-2">
-                                                    <i class="ri-pulse-line text-secondary"></i>
-                                                </span>
+                                    <a href="<?= base_url('Outstanding-Balance') ?>" class="text-decoration-none">
+
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <p class="fw-medium text-muted mb-0">Total Outstanding Balance</p>
+
+                                                <h2 class="mt-4 ff-secondary fw-semibold">
+                                                    <span class="counter-value" data-target-remaining="0">0</span>
+                                                </h2>
+
+                                                <p class="mb-0 text-muted">
+                                                    <span class="badge bg-light text-info mb-0">
+                                                        <i class="ri-stock-line align-middle"></i>
+                                                        total outstanding balance
+                                                    </span>
+                                                </p>
+                                            </div>
+
+                                            <div>
+                                                <div class="avatar-sm flex-shrink-0">
+                                                    <span class="avatar-title bg-warning-subtle rounded-circle fs-2">
+                                                        <i class="ri-wallet-3-line text-warning"></i>
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div><!-- end card body -->
-                            </div> <!-- end card-->
-                        </div> <!-- end col-->
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="col-md-3">
                             <div class="card card-animate">
                                 <div class="card-body">
-                                    <div class="d-flex justify-content-between">
-                                        <div>
-                                            <p class="fw-medium text-muted mb-0">Avg. Visit Duration </p>
-                                            <h2 class="mt-4 ff-secondary fw-semibold"><span class="counter-value"
-                                                    data-target="3">0 </span>m
-                                                <span class="counter-value" data-target="40">0 </span>sec
-                                            </h2>
-                                            <p class="mb-0 text-muted"><span class="badge bg-light text-danger mb-0"> <i
-                                                        class="ri-arrow-down-line align-middle"></i> 0.24 %
-                                                </span> vs. previous month </p>
-                                        </div>
-                                        <div>
-                                            <div class="avatar-sm flex-shrink-0">
-                                                <span class="avatar-title bg-secondary-subtle rounded-circle fs-2">
-                                                    <i class="ri-time-line text-secondary"></i>
-                                                </span>
+                                    <a href="<?= base_url('Fully-Paid') ?>" class="text-decoration-none">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <p class="fw-medium text-muted mb-0">Total Paid </p>
+                                                <h2 class="mt-4 ff-secondary fw-semibold"><span class="counter-value"
+                                                        data-target-paid>0</span>
+                                                </h2>
+                                                <p class="mb-0 text-muted"><span
+                                                        class="badge bg-light text-success mb-0">
+                                                        <i class="ri-bar-chart-grouped-line align-middle"></i> total
+                                                        loan
+                                                        paid
+                                                    </span> </p>
+                                            </div>
+                                            <div>
+                                                <div class="avatar-sm flex-shrink-0">
+                                                    <span class="avatar-title bg-success-subtle rounded-circle fs-2">
+                                                        <i class="ri-money-dollar-circle-line text-success"></i>
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div><!-- end card body -->
-                            </div> <!-- end card-->
-                        </div> <!-- end col-->
-
-                        <div class="col-md-3">
-                            <div class="card card-animate">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between">
-                                        <div>
-                                            <p class="fw-medium text-muted mb-0">Bounce Rate </p>
-                                            <h2 class="mt-4 ff-secondary fw-semibold"><span class="counter-value"
-                                                    data-target="33.48">0 </span>%
-                                            </h2>
-                                            <p class="mb-0 text-muted"><span class="badge bg-light text-success mb-0">
-                                                    <i class="ri-arrow-up-line align-middle"></i> 7.05 %
-                                                </span> vs. previous month </p>
-                                        </div>
-                                        <div>
-                                            <div class="avatar-sm flex-shrink-0">
-                                                <span class="avatar-title bg-secondary-subtle rounded-circle fs-2">
-                                                    <i class="ri-external-link-line text-secondary"></i>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    </a>
                                 </div><!-- end card body -->
                             </div> <!-- end card-->
                         </div> <!-- end col-->
@@ -135,3 +151,27 @@
             <!-- container-fluid -->
         </div>
         <!-- End Page-content -->
+
+        <script>
+        function loadDashboardStats() {
+            $.ajax({
+                url: "<?= base_url('get_dashboard_stats') ?>",
+                type: "GET",
+                dataType: "json",
+                success: function(res) {
+                    if (res.status) {
+
+                        $('[data-target-borrowers]').text(res.total_borrowers);
+
+                        $('[data-target-release]').text(res.total_release);
+
+                        $('[data-target-remaining]').text(res.remaining_balance);
+
+                        $('[data-target-paid]').text(res.total_paid);
+                    }
+                }
+            });
+        }
+
+        loadDashboardStats();
+        </script>
