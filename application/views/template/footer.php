@@ -29,19 +29,19 @@
 
 <!--preloader-->
 <div id="preloader">
-        <div id="status">
-            <div class="spinner-border text-primary avatar-sm" role="status">
-                <span class="visually-hidden">Loading... </span>
-            </div>
+    <div id="status">
+        <div class="spinner-border text-primary avatar-sm" role="status">
+            <span class="visually-hidden">Loading... </span>
         </div>
     </div>
+</div>
 
-    <div class="customizer-setting d-none d-md-block">
-        <div class="btn-info rounded-pill shadow-lg btn btn-icon btn-lg p-2" data-bs-toggle="offcanvas"
-            data-bs-target="#theme-settings-offcanvas" aria-controls="theme-settings-offcanvas">
-            <i class='mdi mdi-spin mdi-cog-outline fs-22'></i>
-        </div>
+<div class="customizer-setting d-none d-md-block">
+    <div class="btn-light rounded-pill shadow-lg btn btn-icon btn-lg p-2" data-bs-toggle="offcanvas"
+        data-bs-target="#theme-settings-offcanvas" aria-controls="theme-settings-offcanvas">
+        <i class='mdi mdi-spin mdi-cog-outline fs-22'></i>
     </div>
+</div>
 
 <!-- Theme Settings -->
 <div class="offcanvas offcanvas-end border-0" tabindex="-1" id="theme-settings-offcanvas">
@@ -101,7 +101,7 @@
                         </div>
                         <h5 class="fs-13 text-center mt-2">Horizontal </h5>
                     </div>
-                    
+
                     <!-- end col -->
 
                     <div class="col-4">
@@ -193,15 +193,15 @@
                 </div>
 
                 <div id="sidebar-visibility">
-                    
+
                 </div>
 
                 <div id="layout-width">
-                   
+
                 </div>
 
                 <div id="layout-position">
-                    
+
                 </div>
                 <h6 class="mt-4 mb-0 fw-semibold text-uppercase">Topbar Color </h6>
                 <p class="text-muted">Choose Light or Dark ______ Color. </p>
@@ -260,22 +260,22 @@
                 </div>
 
                 <div id="sidebar-size">
-                    
+
                 </div>
 
                 <div id="sidebar-view">
-                    
+
                 </div>
                 <div id="sidebar-color">
-                   
+
                 </div>
 
                 <div id="sidebar-img">
-                   
+
                 </div>
 
                 <div id="preloader-menu">
-                   
+
                 </div>
                 <!-- end preloader-menu -->
 
@@ -288,7 +288,7 @@
             <div class="col-6">
                 <button type="button" class="btn btn-light w-100" id="reset-layout">Reset </button>
             </div>
-            
+
         </div>
     </div>
 </div>
