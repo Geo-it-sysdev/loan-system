@@ -228,9 +228,7 @@
     let isEdit = false;
     let editId = null;
 
-    // =========================
     // PHOTO PREVIEW
-    // =========================
     $('#photo').on('change', function(e) {
 
         const file = e.target.files[0];
