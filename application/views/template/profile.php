@@ -5,7 +5,7 @@
 
                <div class="position-relative mx-n4 mt-n4">
                    <div class="profile-wid-bg profile-setting-img">
-                       <img src="<?= base_url('assets/images/geonDark.png'); ?>" class="profile-wid-img"
+                       <img src="<?= base_url('assets/images/geonproject.png'); ?>" class="profile-wid-img"
                            alt="Profile Background">
                        <div class="overlay-content">
                            <div class="text-end p-3">
