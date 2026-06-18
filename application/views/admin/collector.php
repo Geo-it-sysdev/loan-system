@@ -501,7 +501,7 @@
 
                 error: function(xhr) {
 
-                    console.log(xhr.responseText);
+                    // console.log(xhr.responseText);
 
                     Swal.fire({
                         icon: 'error',
@@ -544,7 +544,7 @@
 
                 success: function(res) {
 
-                    console.log(res); 
+                    // console.log(res); 
 
                     let html = '<option value="">Select Municipality</option>';
 
@@ -564,7 +564,7 @@
 
                 error: function(xhr) {
 
-                    console.log(xhr.responseText);
+                    // console.log(xhr.responseText);
 
                 }
 
@@ -595,7 +595,7 @@
 
                 success: function(res) {
 
-                    console.log(res); 
+                    // console.log(res); 
 
                     let html = '<option value="">Select Barangay</option>';
 
@@ -615,7 +615,7 @@
 
                 error: function(xhr) {
 
-                    console.log(xhr.responseText);
+                    // console.log(xhr.responseText);
 
                 }
 

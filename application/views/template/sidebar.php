@@ -9,7 +9,7 @@
         <!-- Dark Logo-->
         <a href="<?php echo base_url('Dashboard'); ?>" class="logo logo-dark">
             <span class="logo-sm">
-                <img src="<?php echo base_url('assets/images/logo-sm.png'); ?>" alt="" height="22" />
+                <img src="<?php echo base_url('assets/images/GeonLoan.png'); ?>" alt="" height="22" />
             </span>
             <span class="logo-lg">
                 <img src="<?php echo base_url('assets/images/GeonLoan.png'); ?>" alt="Logo" height="50"
@@ -19,7 +19,7 @@
         <!-- Light Logo-->
         <a href="<?php echo base_url('Dashboard'); ?>" class="logo logo-light">
             <span class="logo-sm">
-                <img src="<?php echo base_url('assets/images/logo-sm.png'); ?>" alt="" height="22" />
+                <img src="<?php echo base_url('assets/images/GeonLoan.png'); ?>" alt="" height="22" />
             </span>
             <span class="logo-lg">
                 <img src="<?php echo base_url('assets/images/GeonLoan.png'); ?>" alt="" height="50"

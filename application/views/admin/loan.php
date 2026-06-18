@@ -1,5 +1,3 @@
-
-
 <div class="main-content">
 
     <div class="page-content">
@@ -235,6 +233,7 @@
     // BORROWER SEARCH LIST
     $(document).ready(function() {
 
+
         function loadBorrowers() {
             $.ajax({
                 url: "<?= base_url('select_borrowers') ?>",
@@ -382,10 +381,8 @@
         $('#interest_rate').on('change', calculateLoan);
         $('select[name="loan_plan"]').on('change', calculateLoan);
 
-    });
 
-    // LOAN TABLE
-    $(document).ready(function() {
+        // LOAN TABLE
 
         loanTable = $('#LoanTable').DataTable({
 
@@ -495,210 +492,214 @@
             loanTable.ajax.reload();
         });
 
-    });
 
-    // FORM SUBMIT (ADD / EDIT / VIEW )
-    $(document).on('submit', '#BorrowerForm', function(e) {
+        // FORM SUBMIT (ADD / EDIT / VIEW )
+        $(document).on('submit', '#BorrowerForm', function(e) {
 
-        e.preventDefault();
+            e.preventDefault();
 
-        if (mode === "view") {
+            if (mode === "view") {
 
-            $('#BorrowerForm')[0].reset();
+                $('#BorrowerForm')[0].reset();
 
-            $('#loan_id').val('');
-            $('#borrower_id').val('');
+                $('#loan_id').val('');
+                $('#borrower_id').val('');
 
-            $('#BorrowerForm input').prop('readonly', false);
-            $('#BorrowerForm select').prop('disabled', false);
+                $('#BorrowerForm input').prop('readonly', false);
+                $('#BorrowerForm select').prop('disabled', false);
 
-            $('[name="monthly_payment"]').prop('readonly', true);
-            $('[name="unearned_interest"]').prop('readonly', true);
-            $('[name="total_balance"]').prop('readonly', true);
+                $('[name="monthly_payment"]').prop('readonly', true);
+                $('[name="unearned_interest"]').prop('readonly', true);
+                $('[name="total_balance"]').prop('readonly', true);
 
-            $('#btnSave')
-                .removeClass('btn-danger btn-success')
-                .addClass('btn-primary')
-                .html('<i class="ri-add-line me-1"></i> Add Loan');
+                $('#btnSave')
+                    .removeClass('btn-danger btn-success')
+                    .addClass('btn-primary')
+                    .html('<i class="ri-add-line me-1"></i> Add Loan');
 
-            mode = "add";
-            return false;
-        }
-
-        let url = (mode === "edit") ?
-            "<?= base_url('update_loan') ?>" :
-            "<?= base_url('save_loan') ?>";
-
-        $.ajax({
-            url: url,
-            type: "POST",
-            data: $(this).serialize(),
-            dataType: "json",
-
-            success: function(res) {
-
-                if (res.status) {
-
-                    Swal.fire({
-                        icon: 'success',
-                        title: (mode === "edit") ?
-                            'Loan Updated Successfully' : 'Loan Added Successfully',
-                        timer: 1500,
-                        showConfirmButton: false
-                    });
-
-                    $('#BorrowerForm')[0].reset();
-
-                    $('#loan_id').val('');
-                    $('#borrower_id').val('');
-
-                    $('#btnSave')
-                        .removeClass('btn-success btn-danger')
-                        .addClass('btn-primary')
-                        .html('<i class="ri-add-line me-1"></i> Add Loan');
-
-                    mode = "add";
-
-                    loanTable.ajax.reload(null, false);
-                }
+                mode = "add";
+                return false;
             }
-        });
-    });
 
-    // VIEW LOAN
-    $(document).on('click', '.btn-view', function() {
+            let url = (mode === "edit") ?
+                "<?= base_url('update_loan') ?>" :
+                "<?= base_url('save_loan') ?>";
 
-        let id = $(this).data('id');
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: $(this).serialize(),
+                dataType: "json",
 
-        $.ajax({
-            url: "<?= base_url('get_loan_details') ?>",
-            type: "POST",
-            data: {
-                id
-            },
-            dataType: "json",
+                success: function(res) {
 
-            success: function(res) {
+                    if (res.status) {
 
-                if (res.status) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: (mode === "edit") ?
+                                'Loan Updated Successfully' :
+                                'Loan Added Successfully',
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
 
-                    let d = res.data;
+                        $('#BorrowerForm')[0].reset();
 
-                    $('#loan_id').val(d.id);
-                    $('#borrower_id').val(d.borrower_id);
-                    $('#borrower_search').val(d.fullname);
+                        $('#loan_id').val('');
+                        $('#borrower_id').val('');
 
-                    $('[name="co_maker_name"]').val(d.co_maker);
-                    $('[name="loan_plan"]').val(d.loan_plan);
-                    $('[name="effective_date"]').val(d.effective_date);
+                        $('#btnSave')
+                            .removeClass('btn-success btn-danger')
+                            .addClass('btn-primary')
+                            .html('<i class="ri-add-line me-1"></i> Add Loan');
 
-                    $('#principal_amount').val(parseFloat(d.loan_amount).toLocaleString());
-                    $('#interest_rate').val(d.interest_rate);
+                        mode = "add";
 
-                    $('[name="monthly_payment"]').val(d.monthly_payment);
-                    $('[name="unearned_interest"]').val(d.unearned_interest);
-                    $('[name="total_balance"]').val(d.total_balance);
-
-                    $('#BorrowerForm input').prop('readonly', true);
-                    $('#BorrowerForm select').prop('disabled', true);
-
-                    $('#btnSave')
-                        .removeClass('btn-primary btn-success')
-                        .addClass('btn-danger')
-                        .html('<i class="ri-close-line me-1"></i> Close');
-
-                    mode = "view";
-                }
-            }
-        });
-    });
-
-    // EDIT LOAN
-    $(document).on('click', '.btn-edit', function() {
-
-        let id = $(this).data('id');
-
-        $.ajax({
-            url: "<?= base_url('get_loan_details') ?>",
-            type: "POST",
-            data: {
-                id
-            },
-            dataType: "json",
-
-            success: function(res) {
-
-                if (res.status) {
-
-                    let d = res.data;
-
-                    $('#loan_id').val(d.id);
-                    $('#borrower_id').val(d.borrower_id);
-                    $('#borrower_search').val(d.fullname);
-
-                    $('[name="co_maker_name"]').val(d.co_maker);
-                    $('[name="loan_plan"]').val(d.loan_plan);
-                    $('[name="effective_date"]').val(d.effective_date);
-
-                    $('#principal_amount').val(d.loan_amount);
-                    $('#interest_rate').val(d.interest_rate);
-
-                    $('[name="monthly_payment"]').val(d.monthly_payment);
-                    $('[name="unearned_interest"]').val(d.unearned_interest);
-                    $('[name="total_balance"]').val(d.total_balance);
-
-                    $('#btnSave')
-                        .removeClass('btn-primary btn-danger')
-                        .addClass('btn-success')
-                        .html('<i class="ri-save-line me-1"></i> Update Loan');
-
-                    mode = "edit";
-                }
-            }
-        });
-    });
-
-    // DELETE LOAN
-    $(document).on('click', '.btn-delete', function() {
-
-        let id = $(this).data('id');
-
-        Swal.fire({
-            title: 'Are you sure?',
-            text: 'This loan record will be permanently deleted.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#dc3545',
-            confirmButtonText: 'Delete',
-            cancelButtonText: 'Cancel'
-        }).then((result) => {
-
-            if (result.isConfirmed) {
-
-                $.ajax({
-                    url: "<?= base_url('delete_loan') ?>",
-                    type: "POST",
-                    data: {
-                        id
-                    },
-                    dataType: "json",
-
-                    success: function(res) {
-
-                        if (res.status) {
-
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Deleted Successfully',
-                                timer: 1500,
-                                showConfirmButton: false
-                            });
-
-                            loanTable.ajax.reload(null, false);
-                        }
+                        loanTable.ajax.reload(null, false);
                     }
-                });
-            }
+                }
+            });
         });
+
+        // VIEW LOAN
+        $(document).on('click', '.btn-view', function() {
+
+            let id = $(this).data('id');
+
+            $.ajax({
+                url: "<?= base_url('get_loan_details') ?>",
+                type: "POST",
+                data: {
+                    id
+                },
+                dataType: "json",
+
+                success: function(res) {
+
+                    if (res.status) {
+
+                        let d = res.data;
+
+                        $('#loan_id').val(d.id);
+                        $('#borrower_id').val(d.borrower_id);
+                        $('#borrower_search').val(d.fullname);
+
+                        $('[name="co_maker_name"]').val(d.co_maker);
+                        $('[name="loan_plan"]').val(d.loan_plan);
+                        $('[name="effective_date"]').val(d.effective_date);
+
+                        $('#principal_amount').val(parseFloat(d.loan_amount)
+                            .toLocaleString());
+                        $('#interest_rate').val(d.interest_rate);
+
+                        $('[name="monthly_payment"]').val(d.monthly_payment);
+                        $('[name="unearned_interest"]').val(d.unearned_interest);
+                        $('[name="total_balance"]').val(d.total_balance);
+
+                        $('#BorrowerForm input').prop('readonly', true);
+                        $('#BorrowerForm select').prop('disabled', true);
+
+                        $('#btnSave')
+                            .removeClass('btn-primary btn-success')
+                            .addClass('btn-danger')
+                            .html('<i class="ri-close-line me-1"></i> Close');
+
+                        mode = "view";
+                    }
+                }
+            });
+        });
+
+        // EDIT LOAN
+        $(document).on('click', '.btn-edit', function() {
+
+            let id = $(this).data('id');
+
+            $.ajax({
+                url: "<?= base_url('get_loan_details') ?>",
+                type: "POST",
+                data: {
+                    id
+                },
+                dataType: "json",
+
+                success: function(res) {
+
+                    if (res.status) {
+
+                        let d = res.data;
+
+                        $('#loan_id').val(d.id);
+                        $('#borrower_id').val(d.borrower_id);
+                        $('#borrower_search').val(d.fullname);
+
+                        $('[name="co_maker_name"]').val(d.co_maker);
+                        $('[name="loan_plan"]').val(d.loan_plan);
+                        $('[name="effective_date"]').val(d.effective_date);
+
+                        $('#principal_amount').val(d.loan_amount);
+                        $('#interest_rate').val(d.interest_rate);
+
+                        $('[name="monthly_payment"]').val(d.monthly_payment);
+                        $('[name="unearned_interest"]').val(d.unearned_interest);
+                        $('[name="total_balance"]').val(d.total_balance);
+
+                        $('#btnSave')
+                            .removeClass('btn-primary btn-danger')
+                            .addClass('btn-success')
+                            .html('<i class="ri-save-line me-1"></i> Update Loan');
+
+                        mode = "edit";
+                    }
+                }
+            });
+        });
+
+        // DELETE LOAN
+        $(document).on('click', '.btn-delete', function() {
+
+            let id = $(this).data('id');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'This loan record will be permanently deleted.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                confirmButtonText: 'Delete',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+
+                    $.ajax({
+                        url: "<?= base_url('delete_loan') ?>",
+                        type: "POST",
+                        data: {
+                            id
+                        },
+                        dataType: "json",
+
+                        success: function(res) {
+
+                            if (res.status) {
+
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Deleted Successfully',
+                                    timer: 1500,
+                                    showConfirmButton: false
+                                });
+
+                                loanTable.ajax.reload(null, false);
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
+
     });
     </script>
