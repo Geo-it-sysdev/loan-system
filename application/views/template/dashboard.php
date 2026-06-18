@@ -148,6 +148,112 @@
                     </div> <!-- end col-->
                 </div> <!-- end row-->
             </div>
+
+
+
+            <!-- ApexCharts CDN -->
+            <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+            <div class="col-xxl-6 col-md-6">
+                <div class="card">
+                    <div class="card-header align-items-center d-flex">
+                        <h4 class="card-title mb-0 flex-grow-1">Revenue</h4>
+
+                        <div class="flex-shrink-0">
+                            <div class="dropdown card-header-dropdown">
+                                <a class="text-reset dropdown-btn" href="#" data-bs-toggle="dropdown">
+                                    <span class="fw-semibold text-uppercase fs-12">Sort by:</span>
+                                    <span class="text-muted" id="selectedYear">This Year</span>
+                                </a>
+
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item year-filter active" href="#" data-year="this">This
+                                            Year</a></li>
+                                    <li><a class="dropdown-item year-filter" href="#" data-year="2026">2026</a></li>
+                                    <li><a class="dropdown-item year-filter" href="#" data-year="2025">2025</a></li>
+                                    <li><a class="dropdown-item year-filter" href="#" data-year="2024">2024</a></li>
+                                    <li><a class="dropdown-item year-filter" href="#" data-year="2023">2023</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body pb-0">
+                        <div id="balance-overview-chart" class="apex-charts"></div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+            document.addEventListener("DOMContentLoaded", function() {
+
+                function formatPeso(value) {
+                    return "₱ " + value.toLocaleString("en-PH");
+                }
+
+                var options = {
+                    series: [{
+                            name: "Total Invest",
+                            data: [12000, 19000, 15000, 22000, 18000, 25000, 21000, 23000, 20000, 24000,
+                                26000, 28000
+                            ]
+                        },
+                        {
+                            name: "Total Income",
+                            data: [8000, 12000, 9000, 14000, 11000, 15000, 13000, 16000, 14500, 17000,
+                                18000, 19000
+                            ]
+                        },
+                        {
+                            name: "Unearned Income",
+                            data: [2000, 3000, 2500, 4000, 3500, 5000, 4500, 4200, 3800, 4100, 3900,
+                                4300
+                            ]
+                        }
+                    ],
+                    chart: {
+                        height: 250,
+                        type: 'bar',
+                        toolbar: {
+                            show: false
+                        }
+                    },
+                    plotOptions: {
+                        bar: {
+                            columnWidth: '45%',
+                            borderRadius: 5
+                        }
+                    },
+                    dataLabels: {
+                        enabled: false
+                    },
+                    xaxis: {
+                        categories: [
+                            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+                        ]
+                    },
+                    tooltip: {
+                        y: {
+                            formatter: function(val) {
+                                return formatPeso(val);
+                            }
+                        }
+                    },
+                    yaxis: {
+                        labels: {
+                            formatter: function(val) {
+                                return formatPeso(val);
+                            }
+                        }
+                    },
+                    colors: ['#0d6efd', '#198754', '#fd7e14']
+                };
+
+                var chart = new ApexCharts(document.querySelector("#balance-overview-chart"), options);
+                chart.render();
+            });
+            </script>
             <!-- container-fluid -->
         </div>
         <!-- End Page-content -->

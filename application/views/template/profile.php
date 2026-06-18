@@ -12,10 +12,10 @@
                                <div class="p-0 ms-auto rounded-circle profile-photo-edit">
                                    <input id="profile-foreground-img-file-input" type="file"
                                        class="profile-foreground-img-file-input" />
-                                   <label for="profile-foreground-img-file-input"
+                                   <!-- <label for="profile-foreground-img-file-input"
                                        class="profile-photo-edit btn btn-light">
                                        <i class="ri-image-edit-line align-bottom me-1"></i> Change Cover
-                                   </label>
+                                   </label> -->
                                </div>
                            </div>
                        </div>
@@ -28,10 +28,10 @@
                            <div class="card-body p-4">
                                <div class="text-center">
                                    <div class="profile-user position-relative d-inline-block mx-auto  mb-4">
-                                       <img src="<?= base_url($this->session->userdata('photo') ?: 'assets/images/users/avatar-1.jpg'); ?>"
+                                       <img src="<?= base_url($this->session->userdata('photo') ?: 'assets/images/user.png'); ?>"
                                            class="rounded-circle avatar-xl img-thumbnail user-profile-image"
                                            alt="User Profile Image"
-                                           onerror="this.src='<?= base_url('assets/images/users/avatar-1.jpg'); ?>'">
+                                           onerror="this.src='<?= base_url('assets/images/user.png'); ?>'">
                                        <div class="avatar-xs p-0 rounded-circle profile-photo-edit">
                                            <input id="profile-img-file-input" type="file"
                                                class="profile-img-file-input" />
@@ -142,46 +142,36 @@
                                    </div>
                                    <!--end tab-pane-->
                                    <div class="tab-pane" id="changeUsernamePassword" role="tabpanel">
-                                       <form action="javascript:void(0);">
-                                           <div class="row g-2">
-                                               <div class="col-lg-4">
-                                                   <div>
-                                                       <label for="username" class="form-label">Username
-                                                       </label>
-                                                       <input type="text" class="form-control" id="username"
-                                                           value="<?= $this->session->userdata('username'); ?>" />
-                                                   </div>
-                                               </div>
-                                               <!--end col-->
-                                               <div class="col-lg-4">
-                                                   <div>
-                                                       <label for="newpasswordInput" class="form-label">New
-                                                           Password</label>
-                                                       <input type="password" class="form-control" id="newpasswordInput"
-                                                           placeholder="Enter new password" />
-                                                   </div>
-                                               </div>
-                                               <!--end col-->
-                                               <div class="col-lg-4">
-                                                   <div>
-                                                       <label for="confirmpasswordInput" class="form-label">Confirm
-                                                           Password</label>
-                                                       <input type="password" class="form-control"
-                                                           id="confirmpasswordInput" placeholder="Confirm password" />
-                                                   </div>
-                                               </div>
-                                               <!--end col-->
+                                       <form id="accountForm">
 
-                                               <!--end col-->
-                                               <div class="col-lg-12">
-                                                   <div class="text-end">
-                                                       <button type="submit" class="btn btn-success">Save & Change
-                                                       </button>
-                                                   </div>
+                                           <div class="row g-3">
+
+                                               <div class="col-lg-4">
+                                                   <label class="form-label">Username</label>
+                                                   <input type="text" name="username" class="form-control"
+                                                       value="<?= $this->session->userdata('username'); ?>" required>
                                                </div>
-                                               <!--end col-->
+
+                                               <div class="col-lg-4">
+                                                   <label class="form-label">New Password</label>
+                                                   <input type="password" name="password" class="form-control"
+                                                       placeholder="Enter New Password">
+                                               </div>
+
+                                               <div class="col-lg-4">
+                                                   <label class="form-label">Confirm Password</label>
+                                                   <input type="password" name="confirm_password" class="form-control"
+                                                       placeholder="Confirm Password">
+                                               </div>
+
+                                               <div class="col-lg-12 text-end">
+                                                   <button class="btn btn-success">
+                                                       Save Changes
+                                                   </button>
+                                               </div>
+
                                            </div>
-                                           <!--end row-->
+
                                        </form>
 
                                    </div>
@@ -198,3 +188,80 @@
            </div>
            <!-- container-fluid -->
        </div><!-- End Page-content -->
+
+       <script>
+       $('#accountForm').submit(function(e) {
+           e.preventDefault();
+
+           Swal.fire({
+               title: 'Are you sure?',
+               text: 'Do you want to update this account?',
+               icon: 'warning',
+               showCancelButton: true,
+               confirmButtonText: 'Yes, Update',
+               cancelButtonText: 'Cancel',
+               reverseButtons: true
+           }).then((result) => {
+
+               if (result.isConfirmed) {
+
+                   $.ajax({
+                       url: "<?= site_url('LoginController/update_account'); ?>",
+                       type: "POST",
+                       data: $('#accountForm').serialize(),
+                       dataType: "json",
+
+                       success: function(response) {
+
+                           if (response.status) {
+
+                               Swal.fire({
+                                   icon: 'success',
+                                   title: 'Success',
+                                   text: response.message,
+                                   confirmButtonText: 'Back to Login',
+                                   showCancelButton: true,
+                                   cancelButtonText: 'Stay Here',
+                                   allowOutsideClick: false
+                               }).then((result) => {
+
+                                   if (result.isConfirmed) {
+                                       window.location.href =
+                                           "<?= site_url('logout'); ?>";
+                                   } else if (result.dismiss === Swal.DismissReason
+                                       .cancel) {
+                                       location.reload();
+                                   }
+
+                               });
+
+                           } else {
+
+                               Swal.fire({
+                                   icon: 'error',
+                                   title: 'Error',
+                                   text: response.message
+                               });
+
+                           }
+
+                       },
+
+                       error: function() {
+
+                           Swal.fire({
+                               icon: 'error',
+                               title: 'Error',
+                               text: 'An unexpected error occurred.'
+                           });
+
+                       }
+
+                   });
+
+               }
+
+           });
+
+       });
+       </script>
