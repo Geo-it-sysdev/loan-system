@@ -796,7 +796,7 @@ class AdminController extends CI_Controller {
             $where = "WHERE l.status = 'Pending'";
         } elseif ($filter == "partial") {
             $where = "WHERE l.status = 'Partial'";
-        } elseif ($filter == "fully paid") {
+        } elseif ($filter == "fully") {
             $where = "WHERE l.status = 'Fully'";
         }
 
