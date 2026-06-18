@@ -105,12 +105,19 @@ class AdminController extends CI_Controller {
                 mkdir($upload_path, 0777, true);
             }
 
-            $filename = preg_replace('/[^A-Za-z0-9]/', '_', $fullname);
+            $filename = preg_replace('/[^A-Za-z0-9]/', '_', $fullname) . '_' . time();
 
             $config['upload_path']   = $upload_path;
-            $config['allowed_types'] = 'jpg|jpeg|png';
+
+            $config['allowed_types'] = 'jpg|jpeg|png|gif|webp|bmp|heic|heif';
+
+            $config['max_size']      = 20480;
+
             $config['file_name']     = $filename;
             $config['overwrite']     = true;
+
+            $config['max_width']     = 0;
+            $config['max_height']    = 0;
 
             $this->load->library('upload');
             $this->upload->initialize($config);
@@ -123,7 +130,7 @@ class AdminController extends CI_Controller {
             } else {
 
                 echo json_encode([
-                    'status' => 'error',
+                    'status'  => 'error',
                     'message' => strip_tags($this->upload->display_errors())
                 ]);
                 return;
@@ -216,7 +223,7 @@ class AdminController extends CI_Controller {
             return;
         }
 
-        $photo_path = $collector->photo;
+       $photo_path = $collector->photo;
 
         if (!empty($_FILES['photo']['name'])) {
 
@@ -226,12 +233,19 @@ class AdminController extends CI_Controller {
                 mkdir($upload_path, 0777, true);
             }
 
-            $filename = preg_replace('/[^A-Za-z0-9]/', '_', $fullname);
+            $filename = preg_replace('/[^A-Za-z0-9]/', '_', $fullname) . '_' . time();
 
             $config['upload_path']   = $upload_path;
-            $config['allowed_types'] = 'jpg|jpeg|png';
+
+            $config['allowed_types'] = 'jpg|jpeg|png|gif|webp|bmp|heic|heif';
+
+            $config['max_size']      = 20480;
+
             $config['file_name']     = $filename;
             $config['overwrite']     = true;
+
+            $config['max_width']     = 0;
+            $config['max_height']    = 0;
 
             $this->load->library('upload');
             $this->upload->initialize($config);
@@ -248,7 +262,7 @@ class AdminController extends CI_Controller {
             } else {
 
                 echo json_encode([
-                    'status' => 'error',
+                    'status'  => 'error',
                     'message' => strip_tags($this->upload->display_errors())
                 ]);
                 return;
@@ -455,11 +469,12 @@ class AdminController extends CI_Controller {
         // UPLOAD PHOTO
         if (!empty($_FILES['photo']['name'])) {
 
-            $config['upload_path']   = FCPATH . 'assets/borrower/';
-            $config['allowed_types'] = 'jpg|jpeg|png';
-            $config['file_name']     = $filename;
-            $config['overwrite']     = true;
-            $config['max_size']      = 2048;
+            $config['upload_path'] = FCPATH . 'assets/borrower/';
+            $config['allowed_types'] = 'jpg|jpeg|png|gif|webp|bmp|heic|heif';
+            $config['max_size'] = 10240; 
+            $config['encrypt_name'] = TRUE; 
+            $config['overwrite'] = FALSE;
+            $config['remove_spaces'] = TRUE;
 
             $this->upload->initialize($config);
 
@@ -549,12 +564,63 @@ class AdminController extends CI_Controller {
 
     public function update_borrower()
     {
-        $id = $this->input->post('id');
+        $id = $this->input->post('id', true);
+
+        $this->db->where('id', $id);
+        $borrower = $this->db->get('tbl_borrower')->row();
+
+        if (!$borrower) {
+            echo json_encode([
+                'status' => false,
+                'message' => 'Borrower not found.'
+            ]);
+            return;
+        }
 
         $address = $this->input->post('Purok', true) . ', ' .
-           $this->input->post('baranggay', true) . ', ' .
-           $this->input->post('municipalities', true) . ', ' .
-           $this->input->post('Province', true);
+                $this->input->post('baranggay', true) . ', ' .
+                $this->input->post('municipalities', true) . ', ' .
+                $this->input->post('Province', true);
+
+        $photo_path = $borrower->photo;
+
+        if (!empty($_FILES['photo']['name'])) {
+
+            $config['upload_path']      = FCPATH . 'assets/borrower/';
+            $config['allowed_types']    = 'jpg|jpeg|png|gif|webp|bmp|heic|heif';
+            $config['max_size']         = 10240;
+            $config['encrypt_name']     = TRUE;
+            $config['overwrite']        = FALSE;
+            $config['remove_spaces']    = TRUE;
+
+            $this->upload->initialize($config);
+
+            if ($this->upload->do_upload('photo')) {
+
+                $uploadData = $this->upload->data();
+                $photo_path = 'assets/borrower/' . $uploadData['file_name'];
+
+                if (
+                    !empty($borrower->photo) &&
+                    $borrower->photo != 'assets/borrower/default.png'
+                ) {
+
+                    $oldPhoto = FCPATH . $borrower->photo;
+
+                    if (is_file($oldPhoto)) {
+                        unlink($oldPhoto);
+                    }
+                }
+
+            } else {
+
+                echo json_encode([
+                    'status' => false,
+                    'message' => strip_tags($this->upload->display_errors())
+                ]);
+                return;
+            }
+        }
 
         $data = [
             'firstname'   => $this->input->post('first_name', true),
@@ -565,6 +631,7 @@ class AdminController extends CI_Controller {
             'contact_no'  => $this->input->post('contact', true),
             'type_of_id'  => $this->input->post('id_type', true),
             'valid_id_no' => $this->input->post('valid_id', true),
+            'photo'       => $photo_path
         ];
 
         $this->db->where('id', $id);
@@ -572,20 +639,39 @@ class AdminController extends CI_Controller {
 
         echo json_encode([
             'status' => $update,
-            'message' => $update ? 'Borrower updated successfully' : 'Update failed'
+            'message' => $update ? 'Borrower updated successfully.' : 'Update failed.'
         ]);
     }
 
-    public function delete_borrower()
+   public function delete_borrower()
     {
-        $id = $this->input->post('id');
+        $id = $this->input->post('id', true);
+
+        $this->db->where('id', $id);
+        $borrower = $this->db->get('tbl_borrower')->row();
+
+        if (!$borrower) {
+            echo json_encode([
+                'status' => false,
+                'message' => 'Borrower not found.'
+            ]);
+            return;
+        }
+
+        if (!empty($borrower->photo)) {
+            $photoPath = FCPATH . $borrower->photo;
+
+            if (is_file($photoPath)) {
+                unlink($photoPath);
+            }
+        }
 
         $this->db->where('id', $id);
         $delete = $this->db->delete('tbl_borrower');
 
         echo json_encode([
             'status' => $delete,
-            'message' => $delete ? 'Deleted successfully' : 'Delete failed'
+            'message' => $delete ? 'Deleted successfully.' : 'Delete failed.'
         ]);
     }
 
