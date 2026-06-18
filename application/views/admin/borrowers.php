@@ -148,7 +148,7 @@
 
                                         <div class="col-md-6">
                                             <label class="form-label">Contact Number</label>
-                                            <input type="text" name="contact" class="form-control"
+                                            <input type="number" name="contact" class="form-control"
                                                 placeholder="Enter contact number" required>
                                         </div>
 
