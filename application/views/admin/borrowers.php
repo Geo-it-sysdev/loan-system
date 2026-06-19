@@ -370,7 +370,7 @@
                             imgSrc = "<?= base_url() ?>" + data;
                         }
 
-                        return `<img src="${imgSrc}" class="rounded-circle" style="width:45px;height:45px;object-fit:cover;">`;
+                        return `<img src="${imgSrc}" class="rounded-circle" style="width:46px;height:46px;object-fit:cover;">`;
                     }
                 },
                 {
