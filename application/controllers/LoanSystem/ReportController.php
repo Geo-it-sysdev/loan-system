@@ -79,7 +79,7 @@ class ReportController extends CI_Controller {
     }
 
 
-   public function outstanding_loans()
+    public function outstanding_loans()
     {
         $query = $this->db->query("
             SELECT 
@@ -88,6 +88,7 @@ class ReportController extends CI_Controller {
                 l.interest_rate,
                 l.total_balance,
                 l.effective_date,
+
                 CONCAT(
                     b.firstname,' ',
                     IFNULL(b.middlename,''),' ',
@@ -96,18 +97,18 @@ class ReportController extends CI_Controller {
 
                 l.loan_amount,
 
-                IFNULL(SUM(p.payment_amount),0) AS total_paid,
+                IFNULL(SUM(p.payment_amount), 0) AS total_paid,
 
-                (GREATEST(
-                    (CAST(l.loan_amount AS DECIMAL(12,2)) - IFNULL(SUM(p.payment_amount),0)),
+                GREATEST(
+                    (CAST(l.loan_amount AS DECIMAL(12,2)) - IFNULL(SUM(p.payment_amount), 0)),
                     0
-                )) AS remaining_balance,
+                ) AS remaining_balance,
 
                 DATE_ADD(
                     l.effective_date,
                     INTERVAL (
                         FLOOR(
-                            IFNULL(SUM(p.payment_amount),0) / CAST(l.monthly_payment AS DECIMAL(12,2))
+                            IFNULL(SUM(p.payment_amount), 0) / NULLIF(CAST(l.monthly_payment AS DECIMAL(12,2)), 0)
                         ) + 1
                     ) MONTH
                 ) AS next_due_date
@@ -116,7 +117,19 @@ class ReportController extends CI_Controller {
             INNER JOIN tbl_borrower b ON b.id = l.borrower_id
             LEFT JOIN tbl_payment p ON p.loan_id = l.id
 
-            GROUP BY l.id
+            WHERE l.status IN ('Released', 'Partial')
+
+            GROUP BY 
+                l.id,
+                l.interest_rate,
+                l.total_balance,
+                l.effective_date,
+                b.firstname,
+                b.middlename,
+                b.lastname,
+                l.loan_amount,
+                l.monthly_payment
+
             HAVING remaining_balance > 0
         ");
 
