@@ -180,14 +180,8 @@
 
                             <div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="stock_filter" id="Pending"
-                                        value="Pending" checked>
-                                    <label class="form-check-label" for="Pending">Pending</label>
-                                </div>
-
-                                <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="stock_filter" id="Released"
-                                        value="Released">
+                                        value="Released" checked>
                                     <label class="form-check-label" for="Released">Released</label>
                                 </div>
 
@@ -435,24 +429,6 @@
                         let payButton = '';
                         let releasedButton = '';
 
-                        // RELEASED BUTTON
-                        if (row.status === "Pending") {
-                            releasedButton = `
-                            <button type="button"
-                                class="btn btn-secondary btn-sm btn-released"
-                                data-id="${row.id}"
-                                data-ref-no="${row.ref_no}">
-                                <i class="ri-checkbox-circle-line me-1"></i> Released
-                            </button>
-
-                             <button type="button"
-                                class="btn btn-danger btn-sm btn-cancelled"
-                                data-id="${row.id}"
-                                data-ref-no="${row.ref_no}">
-                                <i class="ri-close-circle-line me-1"></i> Cancelled
-                            </button>
-                        `;
-                        }
 
                         // VIEW BUTTON
                         if (
@@ -496,7 +472,6 @@
                         return `
                         ${viewButton}
                         ${payButton}
-                        ${releasedButton}
                     `;
                     }
                 }
@@ -512,130 +487,7 @@
         });
 
 
-
-
-        // RELEASE LOAN
-        $(document).on('click', '.btn-released', function() {
-
-            let id = $(this).data('id');
-            let ref_no = $(this).data('ref-no');
-
-            Swal.fire({
-                title: 'Are you sure?',
-                text: 'Do you want to release this loan?\n' + ref_no,
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#198754',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Yes, Release',
-                cancelButtonText: 'No'
-            }).then((result) => {
-
-                if (result.isConfirmed) {
-
-                    $.ajax({
-                        url: "<?= base_url('release_loan'); ?>",
-                        type: "POST",
-                        data: {
-                            id: id
-                        },
-                        dataType: "json",
-                        success: function(response) {
-
-                            if (response.status == "success") {
-
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Released!',
-                                    text: response.message,
-                                    timer: 1500,
-                                    showConfirmButton: false
-                                });
-
-                                $('#PaymentTable').DataTable().ajax.reload(null,
-                                    false);
-
-                            } else {
-
-                                Swal.fire(
-                                    'Error',
-                                    response.message,
-                                    'error'
-                                );
-
-                            }
-
-                        }
-
-                    });
-
-                }
-
-            });
-
-        });
-
-
-        // CANCEL LOAN
-        $(document).on('click', '.btn-cancelled', function() {
-
-            let id = $(this).data('id');
-            let ref_no = $(this).data('ref-no');
-
-            Swal.fire({
-                title: 'Are you sure?',
-                text: 'This will permanently delete this loan.\n' + ref_no,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#dc3545',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Yes, Delete',
-                cancelButtonText: 'No'
-            }).then((result) => {
-
-                if (result.isConfirmed) {
-
-                    $.ajax({
-                        url: "<?= base_url('cancelled_loan'); ?>",
-                        type: "POST",
-                        data: {
-                            id: id
-                        },
-                        dataType: "json",
-                        success: function(response) {
-
-                            if (response.status == "success") {
-
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Deleted!',
-                                    text: response.message,
-                                    timer: 1500,
-                                    showConfirmButton: false
-                                });
-
-                                $('#PaymentTable').DataTable().ajax.reload(null,
-                                    false);
-
-                            } else {
-
-                                Swal.fire(
-                                    'Error',
-                                    response.message,
-                                    'error'
-                                );
-
-                            }
-
-                        }
-
-                    });
-
-                }
-
-            });
-
-        });
+       
 
 
 

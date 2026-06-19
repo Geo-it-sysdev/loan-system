@@ -62,7 +62,7 @@
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between">
                                         <div>
-                                            <p class="fw-medium text-muted mb-0">Total Loan Release</p>
+                                            <p class="fw-medium text-muted mb-0">Total Loan Released</p>
                                             <h2 class="mt-4 ff-secondary fw-semibold"><span class="counter-value"
                                                     data-target-release>0</span>
                                             </h2>

@@ -872,17 +872,7 @@ class AdminController extends CI_Controller {
         }
     }
 
-    public function delete_loan()
-    {
-        $id = $this->input->post('id');
 
-        $this->db->where('id', $id);
-        $delete = $this->db->delete('tbl_loan');
-
-        echo json_encode([
-            'status' => $delete
-        ]);
-    }
 
     // ===== Payment ======
     public function get_loans_payments()
@@ -1284,7 +1274,7 @@ class AdminController extends CI_Controller {
         }
     }
 
-    public function cancelled_loan()
+    public function delete_loan()
     {
         $id = $this->input->post('id');
 

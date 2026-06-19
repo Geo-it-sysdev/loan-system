@@ -51,7 +51,7 @@
                                             <input type="text" id="borrower_search" class="form-control"
                                                 placeholder="Search borrower..." autocomplete="off">
 
-                                            <input type="hidden" name="borrower_id" id="borrower_id">
+                                            <input type="hidden" name="borrower_id" id="borrower_id" required>
 
                                             <div id="borrower_list" class="list-group position-absolute w-100 shadow"
                                                 style="z-index:999;max-height:220px;overflow-y:auto;display:none;">
@@ -59,7 +59,7 @@
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label">Loan Purpose</label>
-                                            <select class="form-select" name="loan_purpose">
+                                            <select class="form-select" name="loan_purpose" required>
                                                 <option value="">Select Purpose</option>
                                                 <option>Business</option>
                                                 <option>Personal</option>
@@ -75,19 +75,19 @@
                                         <div class="col-md-6">
                                             <label class="form-label">Co-Maker Name</label>
                                             <input type="text" class="form-control" name="co_maker_name"
-                                                placeholder="Co-Maker Full Name">
+                                                placeholder="Co-Maker Full Name" required>
                                         </div>
 
                                         <div class="col-md-6">
                                             <label class="form-label">Co-Maker Contact</label>
                                             <input type="text" class="form-control" name="co_maker_contact"
-                                                placeholder="09XXXXXXXXX">
+                                                placeholder="09XXXXXXXXX" required>
                                         </div>
 
                                         <div class="col-md-6">
                                             <label class="form-label">Relationship</label>
                                             <input type="text" class="form-control" name="relationship"
-                                                placeholder="Friend / Brother / Wife">
+                                                placeholder="Friend / Brother / Wife" required>
                                         </div>
 
                                         <div class="col-md-6">
@@ -125,7 +125,8 @@
 
                                         <div class="col-md-6">
                                             <label class="form-label">Effective Date</label>
-                                            <input type="date" name="effective_date" class="form-control" required>
+                                            <input type="date" name="effective_date" id="effective_date"
+                                                class="form-control" required>
                                         </div>
 
                                         <div class="col-md-6">
@@ -443,7 +444,7 @@
             autoWidth: false,
 
             order: [
-                [0, 'asc']
+                [0, 'desc']
             ],
 
             columns: [{
@@ -508,29 +509,54 @@
                         return data;
                     }
                 },
-
                 {
                     data: 'id',
                     orderable: false,
                     searchable: false,
                     className: 'text-center',
-                    render: function(id) {
+                    render: function(id, type, row) {
 
-                        return `
-                        <div class="d-flex">
-                            <button class="btn btn-success btn-sm btn-view me-1" data-id="${id}">
-                                <i class="ri-eye-fill"></i> View
-                            </button>
+                        let buttons = '';
 
-                            <button class="btn btn-primary btn-sm btn-edit me-1" data-id="${id}">
-                                <i class="ri-edit-2-fill"></i> Edit
-                            </button>
+                        // Only View for Released / Partial / Fully
+                        if (
+                            row.status === "Released" ||
+                            row.status === "Partial" ||
+                            row.status === "Fully"
+                        ) {
+                            buttons = `
+                            <div class="d-flex justify-content-center">
+                                <button class="btn btn-success btn-sm btn-view" 
+                                data-id="${id}"
+                                data-interest_rate="${interest_rate}">
+                                    <i class="ri-eye-fill"></i> View
+                                </button>
+                            </div>
+                        `;
+                        } else {
+                            // Pending or others
+                            buttons = `
+                            <div class="d-flex">
+                                <button class="btn btn-success btn-sm btn-released me-1" 
+                                data-id="${row.id}"
+                                data-ref-no="${row.ref_no}">
+                                    <i class="ri-checkbox-circle-fill"></i> Released
+                                </button>
 
-                            <button class="btn btn-danger btn-sm btn-delete" data-id="${id}">
-                                <i class="ri-delete-bin-2-fill"></i> Delete
-                            </button>
-                        </div>
-                    `;
+                                <button class="btn btn-secondary btn-sm btn-edit me-1" data-id="${id}">
+                                    <i class="ri-edit-2-fill"></i> Edit
+                                </button>
+
+                                <button class="btn btn-danger btn-sm btn-delete" 
+                                data-id="${row.id}"
+                                data-ref-no="${row.ref_no}">
+                                    <i class="ri-delete-bin-2-fill"></i> Delete
+                                </button>
+                            </div>
+                        `;
+                        }
+
+                        return buttons;
                     }
                 }
             ],
@@ -543,6 +569,67 @@
 
         $('input[name="stock_filter"]').on('change', function() {
             loanTable.ajax.reload();
+        });
+
+
+        $(document).on('click', '.btn-released', function() {
+
+            let id = $(this).data('id');
+            let ref_no = $(this).data('ref-no');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'Do you want to release this loan?\n' + ref_no,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#198754',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, Release',
+                cancelButtonText: 'No'
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+
+                    $.ajax({
+                        url: "<?= base_url('release_loan'); ?>",
+                        type: "POST",
+                        data: {
+                            id: id
+                        },
+                        dataType: "json",
+                        success: function(response) {
+
+                            if (response.status == "success") {
+
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Released!',
+                                    text: response.message,
+                                    timer: 1500,
+                                    showConfirmButton: false
+                                });
+
+                                $('#LoanTable').DataTable().ajax.reload(null,
+                                    false);
+
+                            } else {
+
+                                Swal.fire(
+                                    'Error',
+                                    response.message,
+                                    'error'
+                                );
+
+                            }
+
+                        }
+
+                    });
+
+                }
+
+            });
+
         });
 
 
@@ -727,46 +814,82 @@
         $(document).on('click', '.btn-delete', function() {
 
             let id = $(this).data('id');
+            let ref_no = $(this).data('ref-no');
 
             Swal.fire({
                 title: 'Are you sure?',
-                text: 'This loan record will be permanently deleted.',
+                text: 'This will permanently delete this loan.\n' + ref_no,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#dc3545',
-                confirmButtonText: 'Delete',
-                cancelButtonText: 'Cancel'
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, Delete',
+                cancelButtonText: 'No'
             }).then((result) => {
 
                 if (result.isConfirmed) {
 
                     $.ajax({
-                        url: "<?= base_url('delete_loan') ?>",
+                        url: "<?= base_url('delete_loan'); ?>",
                         type: "POST",
                         data: {
-                            id
+                            id: id
                         },
                         dataType: "json",
+                        success: function(response) {
 
-                        success: function(res) {
-
-                            if (res.status) {
+                            if (response.status == "success") {
 
                                 Swal.fire({
                                     icon: 'success',
-                                    title: 'Deleted Successfully',
+                                    title: 'Deleted!',
+                                    text: response.message,
                                     timer: 1500,
                                     showConfirmButton: false
                                 });
 
-                                loanTable.ajax.reload(null, false);
+                                $('#LoanTable').DataTable().ajax.reload(null,
+                                    false);
+
+                            } else {
+
+                                Swal.fire(
+                                    'Error',
+                                    response.message,
+                                    'error'
+                                );
+
                             }
+
                         }
+
                     });
+
                 }
+
             });
+
         });
 
 
+
+
+
+    });
+
+
+
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const today = new Date();
+
+        today.setMonth(today.getMonth() + 1);
+
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+
+        document.getElementById("effective_date").value =
+            `${year}-${month}-${day}`;
     });
     </script>
