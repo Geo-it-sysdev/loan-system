@@ -71,7 +71,7 @@ Date Downloaded: 5/7/2026 11:26:03 AM !-->
                     <div class="d-flex">
                         <!-- LOGO -->
                         <div class="navbar-brand-box horizontal-logo">
-                            <a href="<?php echo base_url('Dashboard'); ?>" class="logo logo-dark">
+                            <!-- <a href="<?php echo base_url('Dashboard'); ?>" class="logo logo-dark">
                                 <span class="logo-sm">
                                     <img src="<?php echo base_url('assets/images/geonDark.png'); ?>" alt=""
                                         height="22" />
@@ -91,7 +91,7 @@ Date Downloaded: 5/7/2026 11:26:03 AM !-->
                                     <img src="<?php echo base_url('assets/images/geonDark.png'); ?>" alt="" height="50"
                                         style="width: 180px;" />
                                 </span>
-                            </a>
+                            </a> -->
                         </div>
 
                         <button type="button"

@@ -80,7 +80,7 @@
                 dataSrc: "data"
             },
             columns: [{
-                    data: "reference_no"
+                    data: "ref_no"
                 },
                 {
                     data: "borrower_name"

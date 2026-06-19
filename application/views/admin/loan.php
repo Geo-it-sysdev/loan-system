@@ -28,7 +28,7 @@
             <div class="row g-3">
 
                 <!-- ================= LEFT SIDE ================= -->
-                <div class="col-12 col-lg-5">
+                <div class="col-12 col-lg-4">
 
                     <div class="card shadow-sm">
                         <div class="card-body">
@@ -57,11 +57,43 @@
                                                 style="z-index:999;max-height:220px;overflow-y:auto;display:none;">
                                             </div>
                                         </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Loan Purpose</label>
+                                            <select class="form-select" name="loan_purpose">
+                                                <option value="">Select Purpose</option>
+                                                <option>Business</option>
+                                                <option>Personal</option>
+                                                <option>Medical</option>
+                                                <option>Education</option>
+                                                <option>Agriculture</option>
+                                                <option>House Repair</option>
+                                                <option>Emergency</option>
+                                                <option>Others</option>
+                                            </select>
+                                        </div>
 
                                         <div class="col-md-6">
-                                            <label class="form-label">Co-Maker</label>
-                                            <input type="text" name="co_maker_name" class="form-control"
-                                                placeholder="Enter co-maker's full name" required>
+                                            <label class="form-label">Co-Maker Name</label>
+                                            <input type="text" class="form-control" name="co_maker_name"
+                                                placeholder="Co-Maker Full Name">
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Co-Maker Contact</label>
+                                            <input type="text" class="form-control" name="co_maker_contact"
+                                                placeholder="09XXXXXXXXX">
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Relationship</label>
+                                            <input type="text" class="form-control" name="relationship"
+                                                placeholder="Friend / Brother / Wife">
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Collateral (Optional)</label>
+                                            <input type="text" class="form-control" name="collateral"
+                                                placeholder="Motorcycle, Land Title, etc.">
                                         </div>
 
                                     </div>
@@ -156,16 +188,23 @@
                 </div>
 
                 <!-- ================= RIGHT SIDE ================= -->
-                <div class="col-12 col-lg-7">
+                <div class="col-12 col-lg-8">
 
                     <div class="card shadow-sm">
                         <div class="card-body">
 
                             <div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="stock_filter" id="pending"
-                                        value="pending" checked>
-                                    <label class="form-check-label" for="pending">Pending</label>
+                                    <input class="form-check-input" type="radio" name="stock_filter" id="Pending"
+                                        value="Pending" checked>
+                                    <label class="form-check-label" for="Pending">Pending</label>
+                                </div>
+
+
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="stock_filter" id="Released"
+                                        value="Released">
+                                    <label class="form-check-label" for="Released">Released</label>
                                 </div>
 
                                 <div class="form-check form-check-inline">
@@ -188,7 +227,10 @@
                                         <tr>
                                             <th>Reference No.</th>
                                             <th>Borrower Name</th>
+                                            <th>Loan Purpose</th>
                                             <th>Co-Maker</th>
+                                            <th>Relationship</th>
+                                            <th>Collateral</th>
                                             <th>Loan Plan</th>
                                             <th>Loan Amount</th>
                                             <th>Interest Rate</th>
@@ -411,7 +453,16 @@
                     data: 'fullname'
                 },
                 {
+                    data: 'loan_purpose'
+                },
+                {
                     data: 'co_maker'
+                },
+                {
+                    data: 'relationship'
+                },
+                {
+                    data: 'collateral'
                 },
                 {
                     data: 'loan_plan'
@@ -447,6 +498,8 @@
 
                         if (data === 'Pending')
                             return '<span class="badge bg-danger">Pending</span>';
+                        if (data === 'Released')
+                            return '<span class="badge bg-secondary">Released</span>';
                         if (data === 'Partial')
                             return '<span class="badge bg-primary">Partial</span>';
                         if (data === 'Fully Paid')
@@ -585,20 +638,27 @@
                         $('#borrower_id').val(d.borrower_id);
                         $('#borrower_search').val(d.fullname);
 
+                        $('[name="loan_purpose"]').val(d.loan_purpose);
+
                         $('[name="co_maker_name"]').val(d.co_maker);
+                        $('[name="co_maker_contact"]').val(d.co_maker_contact);
+                        $('[name="relationship"]').val(d.relationship);
+                        $('[name="collateral"]').val(d.collateral);
+
                         $('[name="loan_plan"]').val(d.loan_plan);
                         $('[name="effective_date"]').val(d.effective_date);
 
                         $('#principal_amount').val(parseFloat(d.loan_amount)
                             .toLocaleString());
+
                         $('#interest_rate').val(d.interest_rate);
 
                         $('[name="monthly_payment"]').val(d.monthly_payment);
                         $('[name="unearned_interest"]').val(d.unearned_interest);
                         $('[name="total_balance"]').val(d.total_balance);
 
-                        $('#BorrowerForm input').prop('readonly', true);
-                        $('#BorrowerForm select').prop('disabled', true);
+                        // $('#BorrowerForm input').prop('readonly', true);
+                        // $('#BorrowerForm select').prop('disabled', true);
 
                         $('#btnSave')
                             .removeClass('btn-primary btn-success')
@@ -634,11 +694,18 @@
                         $('#borrower_id').val(d.borrower_id);
                         $('#borrower_search').val(d.fullname);
 
+                        $('[name="loan_purpose"]').val(d.loan_purpose);
+
                         $('[name="co_maker_name"]').val(d.co_maker);
+                        $('[name="co_maker_contact"]').val(d.co_maker_contact);
+                        $('[name="relationship"]').val(d.relationship);
+                        $('[name="collateral"]').val(d.collateral);
+
                         $('[name="loan_plan"]').val(d.loan_plan);
                         $('[name="effective_date"]').val(d.effective_date);
 
                         $('#principal_amount').val(d.loan_amount);
+
                         $('#interest_rate').val(d.interest_rate);
 
                         $('[name="monthly_payment"]').val(d.monthly_payment);

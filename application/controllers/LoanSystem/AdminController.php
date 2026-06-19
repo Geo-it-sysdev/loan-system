@@ -25,7 +25,7 @@ class AdminController extends CI_Controller {
 
         // Remaining Balance
         $this->db->from('tbl_loan');
-        $this->db->where_in('status', ['pending', 'Partial']);
+        $this->db->where_in('status', ['Released', 'Partial']);
         $remaining_balance = $this->db->count_all_results();
 
         // Total Paid
@@ -740,7 +740,12 @@ class AdminController extends CI_Controller {
 
         $data = array(
             'borrower_id'        => $this->input->post('borrower_id'),
+            'loan_purpose'       => $this->input->post('loan_purpose'),
+
             'co_maker'           => $this->input->post('co_maker_name'),
+            'co_maker_contact'   => $this->input->post('co_maker_contact'),
+            'relationship'       => $this->input->post('relationship'),
+            'collateral'         => $this->input->post('collateral'),
             'loan_plan'          => $this->input->post('loan_plan'),
             'effective_date'     => $this->input->post('effective_date'),
             'loan_amount'        => str_replace(',', '', $this->input->post('principal_amount')),
@@ -773,10 +778,14 @@ class AdminController extends CI_Controller {
 
         $this->db->select("
             l.id,
-            LPAD(l.id, 6, '0') AS ref_no,
+            CONCAT('RN-', LPAD(l.id, 6, '0')) AS ref_no,
             l.borrower_id,
             CONCAT(b.firstname, ' ', b.middlename, ' ', b.lastname) AS fullname,
+            l.loan_purpose,
             l.co_maker,
+            l.co_maker_contact,
+            l.relationship,
+            l.collateral,
             l.loan_amount,
             l.interest_rate,
             l.total_balance,
@@ -809,8 +818,12 @@ class AdminController extends CI_Controller {
         $id = $this->input->post('loan_id');
 
         $data = [
-            'borrower_id'       => $this->input->post('borrower_id'),
-            'co_maker'          => $this->input->post('co_maker_name'),
+            'borrower_id'        => $this->input->post('borrower_id'),
+            'loan_purpose'       => $this->input->post('loan_purpose'),
+            'co_maker'           => $this->input->post('co_maker_name'),
+            'co_maker_contact'   => $this->input->post('co_maker_contact'),
+            'relationship'       => $this->input->post('relationship'),
+            'collateral'         => $this->input->post('collateral'),
             'loan_plan'         => $this->input->post('loan_plan'),
             'effective_date'    => $this->input->post('effective_date'),
             'loan_amount'       => str_replace(',', '', $this->input->post('principal_amount')),
@@ -878,8 +891,11 @@ class AdminController extends CI_Controller {
 
         $where = "";
 
-        if ($filter == "pending") {
+        
+        if ($filter == "Pending") {
             $where = "WHERE l.status = 'Pending'";
+        } elseif ($filter == "Released") {
+           $where = "WHERE l.status = 'Released'";
         } elseif ($filter == "partial") {
             $where = "WHERE l.status = 'Partial'";
         } elseif ($filter == "fully") {
@@ -889,7 +905,7 @@ class AdminController extends CI_Controller {
         $query = $this->db->query("
             SELECT 
                 l.id,
-                LPAD(l.id, 6, '0') AS ref_no,
+                CONCAT('RN-', LPAD(l.id, 6, '0')) AS ref_no,
                 CONCAT(
                     b.firstname, ' ',
                     IFNULL(b.middlename, ''), ' ',
@@ -938,7 +954,7 @@ class AdminController extends CI_Controller {
                 l.id,
                 l.borrower_id,
                 l.effective_date,
-                LPAD(l.id,6,'0') AS ref_no,
+                CONCAT('RN-', LPAD(l.id, 6, '0')) AS ref_no,
 
                 CONCAT(
                     b.firstname,' ',
@@ -969,7 +985,7 @@ class AdminController extends CI_Controller {
             LEFT JOIN tbl_borrower b ON b.id = l.borrower_id
             LEFT JOIN tbl_payment p ON p.loan_id = l.id
 
-            WHERE LPAD(l.id,6,'0') = ?
+            WHERE CONCAT('RN-', LPAD(l.id, 6, '0')) = ?
 
             GROUP BY
                 l.id,
@@ -1053,8 +1069,8 @@ class AdminController extends CI_Controller {
 
         } else {
 
-            $status = 'Pending';
-        }
+            $status = 'Released';
+        } 
 
         $this->db->where('id', $row->id)->update('tbl_loan', [
             'status' => $status
@@ -1182,7 +1198,7 @@ class AdminController extends CI_Controller {
             'loan_id'        => $loan_id,
             'borrower_id'    => $this->input->post('borrower_id'),
             'ref_no'         => $this->input->post('reference_number'),
-            'collector'      => $this->input->post('collector'),
+            'collector'     => $this->session->userdata('fullname'),
             'payment_amount' => $payment_amount,
             'penalty'        => $penalty_amount,
             'payment_method' => $this->input->post('payment_method'),
@@ -1225,8 +1241,8 @@ class AdminController extends CI_Controller {
 
         } else {
 
-            $loan_status = 'Pending';
-        }
+            $loan_status = 'Released';
+        } 
 
         $this->db->where('id', $loan_id)->update('tbl_loan', [
             'status' => $loan_status
@@ -1243,6 +1259,49 @@ class AdminController extends CI_Controller {
                 'loan_status' => $loan_status
             ]
         ]);
+    }
+
+
+    public function release_loan()
+    {
+        $id = $this->input->post('id');
+
+        $this->db->where('id', $id);
+        $success = $this->db->update('tbl_loan', [
+            'status' => 'Released'
+        ]);
+
+        if ($success) {
+            echo json_encode([
+                'status' => 'success',
+                'message' => 'Loan has been released successfully.'
+            ]);
+        } else {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Failed to release loan.'
+            ]);
+        }
+    }
+
+    public function cancelled_loan()
+    {
+        $id = $this->input->post('id');
+
+        $this->db->where('id', $id);
+        $success = $this->db->delete('tbl_loan');
+
+        if ($success) {
+            echo json_encode([
+                'status' => 'success',
+                'message' => 'Loan deleted successfully.'
+            ]);
+        } else {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Failed to delete loan.'
+            ]);
+        }
     }
 
 
@@ -1306,7 +1365,7 @@ class AdminController extends CI_Controller {
         );
 
         $data = [
-            'collector'      => $this->input->post('collector'),
+            'collector'     => $this->session->userdata('fullname'),
             'payment_method' => $this->input->post('payment_method'),
             'payment_amount' => $payment_amount
         ];

@@ -17,7 +17,7 @@ class ReportController extends CI_Controller {
         $query = $this->db->query("
             SELECT
                 l.id,
-                LPAD(l.id,6,'0') AS reference_no,
+                CONCAT('RN-', LPAD(l.id, 6, '0')) AS ref_no,
 
                 CONCAT(
                     b.firstname,' ',
@@ -84,7 +84,7 @@ class ReportController extends CI_Controller {
         $query = $this->db->query("
             SELECT 
                 l.id AS loan_id,
-                LPAD(l.id,6,'0') AS ref_no,
+                CONCAT('RN-', LPAD(l.id, 6, '0')) AS ref_no,
                 l.interest_rate,
                 l.total_balance,
                 l.effective_date,
@@ -134,7 +134,7 @@ class ReportController extends CI_Controller {
                 p.id AS receipt_no,
                 p.date_payment,
 
-                LPAD(l.id,6,'0') AS reference_no,
+                CONCAT('RN-', LPAD(l.id, 6, '0')) AS ref_no,
 
                 CONCAT(
                     b.firstname,' ',
@@ -174,7 +174,7 @@ class ReportController extends CI_Controller {
             SELECT
                 l.id AS loan_id,
 
-                LPAD(l.id, 6, '0') AS ref_no,
+                CONCAT('RN-', LPAD(l.id, 6, '0')) AS ref_no,
 
                 CONCAT(
                     b.firstname, ' ',

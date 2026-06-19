@@ -52,6 +52,9 @@ $route['delete_loan']                   = 'LoanSystem/AdminController/delete_loa
 // Payment
 $route['get_loans_payments']            = 'LoanSystem/AdminController/get_loans_payments';
 $route['get_loan_by_refno']             = 'LoanSystem/AdminController/get_loan_by_refno';
+$route['release_loan']                   = 'LoanSystem/AdminController/release_loan';
+$route['cancelled_loan']                   = 'LoanSystem/AdminController/cancelled_loan';
+
 $route['add_payment']                   = 'LoanSystem/AdminController/add_payment';
 $route['fetch_the_collectors']          = 'LoanSystem/AdminController/fetch_the_collectors';
 $route['get_payment_history']           = 'LoanSystem/AdminController/get_payment_history';
