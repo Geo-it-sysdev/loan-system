@@ -5,16 +5,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class LoanController extends CI_Controller {
 
 
-	public function __construct()
-	{
-		parent::__construct();
+	 public function __construct()
+    {
+        parent::__construct();
 
-		$this->load->library('session');
-
-		if (!$this->session->userdata('logged_in')) {
-			redirect('LoginController/logout');
-		}
-	}
+        $this->load->library('session');
+        $this->load->helper('url');
+        if (!$this->session->userdata('logged_in')) {
+            redirect('LoginController/login');
+            exit; 
+        }
+    }
 
 
 	public function dashboard()
