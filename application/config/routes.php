@@ -52,7 +52,7 @@ $route['delete_loan']                   = 'AdminController/delete_loan';
 // Payment
 $route['get_loans_payments']            = 'AdminController/get_loans_payments';
 $route['get_loan_by_refno']             = 'AdminController/get_loan_by_refno';
-$route['release_loan']                   = 'AdminController/release_loan';
+$route['release_loan']                  = 'AdminController/release_loan';
 $route['add_payment']                   = 'AdminController/add_payment';
 $route['fetch_the_collectors']          = 'AdminController/fetch_the_collectors';
 $route['get_payment_history']           = 'AdminController/get_payment_history';
@@ -64,11 +64,7 @@ $route['payment_collection']            = 'ReportController/payment_collection';
 $route['fully_paid_loans']              = 'ReportController/fully_paid_loans';
 // Profile
 $route['Profile']                       = 'LoanController/profile';
-
 //=============================== End Loan System  ===================================\\
-
-
-
 
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
