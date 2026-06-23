@@ -1,3 +1,10 @@
+<style>
+.bg-warning {
+    background-color: #fff3cd !important;
+    border: 1px solid #ffc107 !important;
+}
+</style>
+
 <div class="main-content">
 
     <div class="page-content">
@@ -49,7 +56,7 @@
                                         <div class="col-md-4">
                                             <label class="form-label">Reference Number</label>
                                             <input type="text" id="reference_number" name="reference_number"
-                                                class="form-control" placeholder="Enter reference number" required>
+                                                class="form-control" placeholder="Reference no." required>
                                         </div>
 
                                         <div class="col-md-8">
@@ -105,10 +112,18 @@
                                         </div>
 
                                         <div class="col-md-6">
+                                            <label class="form-label">Total Payment</label>
+                                            <input type="text" id="total_payment" name="total_payment"
+                                                class="form-control bg-light" readonly>
+                                        </div>
+
+                                        <div class="col-md-6">
                                             <label class="form-label">Payment Date</label>
                                             <input type="text" name="payment_date" class="form-control bg-light"
                                                 value="<?= date('Y-m-d') ?>" readonly>
                                         </div>
+
+
 
                                     </div>
                                 </div>
@@ -232,35 +247,45 @@
 
 
     <div class="modal fade" id="ViewLoanModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
-        <div class="modal-dialog modal-xl">
+        <div class="modal-dialog" style="max-width: 85%;">
             <div class="modal-content">
 
                 <div class="modal-header">
-                    <h5 class="modal-title">Loan Details</h5>
+                    <h5 class="modal-title">Payment Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
                 <div class="modal-body">
 
                     <!-- Loan Summary -->
-                    <div class="row g-3">
+                    <div class="row g-2 align-items-end flex-nowrap overflow-auto">
 
-                        <div class="col-md-3">
+                        <div class="col">
                             <label class="form-label">Borrower Name</label>
                             <input type="text" id="view_fullname" class="form-control" readonly>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col">
+                            <label class="form-label">Reference No</label>
+                            <input type="text" id="view_ref_no" class="form-control" readonly>
+                        </div>
+
+                        <div class="col">
                             <label class="form-label">Loan Amount</label>
                             <input type="text" id="view_loan_amount" class="form-control" readonly>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col">
                             <label class="form-label">Interest Rate</label>
                             <input type="text" id="view_interest_rate" class="form-control" readonly>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col">
+                            <label class="form-label">Total Balance</label>
+                            <input type="text" id="view_total_balance" class="form-control" readonly>
+                        </div>
+
+                        <div class="col">
                             <label class="form-label">Effective Date</label>
                             <input type="text" id="view_effective_date" class="form-control" readonly>
                         </div>
@@ -270,9 +295,10 @@
                     <!-- Payment History Table -->
                     <br>
                     <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-sm" id="PaymentHistoryTable">
+                        <table class="table table-striped align-middle w-100 nowrap table-sm" id="PaymentHistoryTable">
                             <thead class="table-light">
                                 <tr>
+                                    <th>Payment No</th>
                                     <th>Date Payment</th>
                                     <th>Collector</th>
                                     <th>Payment Method</th>
@@ -282,33 +308,30 @@
                                     <th>Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                            </tbody>
+
+                            <tbody></tbody>
+
+                            <tfoot class="table-light">
+                                <tr class="text-center fw-bold">
+                                    <td colspan="4" class="text-end">TOTAL PAID</td>
+
+                                    <td id="tfoot_total_paid"></td>
+                                    <td></td>
+                                    <td id="tfoot_total_penalty"></td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
 
-                    <div class="row g-3">
 
-                        <div class="col-md-4">
-                            <label class="form-label">Total Balance</label>
-                            <input type="text" id="view_total_balance" class="form-control" readonly>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Total Amount Paid</label>
-                            <input type="text" id="view_total_paid" class="form-control" readonly>
-                        </div>
-
-                        <div class="col-md-4">
-                            <label class="form-label">Total Remaining Balance</label>
-                            <input type="text" id="view_total_remaining" class="form-control" readonly>
-                        </div>
-                    </div>
 
 
                 </div>
 
                 <!-- Modal Footer -->
                 <div class="modal-footer">
+
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
                         <i class="ri-close-line me-1"></i> Close
                     </button>
@@ -487,7 +510,7 @@
         });
 
 
-       
+
 
 
 
@@ -535,17 +558,11 @@
             let loan_id = $(this).data('id');
             let ref_no = $(this).data('ref-no');
 
-            window.currentRefNo = ref_no;
-            window.currentBorrower = $(this).data('full-name');
-            window.currentLoanAmount = parseFloat($(this).data('loan-amount')) || 0;
+            $('#view_fullname').val($(this).data('full-name'));
+            $('#view_ref_no').val($(this).data('ref-no'));
+            $('#view_effective_date').val($(this).data('effective-date'));
 
             let loan_amount = parseFloat($(this).data('loan-amount')) || 0;
-            let total_paid = parseFloat($(this).data('total-paid')) || 0;
-            let remaining = parseFloat($(this).data('remaining-balance')) || 0;
-
-            $('#view_fullname').val($(this).data('full-name'));
-
-            $('#view_effective_date').val($(this).data('effective-date'));
 
             $('#view_loan_amount').val(
                 loan_amount.toLocaleString('en-US', {
@@ -562,137 +579,130 @@
                 })
             );
 
-            $('#view_total_paid').val(
-                "₱ " + total_paid.toLocaleString('en-US', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                })
-            );
-
-            $('#view_total_remaining').val(
-                "₱ " + remaining.toLocaleString('en-US', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                })
-            );
-
+            // destroy old table
             if ($.fn.DataTable.isDataTable('#PaymentHistoryTable')) {
                 $('#PaymentHistoryTable').DataTable().destroy();
             }
 
+            // init table
             $('#PaymentHistoryTable').DataTable({
                 processing: true,
                 responsive: true,
-                destroy: true,
                 autoWidth: false,
                 ordering: false,
+                searching: false,
 
                 ajax: {
                     url: "<?= base_url('get_payment_history') ?>",
                     type: "POST",
                     data: {
-                        loan_id: loan_id,
-                        ref_no: ref_no
+                        loan_id,
+                        ref_no
                     }
                 },
 
                 columns: [
 
                     {
-                        data: "date_payment"
+                        data: "payment_no"
                     },
                     {
+                        data: "date_payment"
+                    },
+
+                    {
                         data: "collector",
-                        render: function(data, type, row) {
-                            return `<span class="collector-text" data-id="${row.id}">${data}</span>`;
-                        }
+                        render: (d, t, r) =>
+                            `<span class="collector-text">${d}</span>`
                     },
 
                     {
                         data: "payment_method",
-                        render: function(data, type, row) {
-                            return `<span class="method-text" data-id="${row.id}">${data}</span>`;
-                        }
+                        render: (d) =>
+                            `<span class="method-text">${d}</span>`
                     },
 
                     {
                         data: "payment_amount",
-                        render: function(data, type, row) {
+                        className: "text-end",
+                        render: function(data) {
                             let amount = parseFloat(data) || 0;
-
-                            return `
-                        <span class="amount-text" data-id="${row.id}">
-                            ₱${amount.toLocaleString('en-PH', {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2
-                            })}
-                        </span>
-                    `;
+                            return `<span class="amount-text">${amount.toLocaleString('en-PH', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    })}</span>`;
                         }
                     },
 
                     {
                         data: "remaining_balance",
                         className: "text-end",
-                        render: function(data) {
-                            return "₱ " + parseFloat(data || 0)
-                                .toLocaleString('en-PH', {
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 2
-                                });
-                        }
+                        render: d =>
+                            (parseFloat(d) || 0).toLocaleString('en-PH', {
+                                minimumFractionDigits: 2
+                            })
                     },
 
                     {
                         data: "penalty",
                         className: "text-end",
-                        render: function(data) {
-                            return "₱ " + parseFloat(data || 0)
-                                .toLocaleString('en-PH', {
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 2
-                                });
-                        }
+                        render: d =>
+                            (parseFloat(d) || 0).toLocaleString('en-PH', {
+                                minimumFractionDigits: 2
+                            })
                     },
 
                     {
                         data: null,
-                        orderable: false,
-                        searchable: false,
                         className: "text-center",
-                        render: function(data, type, row) {
-
-                            console.log(row.remaining_balance);
-
-                            return `
-                            <button type="button"
-                                class="btn btn-primary btn-sm btn-edit-receipt me-1"
-                                data-id="${row.id}">
-                                <i class="ri-edit-line me-1"></i> Edit
+                        render: (d, t, r) => `
+                            <button class="btn btn-primary btn-sm btn-edit-receipt"
+                                data-id="${r.id}">
+                                <i class="ri-edit-line"></i> Edit
                             </button>
 
-                            <button type="button"
-                                class="btn btn-success btn-sm btn-print-receipt me-1"
-                                data-date="${row.date_payment}"
-                                data-collector="${row.collector}"
-                                data-method="${row.payment_method}"
-                                data-amount="${row.payment_amount}"
-                                data-total-overall-paid="${row.total_overall_paid || 0}"
-                                data-balance="${row.remaining_balance || 0}"
-                                data-penalty="${row.penalty || 0}">
-                                <i class="ri-printer-line me-1"></i> Print
+                            <button class="btn btn-success btn-sm btn-print-receipt"
+                                data-payment-no="${r.payment_no}"
+                                data-date-payment="${r.date_payment}"
+                                data-collector="${r.collector}"
+                                data-payment-method="${r.payment_method}"
+                                data-payment-amount="${r.payment_amount}"
+                                data-remaining-balance="${r.remaining_balance}"
+                                data-penalty="${r.penalty}">
+                                <i class="ri-printer-line"></i> Print
                             </button>
-                        `;
-                        }
+                        `
                     }
+                ],
 
-                ]
+                initComplete: function() {
+
+                    let api = this.api();
+
+                    const sum = (i) =>
+                        api.column(i, {
+                            page: 'all'
+                        }).data()
+                        .reduce((a, b) => (parseFloat(a) || 0) + (parseFloat(b) || 0), 0);
+
+                    let totalPaid = sum(4);
+                    let totalPenalty = sum(6);
+
+                    $('#tfoot_total_paid').html(
+                        "₱ " + totalPaid.toLocaleString('en-PH', {
+                            minimumFractionDigits: 2
+                        })
+                    );
+
+                    $('#tfoot_total_penalty').html(
+                        "₱ " + totalPenalty.toLocaleString('en-PH', {
+                            minimumFractionDigits: 2
+                        })
+                    );
+                }
             });
 
-            new bootstrap.Modal(
-                document.getElementById('ViewLoanModal')
-            ).show();
-
+            new bootstrap.Modal(document.getElementById('ViewLoanModal')).show();
         });
 
 
@@ -721,34 +731,50 @@
 
             let isEditing = row.data('editing') === true;
 
-            // SAVE
+            // ================= SAVE =================
             if (isEditing) {
 
                 let collector = row.find('.collector-input').val();
                 let method = row.find('.method-input').val();
 
-                let amount = row.find('.amount-input').val()
-                    .replace(/[₱,\s]/g, '');
+                let amount = parseFloat(
+                    row.find('.amount-input').val()
+                ) || 0;
 
-                $.ajax({
-                    url: "<?= base_url('update_payment') ?>",
-                    type: "POST",
-                    dataType: "json",
-                    data: {
-                        id: id,
-                        collector: collector,
-                        payment_method: method,
-                        payment_amount: amount
-                    },
-                    success: function(result) {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "Do you want to update this payment?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, update it!'
+                }).then((result) => {
 
-                        if (result.success) {
+                    if (!result.isConfirmed) return;
 
-                            let formattedAmount = Number(amount).toLocaleString('en-PH', {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2
-                            });
+                    $.ajax({
+                        url: "<?= base_url('update_payment') ?>",
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            id,
+                            collector,
+                            payment_method: method,
+                            payment_amount: amount
+                        },
 
+                        success: function(res) {
+
+                            if (!res.success) {
+                                return Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Update failed'
+                                });
+                            }
+
+                            // back to text
                             row.find('.collector-input').replaceWith(
                                 `<span class="collector-text">${collector}</span>`
                             );
@@ -758,72 +784,50 @@
                             );
 
                             row.find('.amount-input').replaceWith(
-                                `<span class="amount-text">₱${formattedAmount}</span>`
+                                `<span class="amount-text">${amount.toLocaleString('en-PH', {
+                    minimumFractionDigits: 2
+                })}</span>`
                             );
 
                             row.data('editing', false);
 
                             btn.removeClass('btn-success')
                                 .addClass('btn-primary')
-                                .html('<i class="ri-edit-line me-1"></i> Edit');
+                                .text('Edit');
 
+                            // success alert
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Updated!',
-                                text: 'Payment updated successfully.',
+                                text: 'Payment updated successfully',
                                 timer: 1500,
                                 showConfirmButton: false
                             });
 
-                            $('#PaymentHistoryTable').DataTable().ajax.reload(null, false);
-
-                        } else {
-
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Failed!',
-                                text: 'Unable to update payment.'
-                            });
-
+                            $('#PaymentHistoryTable').DataTable().ajax.reload();
                         }
-                    },
-                    error: function(xhr, status, error) {
-
-                        console.log(xhr.responseText);
-
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Server Error',
-                            text: 'Something went wrong.'
-                        });
-
-                    }
+                    });
                 });
-
                 return;
             }
 
-            // RESET OTHER ROWS
+            // ================= CANCEL OTHER EDITS =================
             $('#PaymentHistoryTable tbody tr').each(function() {
 
                 let tr = $(this);
 
-                if (tr[0] !== row[0] && tr.data('editing') === true) {
-
-                    let collector = tr.find('.collector-input').val();
-                    let method = tr.find('.method-input').val();
-                    let amount = tr.find('.amount-input').val();
+                if (tr.data('editing')) {
 
                     tr.find('.collector-input').replaceWith(
-                        `<span class="collector-text">${collector}</span>`
+                        `<span class="collector-text">${tr.find('.collector-input').val()}</span>`
                     );
 
                     tr.find('.method-input').replaceWith(
-                        `<span class="method-text">${method}</span>`
+                        `<span class="method-text">${tr.find('.method-input').val()}</span>`
                     );
 
                     tr.find('.amount-input').replaceWith(
-                        `<span class="amount-text">${amount}</span>`
+                        `<span class="amount-text">${tr.find('.amount-input').val()}</span>`
                     );
 
                     tr.data('editing', false);
@@ -831,64 +835,40 @@
                     tr.find('.btn-edit-receipt')
                         .removeClass('btn-success')
                         .addClass('btn-primary')
-                        .html('<i class="ri-edit-line me-1"></i> Edit');
+                        .html('<i class="ri-edit-line"></i> Edit');
                 }
             });
 
-            // ENTER EDIT MODE
+            // ================= ENTER EDIT MODE =================
             row.data('editing', true);
 
             let collectorText = row.find('.collector-text').text().trim();
             let methodText = row.find('.method-text').text().trim();
+
             let amountText = row.find('.amount-text').text().replace(/[₱,\s]/g, '');
 
             row.find('.collector-text').replaceWith(
-                `<input type="text"
-            class="form-control text-danger collector-input"
-            value="${collectorText}">`
+                `<input class="form-control collector-input bg-warning text-dark"
+        value="${collectorText}">`
             );
 
             row.find('.method-text').replaceWith(
-                `<input type="text"
-            class="form-control text-danger method-input"
-            value="${methodText}">`
+                `<input class="form-control method-input bg-warning text-dark"
+        value="${methodText}">`
             );
 
             row.find('.amount-text').replaceWith(
-                `<input type="number"
-            class="form-control text-danger amount-input"
-            step="0.01"
-            value="${amountText}">`
+                `<input type="number" step="0.01"
+        class="form-control amount-input bg-warning text-dark text-end"
+        value="${amountText}">`
             );
 
             btn.removeClass('btn-primary')
                 .addClass('btn-success')
-                .html('<i class="ri-save-line me-1"></i> Save');
+                .html('<i class="ri-save-line"></i> Save');
         });
 
 
-        $(document).on('click', '.btn-print-receipt', function() {
-
-            let remainingBalance = $(this).attr('data-balance');
-            let totalPaid = parseFloat($(this).attr('data-total-overall-paid') || 0);
-
-            console.log('Remaining:', remainingBalance);
-            console.log('Total Paid:', totalPaid);
-
-            printReceipt(
-                window.currentRefNo,
-                window.currentBorrower,
-                window.currentLoanAmount,
-                remainingBalance,
-                $(this).attr('data-penalty'),
-                $(this).attr('data-amount'),
-                $(this).attr('data-method'),
-                $(this).attr('data-collector'),
-                $(this).attr('data-date'),
-                totalPaid
-            );
-
-        });
 
 
 
@@ -995,10 +975,22 @@
                         // SHOW AMOUNT PAID
                         $('#amount_paid').show();
 
-                        // YOUR ORIGINAL LOGIC
-                        $('#amount_paid').val(
-                            parseFloat(d.amount_due || 0).toFixed(2)
-                        );
+
+                        let totalPayment = parseFloat(d.amount_due || 0);
+
+                        let penalty = parseFloat(d.penalty || 0);
+
+                        // base payment = total - penalty (safe extraction)
+                        let basePayment = totalPayment - penalty;
+                        if (basePayment < 0) basePayment = 0;
+
+                        $('#amount_paid').val(basePayment.toFixed(2));
+                        $('#penalty_amount').val(penalty.toFixed(2));
+                        $('#total_payment').val(totalPayment.toFixed(2));
+
+
+
+
 
                         window.currentTotalPaid = d.total_overall_paid || 0;
 
@@ -1066,100 +1058,90 @@
             }
         });
 
+        $('#amount_paid, #penalty_amount').on('input', function() {
+
+            let amount = parseFloat($('#amount_paid').val()) || 0;
+            let penalty = parseFloat($('#penalty_amount').val()) || 0;
+
+            let total = amount + penalty;
+
+            $('#total_payment').val(total.toFixed(2));
+        });
 
         // SAVE PAYMENT
         $('#BorrowerForm').submit(function(e) {
 
             e.preventDefault();
 
-            $.ajax({
-                url: "<?= base_url('add_payment') ?>",
-                type: "POST",
-                data: $(this).serialize(),
-                dataType: "json",
+            Swal.fire({
+                icon: 'question',
+                title: 'Are you sure?',
+                text: 'You want to pay this loan?',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Pay Now',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
 
-                beforeSend: function() {
-                    $('#btnSave')
-                        .prop('disabled', true)
-                        .html('<i class="ri-loader-4-line ri-spin"></i> Saving...');
-                },
+                if (!result.isConfirmed) return;
 
-                success: function(response) {
+                $.ajax({
+                    url: "<?= base_url('add_payment') ?>",
+                    type: "POST",
+                    data: $(this).serialize(),
+                    dataType: "json",
 
-                    if (response.status === 'success') {
+                    beforeSend: function() {
+                        $('#btnSave')
+                            .prop('disabled', true)
+                            .html(
+                                '<i class="ri-loader-4-line ri-spin"></i> Saving...'
+                            );
+                    },
 
-                        let d = response.data;
+                    success: function(response) {
 
-                        let receiptData = {
-                            refNo: $('#reference_number').val(),
-                            borrower: $('#borrower_name').val(),
+                        if (response.status === 'success') {
 
-                            loanAmount: d.loan_amount,
-                            remainingBalance: d.remaining_balance,
-                            totalPaid: d.total_overall_paid,
-
-                            penalty: $('#penalty_amount').val(),
-                            amountPaid: $('#amount_paid').val(),
-                            paymentMethod: $('select[name="payment_method"]').val(),
-                            collector: $('#collector').val(), // ✅ Fixed
-                            paymentDate: response.date_payment
-                        };
-
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Payment Saved',
-                            text: response.message,
-                            showCancelButton: true,
-                            confirmButtonText: 'Print Receipt'
-                        }).then((result) => {
-
-                            if (result.isConfirmed) {
-                                printReceipt(
-                                    receiptData.refNo,
-                                    receiptData.borrower,
-                                    receiptData.loanAmount,
-                                    receiptData.remainingBalance,
-                                    receiptData.penalty,
-                                    receiptData.amountPaid,
-                                    receiptData.paymentMethod,
-                                    receiptData.collector,
-                                    receiptData.paymentDate,
-                                    receiptData.totalPaid
-                                );
-                            }
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Payment Saved',
+                                text: response.message,
+                                confirmButtonText: 'Close'
+                            });
 
                             $('#BorrowerForm')[0].reset();
                             $('#PaymentTable').DataTable().ajax.reload(null, false);
-                        });
 
-                    } else {
+                        } else {
 
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Payment Failed',
+                                text: response.message ||
+                                    'Something went wrong'
+                            });
+
+                        }
+                    },
+
+                    error: function(xhr) {
                         Swal.fire({
                             icon: 'error',
-                            title: 'Payment Failed',
-                            text: response.message || 'Something went wrong'
+                            title: 'Server Error',
+                            text: 'An unexpected error occurred.'
                         });
+                        console.error(xhr.responseText);
+                    },
 
+                    complete: function() {
+                        $('#btnSave')
+                            .prop('disabled', false)
+                            .html('<i class="ri-add-line me-1"></i> Add Payment');
                     }
-                },
 
-                error: function(xhr) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Server Error',
-                        text: 'An unexpected error occurred.'
-                    });
-                    console.error(xhr.responseText);
-                },
-
-                complete: function() {
-                    $('#btnSave')
-                        .prop('disabled', false)
-                        .html('<i class="ri-add-line me-1"></i> Add Payment');
-                }
+                });
 
             });
-
         });
 
 
@@ -1195,145 +1177,177 @@
 
 
 
+    }); // End Document 
 
 
 
 
-        function printReceipt(
-            refNo,
-            borrower,
-            loanAmount,
-            remainingBalance,
-            penalty,
-            amountPaid,
-            paymentMethod,
-            collector,
-            paymentDate,
-            totalPaid
-        ) {
 
-            let receipt = `
-            <html>
-            <head>
-                <title>Receipt</title>
+    $(document).on('click', '.btn-print-receipt', function() {
 
-                <style>
-                    @page {
-                        size: 100mm 150mm;
-                        margin: 0;
-                    }
+        let fullname = $('#view_fullname').val();
+        let refNo = $('#view_ref_no').val();
 
-                    html, body {
-                        margin: 0;
-                        padding: 0;
-                        font-family: Arial;
-                        -webkit-print-color-adjust: exact;
-                        print-color-adjust: exact;
-                    }
+        let paymentNo = $(this).data('payment-no');
+        let datePayment = $(this).data('date-payment');
+        let collector = $(this).data('collector');
+        let paymentMethod = $(this).data('payment-method');
+        let amountPaid = parseFloat($(this).data('payment-amount') || 0);
+        let remainingBalance = parseFloat($(this).data('remaining-balance') || 0);
+        let penalty = parseFloat($(this).data('penalty') || 0);
 
-                    .box {
-                        width: 100%;
-                        height: 100%;
-                        box-sizing: border-box;
-                        padding: 8mm;
-                        border: 2px solid #000;
-                    }
+        let win = window.open('', '', 'width=500,height=600');
 
-                    h2 {
-                        text-align: center;
-                        margin: 0 0 10px 0;
-                        font-size: 14px;
-                    }
+        win.document.write(`
+        <html>
+        <head>
+            <title>Payment Receipt</title>
 
-                    table {
-                        width: 100%;
-                        border-collapse: collapse;
-                        font-size: 12px;
-                    }
+             <style>
 
-                    td {
-                        padding: 3px 0;
-                    }
+                @page{
+                    size:80mm 100mm;
+                    margin:3mm;
+                }
 
-                    .right {
-                        text-align: right;
-                    }
+                body{
+                    font-family:Arial,sans-serif;
+                    margin:0;
+                    padding:0;
+                }
 
-                    .line {
-                        border-top: 1px dashed #000;
-                        margin: 8px 0;
-                    }
+                .receipt{
+                    width:100%;
+                    border:1px solid #000;
+                    padding:5mm;
+                    box-sizing:border-box;
+                    page-break-after:always;
+                }
 
-                    .signature {
-                        text-align: center;
-                        margin-top: 15px;
-                        font-size: 12px;
-                    }
-                </style>
-            </head>
+                h3{
+                    text-align:center;
+                    margin:0 0 5px;
+                    font-size:12px;
+                }
 
-            <body onload="window.print()">
+                table{
+                    width:100%;
+                    border-collapse:collapse;
+                    font-size:10px;
+                }
 
-            <div class="box">
+                td{
+                    padding:2px 0;
+                }
 
-                <h2>LOAN RECEIPT</h2>
+                .right{
+                    text-align:right;
+                }
+
+                .line{
+                    border-top:1px dashed #000;
+                    margin:5px 0;
+                }
+
+                .signature{
+                    text-align:center;
+                    margin-top:10px;
+                    font-size:10px;
+                }
+
+            </style>
+        </head>
+
+        <body>
+
+            <div class="receipt">
+
+                <h3>PAYMENT RECEIPT</h3>
 
                 <table>
-                    <tr><td>Reference Number</td><td class="right">${refNo}</td></tr>
-                    <tr><td>Borrower</td><td class="right">${borrower}</td></tr>
-                    <tr><td>Date Payment</td><td class="right">${paymentDate}</td></tr>
-                    <tr><td>Collected By</td><td class="right">${collector}</td></tr>
-                    <tr><td>Payment Method</td><td class="right">${paymentMethod}</td></tr>
+                    <tr>
+                        <td>Borrower</td>
+                        <td class="right">${fullname}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Reference No</td>
+                        <td class="right">${refNo}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Payment No</td>
+                        <td class="right">${paymentNo}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Date Payment</td>
+                        <td class="right">${datePayment}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Collector</td>
+                        <td class="right">${collector}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Method</td>
+                        <td class="right">${paymentMethod}</td>
+                    </tr>
                 </table>
 
                 <div class="line"></div>
 
                 <table>
-                    <tr>
-                        <td>Loan Amount</td>
-                        <td class="right">₱ ${parseFloat(loanAmount || 0).toFixed(2)}</td>
-                    </tr>
-                    <tr>
-                        <td>Penalty</td>
-                        <td class="right">₱ ${parseFloat(penalty || 0).toFixed(2)}</td>
-                    </tr>
                     <tr>
                         <td>Amount Paid</td>
-                        <td class="right">₱ ${parseFloat(amountPaid || 0).toFixed(2)}</td>
+                        <td class="right">
+                            ₱ ${amountPaid.toLocaleString('en-PH', {
+                                minimumFractionDigits: 2
+                            })}
+                        </td>
                     </tr>
-                </table>
 
-                <div class="line"></div>
-
-                <table>
                     <tr>
-                        <td><b>Total Paid</b></td>
-                        <td class="right"><b>₱ ${parseFloat(totalPaid || 0).toFixed(2)}</b></td>
+                        <td>Penalty</td>
+                        <td class="right">
+                            ₱ ${penalty.toLocaleString('en-PH', {
+                                minimumFractionDigits: 2
+                            })}
+                        </td>
                     </tr>
+
                     <tr>
-                        <td><b>Remaining</b></td>
-                        <td class="right"><b>₱ ${parseFloat(remainingBalance || 0).toFixed(2)}</b></td>
+                        <td>Remaining</td>
+                        <td class="right">
+                            ₱ ${remainingBalance.toLocaleString('en-PH', {
+                                minimumFractionDigits: 2
+                            })}
+                        </td>
                     </tr>
                 </table>
 
                 <div class="line"></div>
 
                 <div class="signature">
-                    _______________________<br>
+                     <center>
+                    ___________________<br>
                     Authorized Signature
+                </center>
                 </div>
 
             </div>
 
-            </body>
-            </html>
-            `;
+        </body>
+        </html>
+    `);
 
-            let win = window.open('', '', 'width=400,height=600');
-            win.document.write(receipt);
-            win.document.close();
-        }
+        win.document.close();
 
+        setTimeout(() => {
+            win.print();
+            // win.close();
+        }, 500);
 
-    }); // End Document 
+    });
     </script>

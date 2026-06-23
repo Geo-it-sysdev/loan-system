@@ -943,6 +943,7 @@ class AdminController extends CI_Controller {
             SELECT 
                 l.id,
                 l.borrower_id,
+                l.loan_plan,
                 l.effective_date,
                 CONCAT('RN-', LPAD(l.id, 6, '0')) AS ref_no,
 
@@ -999,55 +1000,126 @@ class AdminController extends CI_Controller {
             return;
         }
 
-        $loan_amount = (float)$row->loan_amount;
+        // Loan Summary
+       
+        $loan_amount     = (float)$row->loan_amount;
         $monthly_payment = (float)$row->monthly_payment;
-        $total_balance = (float)$row->total_balance;
-        $total_paid = (float)$row->total_overall_paid;
+        $total_balance   = (float)$row->total_balance;
+        $total_paid      = (float)$row->total_overall_paid;
+        $loan_plan       = (int)$row->loan_plan;
 
+        // Remaining Balance
+        
         $remaining_balance = round(
             max(0, $total_balance - $total_paid),
             2
         );
 
+        // Paid Cycles Calculation
+   
         $paid_cycles = 0;
+        $current_month_paid = 0;
 
         if ($monthly_payment > 0) {
-            $paid_cycles = floor($total_paid / $monthly_payment);
+
+            // Count completed installments
+            $paid_cycles = min(
+                $loan_plan,
+                (int) floor(($total_paid + 0.01) / $monthly_payment)
+            );
+
+            // Remaining amount already paid toward current cycle
+            $current_month_paid = round(
+                $total_paid - ($paid_cycles * $monthly_payment),
+                2
+            );
         }
 
+        //  Next Due Date
+        
         $effective_date = new DateTime($row->effective_date);
 
-        $next_due_date = clone $effective_date;
-        $next_due_date->modify("+{$paid_cycles} month");
+        if ($loan_plan > 0 && $paid_cycles >= $loan_plan) {
 
+            // Loan completely paid
+            $next_due_date = null;
+
+        } else {
+
+            // Next unpaid cycle due date
+            $next_due_date = clone $effective_date;
+            $next_due_date->modify("+{$paid_cycles} month");
+        }
+
+        // Penalty Calculation
+        
+        $overdue_cycles = 0;
         $late_days = 0;
         $penalty = 0;
-        $overdue_cycles = 0;
 
-        if ($remaining_balance > 0 && $payment_date > $next_due_date) {
+        if ($remaining_balance > 0) {
 
-            $diff = $next_due_date->diff($payment_date);
+            $start_date = new DateTime($row->effective_date);
 
-            $late_days = $diff->days;
-            $penalty = $late_days * 1;
-            $overdue_cycles = floor($late_days / 30);
+            // Current cycle that should be paid
+            $expected_cycles = $paid_cycles + 1;
+
+            for ($i = 0; $i < $expected_cycles; $i++) {
+
+                $due_date = clone $start_date;
+                $due_date->modify("+{$i} month");
+
+                // Skip cycles already fully paid
+                if ($i < $paid_cycles) {
+                    continue;
+                }
+
+                // Apply penalty only if overdue
+                if ($payment_date > $due_date) {
+
+                    $days_late = $due_date->diff($payment_date)->days;
+
+                    $late_days += $days_late;
+
+                    // ₱1 per day penalty
+                    $penalty += $days_late;
+                }
+            }
         }
+
+        // Amount Due Calculation
+        
+        $installment_due = 0;
 
         if ($remaining_balance <= 0) {
 
             $amount_due = 0;
 
-        } elseif ($remaining_balance <= $monthly_payment) {
-
-            $amount_due = $remaining_balance + $penalty;
-
         } else {
 
-            $amount_due = $monthly_payment + $penalty;
+            // Partial payment for current cycle
+            if ($current_month_paid > 0) {
+
+                $installment_due = $monthly_payment - $current_month_paid;
+
+            } else {
+
+                $installment_due = $monthly_payment;
+            }
+
+            // Final payment adjustment
+            if ($remaining_balance < $installment_due) {
+
+                $installment_due = $remaining_balance;
+            }
+
+            $amount_due = $installment_due + $penalty;
         }
 
         $amount_due = round($amount_due, 2);
 
+        //  Loan Status
+        
         if ($remaining_balance <= 0.05) {
 
             $status = 'Fully';
@@ -1060,15 +1132,21 @@ class AdminController extends CI_Controller {
         } else {
 
             $status = 'Released';
-        } 
+        }
 
-        $this->db->where('id', $row->id)->update('tbl_loan', [
+        //  Update Loan Status
+        
+        $this->db->where('id', $row->id);
+        $this->db->update('tbl_loan', [
             'status' => $status
         ]);
 
+        //  Return Loan Information
+       
         echo json_encode([
             'status' => 'success',
             'data' => [
+
                 'id' => $row->id,
                 'borrower_id' => $row->borrower_id,
                 'ref_no' => $row->ref_no,
@@ -1083,14 +1161,20 @@ class AdminController extends CI_Controller {
 
                 'effective_date' => $row->effective_date,
                 'last_payment_date' => $row->last_payment_date,
-                'next_due_date' => $next_due_date->format('Y-m-d'),
 
+                'next_due_date' => $next_due_date
+                    ? $next_due_date->format('Y-m-d')
+                    : null,
+
+                'loan_plan' => $loan_plan,
                 'paid_cycles' => $paid_cycles,
                 'overdue_cycles' => $overdue_cycles,
 
                 'late_days' => $late_days,
                 'penalty' => round($penalty, 2),
 
+                'base_amount_due' => round($installment_due, 2),
+                'total_amount_due' => round($amount_due, 2),
                 'amount_due' => round($amount_due, 2),
 
                 'loan_status' => $status
@@ -1156,8 +1240,11 @@ class AdminController extends CI_Controller {
             return;
         }
 
-        $payment_amount = (float)$this->input->post('amount_paid');
-        $penalty_amount = (float)$this->input->post('penalty_amount');
+        $payment_amount  = (float)$this->input->post('amount_paid');
+        $penalty_amount  = (float)$this->input->post('penalty_amount');
+
+        // TOTAL PAYMENT = amount + penalty
+        $total_payment = round($payment_amount + $penalty_amount, 2);
 
         if ($payment_amount <= 0) {
 
@@ -1184,13 +1271,32 @@ class AdminController extends CI_Controller {
             $payment_amount = $remaining_balance;
         }
 
+
+        // YYYYMM format
+        $ym = date('Ym');
+
+        $count_row = $this->db->query("
+            SELECT COUNT(*) as cnt
+            FROM tbl_payment
+            WHERE ref_no = ?
+        ", [$this->input->post('reference_number')])->row();
+
+        $next_seq = (int)$count_row->cnt + 1;
+
+        $payment_no = 'PN-' . $ym . '-' . str_pad($next_seq, 2, '0', STR_PAD_LEFT);
+
+
         $insert = [
             'loan_id'        => $loan_id,
             'borrower_id'    => $this->input->post('borrower_id'),
             'ref_no'         => $this->input->post('reference_number'),
-            'collector'     => $this->session->userdata('fullname'),
+            'payment_no'     => $payment_no, // ✅ ADD THIS
+            'collector'      => $this->session->userdata('fullname'),
+
             'payment_amount' => $payment_amount,
             'penalty'        => $penalty_amount,
+            'total_payment'  => $total_payment,
+
             'payment_method' => $this->input->post('payment_method'),
             'date_payment'   => date('Y-m-d H:i:s')
         ];
@@ -1314,6 +1420,7 @@ class AdminController extends CI_Controller {
         $payments = $this->db->query("
             SELECT 
                 p.id,
+                p.payment_no,
                 p.date_payment,
                 p.collector,
                 p.payment_method,

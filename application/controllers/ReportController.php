@@ -144,6 +144,7 @@ class ReportController extends CI_Controller {
         $query = $this->db->query("
             SELECT 
                 p.id,
+                p.payment_no,
                 p.id AS receipt_no,
                 p.date_payment,
 

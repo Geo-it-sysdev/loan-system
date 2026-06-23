@@ -66,35 +66,45 @@
 
 
     <div class="modal fade" id="ViewLoanModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
-        <div class="modal-dialog modal-xl">
+        <div class="modal-dialog" style="max-width: 85%;">
             <div class="modal-content">
 
                 <div class="modal-header">
-                    <h5 class="modal-title">Loan Details</h5>
+                    <h5 class="modal-title">Payment Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
                 <div class="modal-body">
 
                     <!-- Loan Summary -->
-                    <div class="row g-3">
+                    <div class="row g-2 align-items-end flex-nowrap overflow-auto">
 
-                        <div class="col-md-3">
+                        <div class="col">
                             <label class="form-label">Borrower Name</label>
                             <input type="text" id="view_fullname" class="form-control" readonly>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col">
+                            <label class="form-label">Reference No</label>
+                            <input type="text" id="view_ref_no" class="form-control" readonly>
+                        </div>
+
+                        <div class="col">
                             <label class="form-label">Loan Amount</label>
                             <input type="text" id="view_loan_amount" class="form-control" readonly>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col">
                             <label class="form-label">Interest Rate</label>
                             <input type="text" id="view_interest_rate" class="form-control" readonly>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col">
+                            <label class="form-label">Total Balance</label>
+                            <input type="text" id="view_total_balance" class="form-control" readonly>
+                        </div>
+
+                        <div class="col">
                             <label class="form-label">Effective Date</label>
                             <input type="text" id="view_effective_date" class="form-control" readonly>
                         </div>
@@ -104,9 +114,10 @@
                     <!-- Payment History Table -->
                     <br>
                     <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-sm" id="PaymentHistoryTable">
+                        <table class="table table-striped align-middle w-100 nowrap table-sm" id="PaymentHistoryTable">
                             <thead class="table-light">
                                 <tr>
+                                    <th>Payment No</th>
                                     <th>Date Payment</th>
                                     <th>Collector</th>
                                     <th>Payment Method</th>
@@ -116,33 +127,30 @@
                                     <th>Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                            </tbody>
+
+                            <tbody></tbody>
+
+                            <tfoot class="table-light">
+                                <tr class="text-center fw-bold">
+                                    <td colspan="4" class="text-end">TOTAL PAID</td>
+
+                                    <td id="tfoot_total_paid"></td>
+                                    <td></td>
+                                    <td id="tfoot_total_penalty"></td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
 
-                    <div class="row g-3">
 
-                        <div class="col-md-4">
-                            <label class="form-label">Total Balance</label>
-                            <input type="text" id="view_total_balance" class="form-control" readonly>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Total Amount Paid</label>
-                            <input type="text" id="view_total_paid" class="form-control" readonly>
-                        </div>
-
-                        <div class="col-md-4">
-                            <label class="form-label">Total Remaining Balance</label>
-                            <input type="text" id="view_total_remaining" class="form-control" readonly>
-                        </div>
-                    </div>
 
 
                 </div>
 
                 <!-- Modal Footer -->
                 <div class="modal-footer">
+
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
                         <i class="ri-close-line me-1"></i> Close
                     </button>
@@ -244,17 +252,11 @@
         let loan_id = $(this).data('id');
         let ref_no = $(this).data('ref-no');
 
-        window.currentRefNo = ref_no;
-        window.currentBorrower = $(this).data('full-name');
-        window.currentLoanAmount = parseFloat($(this).data('loan-amount')) || 0;
+        $('#view_fullname').val($(this).data('full-name'));
+        $('#view_ref_no').val($(this).data('ref-no'));
+        $('#view_effective_date').val($(this).data('effective-date'));
 
         let loan_amount = parseFloat($(this).data('loan-amount')) || 0;
-        let total_paid = parseFloat($(this).data('total-paid')) || 0;
-        let remaining = parseFloat($(this).data('remaining-balance')) || 0;
-
-        $('#view_fullname').val($(this).data('full-name'));
-
-        $('#view_effective_date').val($(this).data('effective-date'));
 
         $('#view_loan_amount').val(
             loan_amount.toLocaleString('en-US', {
@@ -271,278 +273,300 @@
             })
         );
 
-        $('#view_total_paid').val(
-            "₱ " + total_paid.toLocaleString('en-US', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            })
-        );
-
-        $('#view_total_remaining').val(
-            "₱ " + remaining.toLocaleString('en-US', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            })
-        );
-
+        // destroy old table
         if ($.fn.DataTable.isDataTable('#PaymentHistoryTable')) {
             $('#PaymentHistoryTable').DataTable().destroy();
         }
 
+        // init table
         $('#PaymentHistoryTable').DataTable({
             processing: true,
             responsive: true,
-            destroy: true,
             autoWidth: false,
             ordering: false,
+            searching: false,
 
             ajax: {
                 url: "<?= base_url('get_payment_history') ?>",
                 type: "POST",
                 data: {
-                    loan_id: loan_id,
-                    ref_no: ref_no
+                    loan_id,
+                    ref_no
                 }
             },
 
             columns: [
 
                 {
+                    data: "payment_no"
+                },
+                {
                     data: "date_payment"
                 },
+
                 {
-                    data: "collector"
+                    data: "collector",
+                    render: (d, t, r) =>
+                        `<span class="collector-text">${d}</span>`
                 },
+
                 {
-                    data: "payment_method"
+                    data: "payment_method",
+                    render: (d) =>
+                        `<span class="method-text">${d}</span>`
                 },
 
                 {
                     data: "payment_amount",
                     className: "text-end",
                     render: function(data) {
-                        return "₱ " + parseFloat(data || 0)
-                            .toLocaleString('en-PH', {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2
-                            });
+                        let amount = parseFloat(data) || 0;
+                        return `<span class="amount-text">${amount.toLocaleString('en-PH', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    })}</span>`;
                     }
                 },
 
                 {
                     data: "remaining_balance",
                     className: "text-end",
-                    render: function(data) {
-                        return "₱ " + parseFloat(data || 0)
-                            .toLocaleString('en-PH', {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2
-                            });
-                    }
+                    render: d =>
+                        (parseFloat(d) || 0).toLocaleString('en-PH', {
+                            minimumFractionDigits: 2
+                        })
                 },
 
                 {
                     data: "penalty",
                     className: "text-end",
-                    render: function(data) {
-                        return "₱ " + parseFloat(data || 0)
-                            .toLocaleString('en-PH', {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2
-                            });
-                    }
+                    render: d =>
+                        (parseFloat(d) || 0).toLocaleString('en-PH', {
+                            minimumFractionDigits: 2
+                        })
                 },
 
                 {
                     data: null,
-                    orderable: false,
-                    searchable: false,
                     className: "text-center",
-                    render: function(data, type, row) {
+                    render: (d, t, r) => `
+                            <button class="btn btn-primary btn-sm btn-edit-receipt"
+                                data-id="${r.id}">
+                                <i class="ri-edit-line"></i> Edit
+                            </button>
 
-                        console.log(row.remaining_balance);
-
-                        return `
-            <button type="button"
-                class="btn btn-success btn-sm btn-print-receipt"
-                data-date="${row.date_payment}"
-                data-collector="${row.collector}"
-                data-method="${row.payment_method}"
-                data-amount="${row.payment_amount}"
-                data-total-overall-paid="${row.total_overall_paid || 0}"
-                data-balance="${row.remaining_balance || 0}"
-                data-penalty="${row.penalty || 0}">
-                <i class="ri-printer-line"></i> Print
-            </button>
-        `;
-                    }
+                            <button class="btn btn-success btn-sm btn-print-receipt"
+                                data-payment-no="${r.payment_no}"
+                                data-date-payment="${r.date_payment}"
+                                data-collector="${r.collector}"
+                                data-payment-method="${r.payment_method}"
+                                data-payment-amount="${r.payment_amount}"
+                                data-remaining-balance="${r.remaining_balance}"
+                                data-penalty="${r.penalty}">
+                                <i class="ri-printer-line"></i> Print
+                            </button>
+                        `
                 }
+            ],
 
-            ]
+            initComplete: function() {
+
+                let api = this.api();
+
+                const sum = (i) =>
+                    api.column(i, {
+                        page: 'all'
+                    }).data()
+                    .reduce((a, b) => (parseFloat(a) || 0) + (parseFloat(b) || 0), 0);
+
+                let totalPaid = sum(4);
+                let totalPenalty = sum(6);
+
+                $('#tfoot_total_paid').html(
+                    "₱ " + totalPaid.toLocaleString('en-PH', {
+                        minimumFractionDigits: 2
+                    })
+                );
+
+                $('#tfoot_total_penalty').html(
+                    "₱ " + totalPenalty.toLocaleString('en-PH', {
+                        minimumFractionDigits: 2
+                    })
+                );
+            }
         });
 
-        new bootstrap.Modal(
-            document.getElementById('ViewLoanModal')
-        ).show();
-
+        new bootstrap.Modal(document.getElementById('ViewLoanModal')).show();
     });
+
+
+
 
     $(document).on('click', '.btn-print-receipt', function() {
 
-        let remainingBalance = $(this).attr('data-balance');
-        let totalPaid = parseFloat($(this).attr('data-total-overall-paid') || 0);
+        let fullname = $('#view_fullname').val();
+        let refNo = $('#view_ref_no').val();
 
-        console.log('Remaining:', remainingBalance);
-        console.log('Total Paid:', totalPaid);
+        let paymentNo = $(this).data('payment-no');
+        let datePayment = $(this).data('date-payment');
+        let collector = $(this).data('collector');
+        let paymentMethod = $(this).data('payment-method');
+        let amountPaid = parseFloat($(this).data('payment-amount') || 0);
+        let remainingBalance = parseFloat($(this).data('remaining-balance') || 0);
+        let penalty = parseFloat($(this).data('penalty') || 0);
 
-        printReceipt(
-            window.currentRefNo,
-            window.currentBorrower,
-            window.currentLoanAmount,
-            remainingBalance,
-            $(this).attr('data-penalty'),
-            $(this).attr('data-amount'),
-            $(this).attr('data-method'),
-            $(this).attr('data-collector'),
-            $(this).attr('data-date'),
-            totalPaid
-        );
+        let win = window.open('', '', 'width=500,height=600');
+
+        win.document.write(`
+        <html>
+        <head>
+            <title>Payment Receipt</title>
+
+             <style>
+
+                @page{
+                    size:80mm 100mm;
+                    margin:3mm;
+                }
+
+                body{
+                    font-family:Arial,sans-serif;
+                    margin:0;
+                    padding:0;
+                }
+
+                .receipt{
+                    width:100%;
+                    border:1px solid #000;
+                    padding:5mm;
+                    box-sizing:border-box;
+                    page-break-after:always;
+                }
+
+                h3{
+                    text-align:center;
+                    margin:0 0 5px;
+                    font-size:12px;
+                }
+
+                table{
+                    width:100%;
+                    border-collapse:collapse;
+                    font-size:10px;
+                }
+
+                td{
+                    padding:2px 0;
+                }
+
+                .right{
+                    text-align:right;
+                }
+
+                .line{
+                    border-top:1px dashed #000;
+                    margin:5px 0;
+                }
+
+                .signature{
+                    text-align:center;
+                    margin-top:10px;
+                    font-size:10px;
+                }
+
+            </style>
+        </head>
+
+        <body>
+
+            <div class="receipt">
+
+                <h3>PAYMENT RECEIPT</h3>
+
+                <table>
+                    <tr>
+                        <td>Borrower</td>
+                        <td class="right">${fullname}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Reference No</td>
+                        <td class="right">${refNo}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Payment No</td>
+                        <td class="right">${paymentNo}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Date Payment</td>
+                        <td class="right">${datePayment}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Collector</td>
+                        <td class="right">${collector}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Method</td>
+                        <td class="right">${paymentMethod}</td>
+                    </tr>
+                </table>
+
+                <div class="line"></div>
+
+                <table>
+                    <tr>
+                        <td>Amount Paid</td>
+                        <td class="right">
+                            ₱ ${amountPaid.toLocaleString('en-PH', {
+                                minimumFractionDigits: 2
+                            })}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Penalty</td>
+                        <td class="right">
+                            ₱ ${penalty.toLocaleString('en-PH', {
+                                minimumFractionDigits: 2
+                            })}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Remaining</td>
+                        <td class="right">
+                            ₱ ${remainingBalance.toLocaleString('en-PH', {
+                                minimumFractionDigits: 2
+                            })}
+                        </td>
+                    </tr>
+                </table>
+
+                <div class="line"></div>
+
+                <div class="signature">
+                     <center>
+                    ___________________<br>
+                    Authorized Signature
+                </center>
+                </div>
+
+            </div>
+
+        </body>
+        </html>
+    `);
+
+        win.document.close();
+
+        setTimeout(() => {
+            win.print();
+            // win.close();
+        }, 500);
 
     });
-
-
-    function printReceipt(
-        refNo,
-        borrower,
-        loanAmount,
-        remainingBalance,
-        penalty,
-        amountPaid,
-        paymentMethod,
-        collector,
-        paymentDate,
-        totalPaid
-    ) {
-
-        let receipt = `
-    <html>
-    <head>
-        <title>Receipt</title>
-
-        <style>
-            @page {
-                size: 100mm 150mm;
-                margin: 0;
-            }
-
-            html, body {
-                margin: 0;
-                padding: 0;
-                font-family: Arial;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-
-            .box {
-                width: 100%;
-                height: 100%;
-                box-sizing: border-box;
-                padding: 8mm;
-                border: 2px solid #000;
-            }
-
-            h2 {
-                text-align: center;
-                margin: 0 0 10px 0;
-                font-size: 14px;
-            }
-
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                font-size: 12px;
-            }
-
-            td {
-                padding: 3px 0;
-            }
-
-            .right {
-                text-align: right;
-            }
-
-            .line {
-                border-top: 1px dashed #000;
-                margin: 8px 0;
-            }
-
-            .signature {
-                text-align: center;
-                margin-top: 15px;
-                font-size: 12px;
-            }
-        </style>
-    </head>
-
-    <body onload="window.print()">
-
-    <div class="box">
-
-        <h2>LOAN RECEIPT</h2>
-
-        <table>
-            <tr><td>Reference Number</td><td class="right">${refNo}</td></tr>
-            <tr><td>Borrower</td><td class="right">${borrower}</td></tr>
-            <tr><td>Date Payment</td><td class="right">${paymentDate}</td></tr>
-            <tr><td>Collected By</td><td class="right">${collector}</td></tr>
-            <tr><td>Payment Method</td><td class="right">${paymentMethod}</td></tr>
-        </table>
-
-        <div class="line"></div>
-
-        <table>
-            <tr>
-                <td>Loan Amount</td>
-                <td class="right">₱ ${parseFloat(loanAmount || 0).toFixed(2)}</td>
-            </tr>
-            <tr>
-                <td>Penalty</td>
-                <td class="right">₱ ${parseFloat(penalty || 0).toFixed(2)}</td>
-            </tr>
-            <tr>
-                <td>Amount Paid</td>
-                <td class="right">₱ ${parseFloat(amountPaid || 0).toFixed(2)}</td>
-            </tr>
-        </table>
-
-        <div class="line"></div>
-
-        <table>
-            <tr>
-                <td><b>Total Paid</b></td>
-                <td class="right"><b>₱ ${parseFloat(totalPaid || 0).toFixed(2)}</b></td>
-            </tr>
-            <tr>
-                <td><b>Remaining</b></td>
-                <td class="right"><b>₱ ${parseFloat(remainingBalance || 0).toFixed(2)}</b></td>
-            </tr>
-        </table>
-
-        <div class="line"></div>
-
-        <div class="signature">
-            _______________________<br>
-            Authorized Signature
-        </div>
-
-    </div>
-
-    </body>
-    </html>
-    `;
-
-        let win = window.open('', '', 'width=400,height=600');
-        win.document.write(receipt);
-        win.document.close();
-    }
     </script>

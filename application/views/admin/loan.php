@@ -684,24 +684,30 @@
                             showConfirmButton: false
                         });
 
-                        $('#BorrowerForm')[0].reset();
-
-                        $('#loan_id').val('');
-                        $('#borrower_id').val('');
-
-                        $('#btnSave')
-                            .removeClass('btn-success btn-danger')
-                            .addClass('btn-primary')
-                            .html('<i class="ri-add-line me-1"></i> Add Loan');
-
-                        mode = "add";
-
-                        loanTable.ajax.reload(null, false);
+                        // reload page after alert
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1500);
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: res.message || 'Something went wrong'
+                        });
                     }
+                },
+
+                error: function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Server Error',
+                        text: 'Please try again later'
+                    });
                 }
             });
         });
 
+        
         // VIEW LOAN
         $(document).on('click', '.btn-view', function() {
 
