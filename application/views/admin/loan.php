@@ -911,6 +911,9 @@
 
 
     document.addEventListener("DOMContentLoaded", function() {
+
+        refreshEffectiveDate();
+
         const today = new Date();
 
         today.setMonth(today.getMonth() + 1);
@@ -935,7 +938,6 @@
         $('#effective_date').val(`${year}-${month}-${day}`);
     }
 
-    document.addEventListener("DOMContentLoaded", function() {
-        refreshEffectiveDate();
-    });
+    // document.addEventListener("DOMContentLoaded", function() {
+    // });
     </script>

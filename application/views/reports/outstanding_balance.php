@@ -338,11 +338,6 @@
                     data: null,
                     className: "text-center",
                     render: (d, t, r) => `
-                            <button class="btn btn-primary btn-sm btn-edit-receipt"
-                                data-id="${r.id}">
-                                <i class="ri-edit-line"></i> Edit
-                            </button>
-
                             <button class="btn btn-success btn-sm btn-print-receipt"
                                 data-payment-no="${r.payment_no}"
                                 data-date-payment="${r.date_payment}"
