@@ -685,9 +685,33 @@
                         });
 
                         // reload page after alert
-                        setTimeout(function() {
-                            location.reload();
-                        }, 1500);
+                       setTimeout(function() {
+
+                        $('#BorrowerForm')[0].reset();
+
+                        $('#loan_id').val('');
+                        $('#borrower_id').val('');
+
+                        $('#BorrowerForm input').prop('readonly', false);
+                        $('#BorrowerForm select').prop('disabled', false);
+
+                        $('[name="monthly_payment"]').prop('readonly', true);
+                        $('[name="unearned_interest"]').prop('readonly', true);
+                        $('[name="total_balance"]').prop('readonly', true);
+
+                        // Restore button
+                        $('#btnSave')
+                            .removeClass('btn-danger btn-success')
+                            .addClass('btn-primary')
+                            .html('<i class="ri-add-line me-1"></i> Add Loan');
+
+                        mode = "add";
+
+                        $('#LoanTable').DataTable().ajax.reload(null, false);
+
+                        refreshEffectiveDate();
+
+                    }, 1500);
                     } else {
                         Swal.fire({
                             icon: 'error',
@@ -707,7 +731,7 @@
             });
         });
 
-        
+
         // VIEW LOAN
         $(document).on('click', '.btn-view', function() {
 
@@ -897,5 +921,21 @@
 
         document.getElementById("effective_date").value =
             `${year}-${month}-${day}`;
+    });
+
+    function refreshEffectiveDate() {
+        const today = new Date();
+
+        today.setMonth(today.getMonth() + 1);
+
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+
+        $('#effective_date').val(`${year}-${month}-${day}`);
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        refreshEffectiveDate();
     });
     </script>
