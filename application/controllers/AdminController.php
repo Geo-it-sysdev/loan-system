@@ -469,24 +469,31 @@ class AdminController extends CI_Controller {
         // UPLOAD PHOTO
         if (!empty($_FILES['photo']['name'])) {
 
-            $config['upload_path'] = FCPATH . 'assets/borrower/';
-            $config['allowed_types'] = 'jpg|jpeg|png|gif|webp|bmp|heic|heif';
-            $config['max_size'] = 10240; 
-            $config['encrypt_name'] = TRUE; 
-            $config['overwrite'] = FALSE;
+            $config['upload_path']   = FCPATH . 'assets/borrower/';
+            $config['allowed_types'] = 'jpg|jpeg|png|gif|webp|bmp';
+            $config['max_size']      = 10240;
+            $config['overwrite']     = TRUE;
             $config['remove_spaces'] = TRUE;
+
+            // Get uploaded file extension
+            $extension = strtolower(pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION));
+
+            // Save as firstname_lastname.extension
+            $config['file_name'] = $filename . '.' . $extension;
 
             $this->upload->initialize($config);
 
             if ($this->upload->do_upload('photo')) {
 
                 $uploadData = $this->upload->data();
+
                 $photo_path = 'assets/borrower/' . $uploadData['file_name'];
 
             } else {
+
                 echo json_encode([
-                    'status' => false,
-                    'message' => $this->upload->display_errors()
+                    'status'  => false,
+                    'message' => strip_tags($this->upload->display_errors())
                 ]);
                 return;
             }
@@ -582,35 +589,55 @@ class AdminController extends CI_Controller {
                 $this->input->post('municipalities', true) . ', ' .
                 $this->input->post('Province', true);
 
+        $firstname = $this->input->post('first_name', true);
+        $lastname  = $this->input->post('last_name', true);
+
+        $clean_firstname = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $firstname));
+        $clean_lastname  = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $lastname));
+
+        $filename = $clean_firstname . '_' . $clean_lastname;
+
         $photo_path = $borrower->photo;
 
         if (!empty($_FILES['photo']['name'])) {
 
-            $config['upload_path']      = FCPATH . 'assets/borrower/';
-            $config['allowed_types']    = 'jpg|jpeg|png|gif|webp|bmp|heic|heif';
-            $config['max_size']         = 10240;
-            $config['encrypt_name']     = TRUE;
-            $config['overwrite']        = FALSE;
-            $config['remove_spaces']    = TRUE;
+            // Remove old photo
+            if (
+                !empty($borrower->photo) &&
+                $borrower->photo != 'assets/borrower/default.png'
+            ) {
 
+                $oldPhoto = FCPATH . $borrower->photo;
+
+                if (is_file($oldPhoto)) {
+                    unlink($oldPhoto);
+                }
+            }
+
+            // Remove any existing file with same borrower name
+            foreach (glob(FCPATH . "assets/borrower/{$filename}.*") as $file) {
+                if (is_file($file)) {
+                    unlink($file);
+                }
+            }
+
+            $extension = strtolower(pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION));
+
+            $config['upload_path']   = FCPATH . 'assets/borrower/';
+            $config['allowed_types'] = 'jpg|jpeg|png|gif|webp|bmp';
+            $config['max_size']      = 10240;
+            $config['file_name']     = $filename . '.' . $extension;
+            $config['overwrite']     = TRUE;
+            $config['remove_spaces'] = TRUE;
+
+            $this->load->library('upload');
             $this->upload->initialize($config);
 
             if ($this->upload->do_upload('photo')) {
 
                 $uploadData = $this->upload->data();
+
                 $photo_path = 'assets/borrower/' . $uploadData['file_name'];
-
-                if (
-                    !empty($borrower->photo) &&
-                    $borrower->photo != 'assets/borrower/default.png'
-                ) {
-
-                    $oldPhoto = FCPATH . $borrower->photo;
-
-                    if (is_file($oldPhoto)) {
-                        unlink($oldPhoto);
-                    }
-                }
 
             } else {
 
