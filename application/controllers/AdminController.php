@@ -15,13 +15,15 @@ class AdminController extends CI_Controller {
     }
 
     // Dashboard
-    public function get_dashboard_stats()
+   public function get_dashboard_stats()
     {
         // Total Borrowers
         $total_borrowers = $this->db->count_all('tbl_borrower');
 
         // Total Loan Release
-        $total_release = $this->db->count_all('tbl_loan');
+        $this->db->from('tbl_loan');
+        $this->db->where_in('status', ['Released', 'Partial', 'Fully']);
+        $total_release = $this->db->count_all_results();
 
         // Remaining Balance
         $this->db->from('tbl_loan');
@@ -30,7 +32,7 @@ class AdminController extends CI_Controller {
 
         // Total Paid
         $this->db->from('tbl_loan');
-        $this->db->where('status', 'fully');
+        $this->db->where('status', 'Fully');
         $total_paid = $this->db->count_all_results();
 
         echo json_encode([
@@ -39,6 +41,63 @@ class AdminController extends CI_Controller {
             'total_release' => $total_release,
             'remaining_balance' => $remaining_balance,
             'total_paid' => $total_paid
+        ]);
+    }
+
+
+
+    public function get_revenue_chart()
+    {
+        $year = $this->input->get('year');
+
+        if ($year == 'this' || empty($year)) {
+            $year = date('Y');
+        }
+
+        $invest = array_fill(1, 12, 0);
+        $income = array_fill(1, 12, 0);
+        $unearned = array_fill(1, 12, 0);
+
+        $query = $this->db->query("
+            SELECT
+                MONTH(effective_date) AS month_no,
+
+                SUM(loan_amount) AS total_invest,
+
+                SUM(
+                    CASE
+                        WHEN status IN ('Released','Partial')
+                        THEN unearned_interest
+                        ELSE 0
+                    END
+                ) AS total_unearned,
+
+                SUM(
+                    CASE
+                        WHEN status = 'Fully'
+                        THEN unearned_interest
+                        ELSE 0
+                    END
+                ) AS total_income
+
+            FROM tbl_loan
+            WHERE YEAR(effective_date) = ?
+            GROUP BY MONTH(effective_date)
+        ", [$year]);
+
+        foreach ($query->result() as $row) {
+
+            $month = (int)$row->month_no;
+
+            $invest[$month] = (float)$row->total_invest;
+            $income[$month] = (float)$row->total_income;
+            $unearned[$month] = (float)$row->total_unearned;
+        }
+
+        echo json_encode([
+            'invest'   => array_values($invest),
+            'income'   => array_values($income),
+            'unearned' => array_values($unearned)
         ]);
     }
 

@@ -12,7 +12,7 @@ class ReportController extends CI_Controller {
     }
 
 
-    public function overdue_loans()
+   public function overdue_loans()
     {
         $query = $this->db->query("
             SELECT
@@ -69,6 +69,9 @@ class ReportController extends CI_Controller {
             FROM tbl_loan l
             INNER JOIN tbl_borrower b ON b.id = l.borrower_id
             LEFT JOIN tbl_payment p ON p.loan_id = l.id
+
+            WHERE l.status IN ('Released', 'Partial')
+
             GROUP BY l.id
             HAVING days_overdue > 0
         ");
@@ -96,11 +99,13 @@ class ReportController extends CI_Controller {
                 ) AS borrower_name,
 
                 l.loan_amount,
+                l.unearned_interest,
+                l.total_balance,
 
                 IFNULL(SUM(p.payment_amount), 0) AS total_paid,
 
                 GREATEST(
-                    (CAST(l.loan_amount AS DECIMAL(12,2)) - IFNULL(SUM(p.payment_amount), 0)),
+                    (CAST(l.total_balance AS DECIMAL(12,2)) - IFNULL(SUM(p.payment_amount), 0)),
                     0
                 ) AS remaining_balance,
 
@@ -130,7 +135,7 @@ class ReportController extends CI_Controller {
                 l.loan_amount,
                 l.monthly_payment
 
-            HAVING remaining_balance > 0
+       
         ");
 
         echo json_encode([

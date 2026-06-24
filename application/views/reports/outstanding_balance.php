@@ -42,7 +42,7 @@
                                         <tr>
                                             <th>Reference No.</th>
                                             <th>Borrower Name</th>
-                                            <th>Loan Amount</th>
+                                            <th>Total Balance</th>
                                             <th>Total Paid</th>
                                             <th>Remaining Balance</th>
                                             <th>Next Due Date</th>
@@ -181,7 +181,7 @@
                     data: "borrower_name"
                 },
                 {
-                    data: "loan_amount",
+                    data: "total_balance",
                     render: function(data) {
                         return "₱ " + parseFloat(data).toLocaleString(undefined, {
                             minimumFractionDigits: 2

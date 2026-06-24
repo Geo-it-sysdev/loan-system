@@ -154,61 +154,107 @@
             <!-- ApexCharts CDN -->
             <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
-            <div class="col-xxl-6 col-md-6">
-                <div class="card">
-                    <div class="card-header align-items-center d-flex">
-                        <h4 class="card-title mb-0 flex-grow-1">Revenue</h4>
+            <div class="col-12 col-xl-6">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+                            <h4 class="card-title mb-0">Revenue</h4>
 
-                        <div class="flex-shrink-0">
-                            <div class="dropdown card-header-dropdown">
-                                <a class="text-reset dropdown-btn" href="#" data-bs-toggle="dropdown">
-                                    <span class="fw-semibold text-uppercase fs-12">Sort by:</span>
-                                    <span class="text-muted" id="selectedYear">This Year</span>
+                            <div class="dropdown">
+                                <a class="text-reset dropdown-btn d-flex align-items-center gap-1" href="#"
+                                    data-bs-toggle="dropdown">
+
+                                    <span class="fw-semibold text-uppercase fs-12">
+                                        Year:
+                                    </span>
+
+                                    <span class="text-muted" id="selectedYear">
+                                        <?= date('Y'); ?>
+                                    </span>
+
+                                    <i class="ri-arrow-down-s-line"></i>
                                 </a>
 
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item year-filter active" href="#" data-year="this">This
-                                            Year</a></li>
-                                    <li><a class="dropdown-item year-filter" href="#" data-year="2026">2026</a></li>
-                                    <li><a class="dropdown-item year-filter" href="#" data-year="2025">2025</a></li>
-                                    <li><a class="dropdown-item year-filter" href="#" data-year="2024">2024</a></li>
-                                    <li><a class="dropdown-item year-filter" href="#" data-year="2023">2023</a></li>
+                                <ul class="dropdown-menu dropdown-menu-end" id="yearDropdown">
+                                    <?php for ($year = date('Y'); $year >= 2025; $year--) : ?>
+                                    <li>
+                                        <a class="dropdown-item year-filter <?= $year == date('Y') ? 'active' : '' ?>"
+                                            href="#" data-year="<?= $year; ?>">
+                                            <?= $year; ?>
+                                        </a>
+                                    </li>
+                                    <?php endfor; ?>
                                 </ul>
                             </div>
                         </div>
                     </div>
 
-                    <div class="card-body pb-0">
-                        <div id="balance-overview-chart" class="apex-charts"></div>
+                    <div class="card-body p-2 p-md-3">
+                        <div id="balance-overview-chart"></div>
                     </div>
                 </div>
             </div>
 
-            <script>
-            document.addEventListener("DOMContentLoaded", function() {
 
-                function formatPeso(value) {
-                    return "₱ " + value.toLocaleString("en-PH");
-                }
+            <!-- container-fluid -->
+        </div>
+        <!-- End Page-content -->
 
-                var options = {
+        <script>
+        $(document).ready(function() {
+
+            function loadDashboardStats() {
+                $.ajax({
+                    url: "<?= base_url('get_dashboard_stats') ?>",
+                    type: "GET",
+                    dataType: "json",
+                    success: function(res) {
+                        if (res.status) {
+
+                            $('[data-target-borrowers]').text(res.total_borrowers);
+
+                            $('[data-target-release]').text(res.total_release);
+
+                            $('[data-target-remaining]').text(res.remaining_balance);
+
+                            $('[data-target-paid]').text(res.total_paid);
+                        }
+                    }
+                });
+            }
+
+            loadDashboardStats();
+
+        });
+       
+
+
+
+
+
+        
+        document.addEventListener("DOMContentLoaded", function() {
+
+            function formatPeso(value) {
+                return "₱ " + Number(value).toLocaleString("en-PH", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+            }
+
+            var chart = new ApexCharts(
+                document.querySelector("#balance-overview-chart"), {
                     series: [{
                             name: "Total Invest",
-                            data: [12000, 19000, 15000, 22000, 18000, 25000, 21000, 23000, 20000, 24000,
-                                26000, 28000
-                            ]
+                            data: []
                         },
                         {
                             name: "Total Income",
-                            data: [8000, 12000, 9000, 14000, 11000, 15000, 13000, 16000, 14500, 17000,
-                                18000, 19000
-                            ]
+                            data: []
                         },
                         {
                             name: "Unearned Income",
-                            data: [2000, 3000, 2500, 4000, 3500, 5000, 4500, 4200, 3800, 4100, 3900,
-                                4300
-                            ]
+                            data: []
                         }
                     ],
                     chart: {
@@ -248,40 +294,57 @@
                         }
                     },
                     colors: ['#0d6efd', '#198754', '#fd7e14']
-                };
+                }
+            );
 
-                var chart = new ApexCharts(document.querySelector("#balance-overview-chart"), options);
-                chart.render();
-            });
-            </script>
-            <!-- container-fluid -->
-        </div>
-        <!-- End Page-content -->
+            chart.render();
 
-        <script>
-        $(document).ready(function() {
+            function loadRevenue(year) {
 
-            function loadDashboardStats() {
                 $.ajax({
-                    url: "<?= base_url('get_dashboard_stats') ?>",
+                    url: "<?= base_url('get_revenue_chart') ?>",
                     type: "GET",
+                    data: {
+                        year: year
+                    },
                     dataType: "json",
-                    success: function(res) {
-                        if (res.status) {
+                    success: function(response) {
 
-                            $('[data-target-borrowers]').text(res.total_borrowers);
-
-                            $('[data-target-release]').text(res.total_release);
-
-                            $('[data-target-remaining]').text(res.remaining_balance);
-
-                            $('[data-target-paid]').text(res.total_paid);
-                        }
+                        chart.updateSeries([{
+                                name: "Total Invest",
+                                data: response.invest
+                            },
+                            {
+                                name: "Total Income",
+                                data: response.income
+                            },
+                            {
+                                name: "Unearned Income",
+                                data: response.unearned
+                            }
+                        ]);
+                    },
+                    error: function(xhr) {
+                        console.log(xhr.responseText);
                     }
                 });
             }
 
-            loadDashboardStats();
+            loadRevenue(<?= date('Y'); ?>);
+
+            $(document).on('click', '.year-filter', function(e) {
+
+                e.preventDefault();
+
+                $('.year-filter').removeClass('active');
+                $(this).addClass('active');
+
+                let year = $(this).data('year');
+
+                $('#selectedYear').text(year);
+
+                loadRevenue(year);
+            });
 
         });
         </script>

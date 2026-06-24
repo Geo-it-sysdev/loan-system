@@ -24,6 +24,7 @@ $route['sign_in']                       = 'LoginController/sign_in';
 $route['logout']                        = 'LoginController/logout';
 // Dashboard Count
 $route['get_dashboard_stats']           = 'AdminController/get_dashboard_stats';
+$route['get_revenue_chart']             = 'AdminController/get_revenue_chart';
 // Collectors 
 $route['get_collectors']                = 'AdminController/get_collectors';
 $route['add_collector']                 = 'AdminController/add_collector';
