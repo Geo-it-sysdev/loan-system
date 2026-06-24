@@ -1290,7 +1290,7 @@ class AdminController extends CI_Controller {
             'loan_id'        => $loan_id,
             'borrower_id'    => $this->input->post('borrower_id'),
             'ref_no'         => $this->input->post('reference_number'),
-            'payment_no'     => $payment_no, // ✅ ADD THIS
+            'payment_no'     => $payment_no, 
             'collector'      => $this->session->userdata('fullname'),
 
             'payment_amount' => $payment_amount,
