@@ -929,7 +929,7 @@ class AdminController extends CI_Controller {
 
 
 
-    public function get_loan_details()
+    public function get_loan_for_details()
     {
         $id = $this->input->post('id');
 

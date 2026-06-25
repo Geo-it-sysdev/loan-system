@@ -739,7 +739,7 @@
             let id = $(this).data('id');
 
             $.ajax({
-                url: "<?= base_url('get_loan_details') ?>",
+                url: "<?= base_url('get_loan_for_details') ?>",
                 type: "POST",
                 data: {
                     id
@@ -795,7 +795,7 @@
             let id = $(this).data('id');
 
             $.ajax({
-                url: "<?= base_url('get_loan_details') ?>",
+                url: "<?= base_url('get_loan_for_details') ?>",
                 type: "POST",
                 data: {
                     id

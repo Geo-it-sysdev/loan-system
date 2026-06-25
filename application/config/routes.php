@@ -47,7 +47,7 @@ $route['select_borrowers']              = 'AdminController/select_borrowers';
 $route['get_interest_rates']            = 'AdminController/get_interest_rates';
 $route['save_loan']                     = 'AdminController/save_loan';
 $route['get_loans']                     = 'AdminController/get_loans';
-$route['get_loan_details']              = 'AdminController/get_loan_details';
+$route['get_loan_for_details']          = 'AdminController/get_loan_for_details';
 $route['update_loan']                   = 'AdminController/update_loan';
 $route['delete_loan']                   = 'AdminController/delete_loan';
 // Payment
