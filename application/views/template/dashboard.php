@@ -60,24 +60,28 @@
                         <div class="col-md-3">
                             <div class="card card-animate">
                                 <div class="card-body">
-                                    <div class="d-flex justify-content-between">
-                                        <div>
-                                            <p class="fw-medium text-muted mb-0">Total Loan Released</p>
-                                            <h2 class="mt-4 ff-secondary fw-semibold"><span class="counter-value"
-                                                    data-target-release>0</span>
-                                            </h2>
-                                            <p class="mb-0 text-muted"><span class="badge bg-light text-secondary mb-0">
-                                                    <i class="ri-line-chart-line align-middle"></i> total loan release
-                                                </span></p>
-                                        </div>
-                                        <div>
-                                            <div class="avatar-sm flex-shrink-0">
-                                                <span class="avatar-title bg-secondary-subtle rounded-circle fs-2">
-                                                    <i class="ri-hand-coin-line text-secondary"></i>
-                                                </span>
+                                    <a href="<?= base_url('Loan-Release') ?>" class="text-decoration-none">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <p class="fw-medium text-muted mb-0">Total Loan Released</p>
+                                                <h2 class="mt-4 ff-secondary fw-semibold"><span class="counter-value"
+                                                        data-target-release>0</span>
+                                                </h2>
+                                                <p class="mb-0 text-muted"><span
+                                                        class="badge bg-light text-secondary mb-0">
+                                                        <i class="ri-line-chart-line align-middle"></i> total loan
+                                                        release
+                                                    </span></p>
+                                            </div>
+                                            <div>
+                                                <div class="avatar-sm flex-shrink-0">
+                                                    <span class="avatar-title bg-secondary-subtle rounded-circle fs-2">
+                                                        <i class="ri-hand-coin-line text-secondary"></i>
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </a>
                                 </div><!-- end card body -->
                             </div> <!-- end card-->
                         </div> <!-- end col-->
@@ -226,13 +230,13 @@
             loadDashboardStats();
 
         });
-       
 
 
 
 
 
-        
+
+
         document.addEventListener("DOMContentLoaded", function() {
 
             function formatPeso(value) {

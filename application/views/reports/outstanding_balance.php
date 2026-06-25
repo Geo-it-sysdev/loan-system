@@ -199,7 +199,7 @@
                 {
                     data: "remaining_balance",
                     render: function(data) {
-                        return `<span class="badge bg-warning text-dark">
+                        return `<span class="text-danger fw-bold">
                         ₱ ${parseFloat(data).toLocaleString(undefined, {
                             minimumFractionDigits: 2
                         })}

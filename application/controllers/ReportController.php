@@ -238,4 +238,141 @@ class ReportController extends CI_Controller {
     }
 
 
+    public function released_loans()
+    {
+        $query = $this->db->query("
+            SELECT
+                l.id AS loan_id,
+
+                l.date_created AS release_date,
+
+                CONCAT('RN-', LPAD(l.id, 6, '0')) AS ref_no,
+
+                CONCAT(
+                    b.firstname, ' ',
+                    IFNULL(b.middlename, ''),
+                    ' ',
+                    b.lastname
+                ) AS borrower_name,
+
+                l.loan_amount,
+                l.loan_plan,
+                l.interest_rate
+
+            FROM tbl_borrower b
+
+            LEFT JOIN tbl_loan l
+                ON b.id = l.borrower_id
+
+            WHERE l.status IN ('Released', 'Partial', 'Fully')
+
+            ORDER BY l.id DESC
+        ");
+
+        echo json_encode([
+            'data' => $query->result()
+        ]);
+    }
+
+
+    public function get_loan_details()
+    {
+        $loan_id = $this->input->post('loan_id');
+
+        $query = $this->db->query("
+            SELECT
+                b.*,
+                l.*
+
+            FROM tbl_borrower b
+
+            LEFT JOIN tbl_loan l
+                ON b.id = l.borrower_id
+
+            WHERE l.id = ?
+        ", [$loan_id]);
+
+        echo json_encode($query->row());
+    }
+
+
+    public function monthly_collection()
+    {
+        $year = $this->input->post('year');
+
+        $where = '';
+
+        if (!empty($year)) {
+            $where = "WHERE YEAR(p.date_payment) = '$year'";
+        }
+
+        $query = $this->db->query("
+            SELECT
+                DATE_FORMAT(p.date_payment, '%M %Y') AS month,
+
+                SUM(
+                    CAST(p.payment_amount AS DECIMAL(15,2))
+                ) 
+                -
+                ROUND(
+                    SUM(
+                        (
+                            CAST(l.monthly_payment AS DECIMAL(15,2))
+                            -
+                            (
+                                CAST(l.loan_amount AS DECIMAL(15,2))
+                                /
+                                CAST(l.loan_plan AS UNSIGNED)
+                            )
+                        )
+                    ), 2
+                ) AS principal_collected,
+
+                ROUND(
+                    SUM(
+                        (
+                            CAST(l.monthly_payment AS DECIMAL(15,2))
+                            -
+                            (
+                                CAST(l.loan_amount AS DECIMAL(15,2))
+                                /
+                                CAST(l.loan_plan AS UNSIGNED)
+                            )
+                        )
+                    )
+                ) AS interest_collected,
+
+                SUM(
+                    CAST(IFNULL(p.penalty,0) AS DECIMAL(15,2))
+                ) AS penalties_collected,
+
+                SUM(
+                    CAST(p.payment_amount AS DECIMAL(15,2))
+                    +
+                    CAST(IFNULL(p.penalty,0) AS DECIMAL(15,2))
+                ) AS total_collection
+
+            FROM tbl_payment p
+
+            INNER JOIN tbl_loan l
+                ON l.id = p.loan_id
+
+            $where
+
+            GROUP BY
+                YEAR(p.date_payment),
+                MONTH(p.date_payment),
+                DATE_FORMAT(p.date_payment, '%M %Y')
+
+            ORDER BY
+                YEAR(p.date_payment) DESC,
+                MONTH(p.date_payment) DESC
+        ");
+
+        echo json_encode([
+            'data' => $query->result()
+        ]);
+    }
+
+
 }

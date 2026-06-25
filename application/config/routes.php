@@ -63,6 +63,9 @@ $route['overdue_loans']                 = 'ReportController/overdue_loans';
 $route['outstanding_loans']             = 'ReportController/outstanding_loans';
 $route['payment_collection']            = 'ReportController/payment_collection';
 $route['fully_paid_loans']              = 'ReportController/fully_paid_loans';
+$route['released_loans']                = 'ReportController/released_loans';
+$route['get_loan_details']              = 'ReportController/get_loan_details';
+$route['monthly_collection']            = 'ReportController/monthly_collection';
 // Profile
 $route['Profile']                       = 'LoanController/profile';
 //=============================== End Loan System  ===================================\\
