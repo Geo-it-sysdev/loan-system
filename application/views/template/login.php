@@ -180,7 +180,7 @@
     }
 
     .primary-btn {
-        background-color: #1147ab;
+        background-color: #10306b;
         color: #fff;
     }
 
