@@ -204,6 +204,18 @@ class ReportController extends CI_Controller {
 
     public function fully_paid_loans()
     {
+        $startDate = $this->input->post('startDate');
+        $endDate   = $this->input->post('endDate');
+
+        $having = "";
+
+        if (!empty($startDate) && !empty($endDate)) {
+            $having = " HAVING DATE(MAX(p.date_payment)) BETWEEN "
+                    . $this->db->escape($startDate)
+                    . " AND "
+                    . $this->db->escape($endDate);
+        }
+
         $query = $this->db->query("
             SELECT
                 l.id AS loan_id,
@@ -216,15 +228,18 @@ class ReportController extends CI_Controller {
                     ' ',
                     b.lastname
                 ) AS borrower_name,
+
                 l.effective_date,
                 l.loan_amount,
                 l.interest_rate,
                 l.total_balance,
+
                 IFNULL(SUM(p.payment_amount),0) AS total_paid,
-                (GREATEST(
-                    (CAST(l.loan_amount AS DECIMAL(12,2)) - IFNULL(SUM(p.payment_amount),0)),
+
+                GREATEST(
+                    CAST(l.loan_amount AS DECIMAL(12,2)) - IFNULL(SUM(p.payment_amount),0),
                     0
-                )) AS remaining_balance,
+                ) AS remaining_balance,
 
                 l.unearned_interest AS total_interest_earned,
 
@@ -244,6 +259,8 @@ class ReportController extends CI_Controller {
 
             GROUP BY l.id
 
+            $having
+
             ORDER BY l.id DESC
         ");
 
@@ -252,37 +269,50 @@ class ReportController extends CI_Controller {
         ]);
     }
 
-
     public function released_loans()
     {
-        $query = $this->db->query("
-            SELECT
-                l.id AS loan_id,
+        $startDate = $this->input->post('startDate');
+        $endDate   = $this->input->post('endDate');
 
-                l.date_created AS release_date,
+        $this->db->select("
+            l.id AS loan_id,
+            DATE(l.date_created) AS release_date,
+            CONCAT('RN-', LPAD(l.id,6,'0')) AS ref_no,
 
-                CONCAT('RN-', LPAD(l.id, 6, '0')) AS ref_no,
+            CONCAT(
+                b.firstname,' ',
+                IFNULL(b.middlename,''),' ',
+                b.lastname
+            ) AS borrower_name,
 
-                CONCAT(
-                    b.firstname, ' ',
-                    IFNULL(b.middlename, ''),
-                    ' ',
-                    b.lastname
-                ) AS borrower_name,
-
-                l.loan_amount,
-                l.loan_plan,
-                l.interest_rate
-
-            FROM tbl_borrower b
-
-            LEFT JOIN tbl_loan l
-                ON b.id = l.borrower_id
-
-            WHERE l.status IN ('Released', 'Partial', 'Fully')
-
-            ORDER BY l.id DESC
+            l.loan_amount,
+            l.loan_plan,
+            l.interest_rate
         ");
+
+        $this->db->from('tbl_loan l');
+        $this->db->join('tbl_borrower b','b.id=l.borrower_id','left');
+
+        $this->db->where_in('l.status', ['Released','Partial','Fully']);
+
+        // Date Filter
+        if (!empty($startDate) && !empty($endDate)) {
+
+            $this->db->where('DATE(l.date_created) >=', $startDate);
+            $this->db->where('DATE(l.date_created) <=', $endDate);
+
+        } elseif (!empty($startDate)) {
+
+            $this->db->where('DATE(l.date_created)', $startDate);
+
+        } elseif (!empty($endDate)) {
+
+            $this->db->where('DATE(l.date_created)', $endDate);
+        }
+
+        $this->db->order_by('l.id','DESC');
+
+        $query = $this->db->get();
 
         echo json_encode([
             'data' => $query->result()

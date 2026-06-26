@@ -34,6 +34,32 @@
                     <div class="card shadow-sm">
                         <div class="card-body">
 
+                            <!-- Date Filter -->
+                            <div class="row mb-3">
+                                <div class="col-12 mb-2">
+                                    <label class="fw-bold">FILTER DATE FULLY PAID</label>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <label class="form-label fw-bold">Start Date</label>
+                                    <input type="date" class="form-control form-control-md" id="startDate">
+                                </div>
+
+                                <div class="col-md-2">
+                                    <label class="form-label fw-bold">End Date</label>
+                                    <input type="date" class="form-control form-control-md" id="endDate">
+                                </div>
+
+                                <div class="col-md-8 d-flex justify-content-end align-items-end gap-2">
+                                    <button type="button" id="btnExcel" class="btn btn-success btn-sm">
+                                        <i class="ri-file-excel-2-fill me-1"></i> Generate Excel
+                                    </button>
+
+                                    <button type="button" id="btnPDF" class="btn btn-danger btn-sm">
+                                        <i class="ri-file-pdf-2-fill me-1"></i> Generate PDF
+                                    </button>
+                                </div>
+                            </div>
 
                             <div class="table-responsive">
 
@@ -163,7 +189,7 @@
     <script>
     $(document).ready(function() {
 
-        $('#FullyPaidTable').DataTable({
+        var fullyPaidTable = $('#FullyPaidTable').DataTable({
             processing: true,
             responsive: true,
             destroy: true,
@@ -172,6 +198,10 @@
             ajax: {
                 url: "<?= base_url('fully_paid_loans') ?>",
                 type: "POST",
+                data: function(d) {
+                    d.startDate = $('#startDate').val();
+                    d.endDate = $('#endDate').val();
+                },
                 dataSrc: "data"
             },
             columns: [{
@@ -212,10 +242,14 @@
                             return '';
                         }
 
-                        let date = new Date(data).toLocaleDateString('en-PH');
+                        let date = new Date(data).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        });
 
                         return `
-                        <span class="badge  bg-success">
+                        <span class="text-success">
                             ${date}
                         </span>
                     `;
@@ -243,6 +277,767 @@
                 }
             ]
         });
+
+        $('#startDate, #endDate').on('change', function() {
+            fullyPaidTable.ajax.reload();
+        });
+
+        // ==================  PDF ================ \\
+        $('#btnPDF').on('click', function() {
+
+            const {
+                jsPDF
+            } = window.jspdf;
+            const doc = new jsPDF({
+                orientation: "landscape",
+                unit: "mm",
+                format: "a4"
+            });
+
+            let startDate = $('#startDate').val();
+            let endDate = $('#endDate').val();
+
+            let table = $('#FullyPaidTable').DataTable();
+            let data = table.rows({
+                search: 'applied'
+            }).data().toArray();
+
+            let body = [];
+
+            data.forEach(function(row, index) {
+
+                body.push([
+                    index + 1,
+                    row.ref_no,
+                    row.borrower_name,
+                    "P " + Number(row.loan_amount).toLocaleString('en-PH', {
+                        minimumFractionDigits: 2
+                    }),
+                    "P " + Number(row.total_interest_earned).toLocaleString('en-PH', {
+                        minimumFractionDigits: 2
+                    }),
+                    row.date_released ?
+                    new Date(row.date_released).toLocaleDateString('en-US') : '',
+                    row.date_fully_paid ?
+                    new Date(row.date_fully_paid).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    }) : ''
+                ]);
+
+            });
+
+            //================ HEADER =================//
+            const pageWidth = doc.internal.pageSize.getWidth();
+
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(22);
+            doc.text("FULLY PAID LOANS REPORT", pageWidth / 2, 15, {
+                align: "center"
+            });
+
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(12);
+            doc.text("Loan Management System", pageWidth / 2, 22, {
+                align: "center"
+            });
+
+            doc.line(10, 28, pageWidth - 10, 28);
+
+            doc.setFontSize(9);
+
+            doc.text(
+                "Generated : " + new Date().toLocaleString(),
+                10,
+                34
+            );
+
+            doc.text(
+                "Payment Date : " + startDate + " To " + endDate,
+                pageWidth - 10,
+                34, {
+                    align: "right"
+                }
+            );
+
+            //================ TABLE =================//
+            doc.autoTable({
+                startY: 42,
+
+                tableWidth: 277,
+
+                margin: {
+                    left: 10,
+                    right: 10,
+                    top: 42,
+                    bottom: 15
+                },
+
+                head: [
+                    [
+                        "#",
+                        "Reference No.",
+                        "Borrower",
+                        "Loan Amount",
+                        "Interest Earned",
+                        "Release Date",
+                        "Date Fully Paid"
+                    ]
+                ],
+
+                body: body,
+
+                theme: "grid",
+
+                styles: {
+                    font: "helvetica",
+                    fontSize: 9,
+                    cellPadding: 2.8,
+                    overflow: "linebreak",
+                    valign: "middle",
+                    lineWidth: 0.1,
+                    lineColor: [210, 210, 210]
+                },
+
+                headStyles: {
+                    fillColor: [33, 37, 41],
+                    textColor: 255,
+                    fontStyle: "bold",
+                    halign: "center",
+                    valign: "middle"
+                },
+
+                bodyStyles: {
+                    halign: "left"
+                },
+
+                columnStyles: {
+
+
+                    0: {
+                        cellWidth: 12,
+                        halign: "center"
+                    },
+
+                    1: {
+                        cellWidth: 35
+                    },
+
+                    2: {
+                        cellWidth: 78
+                    },
+
+                    3: {
+                        cellWidth: 38,
+                        halign: "right"
+                    },
+
+                    4: {
+                        cellWidth: 40,
+                        halign: "right"
+                    },
+
+                    5: {
+                        cellWidth: 34,
+                        halign: "center"
+                    },
+
+                    6: {
+                        cellWidth: 40,
+                        halign: "center"
+                    }
+
+                },
+
+                didDrawPage: function() {
+
+                    doc.setFontSize(9);
+
+                    doc.text(
+                        "Total Fully Paid Loans : " + body.length,
+                        10,
+                        doc.internal.pageSize.height - 8
+                    );
+
+                    doc.text(
+                        "Page " + doc.internal.getNumberOfPages(),
+                        287,
+                        doc.internal.pageSize.height - 8, {
+                            align: "right"
+                        }
+                    );
+                }
+
+            });
+
+            //================ OPEN PDF =================//
+            const blob = doc.output('blob');
+            const url = URL.createObjectURL(blob);
+
+            window.open(url);
+
+        });
+
+
+
+
+
+        // excel
+        $('#btnExcel').on('click', function() {
+
+            let startDate = $('#startDate').val();
+            let endDate = $('#endDate').val();
+
+            let table = $('#FullyPaidTable').DataTable();
+            let data = table.rows({
+                search: 'applied'
+            }).data().toArray();
+
+            let sheetData = [];
+
+            // REPORT HEADER
+            sheetData.push(["FULLY PAID LOANS REPORT"]);
+            sheetData.push(["Loan Management System"]);
+            sheetData.push([]);
+            sheetData.push([
+                "Generated : " + new Date().toLocaleString()
+            ]);
+            sheetData.push([
+                "Payment Date : " + startDate + " To " + endDate
+            ]);
+            sheetData.push([]);
+
+            // TABLE HEADER
+            sheetData.push([
+                "#",
+                "Reference No.",
+                "Borrower",
+                "Loan Amount",
+                "Interest Earned",
+                "Release Date",
+                "Date Fully Paid"
+            ]);
+
+            // TABLE BODY
+            data.forEach(function(row, index) {
+
+                sheetData.push([
+                    index + 1,
+                    row.ref_no,
+                    row.borrower_name,
+                    Number(row.loan_amount),
+                    Number(row.total_interest_earned),
+                    row.date_released ?
+                    new Date(row.date_released).toLocaleDateString('en-US') : '',
+                    row.date_fully_paid ?
+                    new Date(row.date_fully_paid).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    }) : ''
+                ]);
+
+            });
+
+            // CREATE WORKBOOK
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(sheetData);
+
+            // MERGE CELLS
+            ws["!merges"] = [{
+                    s: {
+                        r: 0,
+                        c: 0
+                    },
+                    e: {
+                        r: 0,
+                        c: 6
+                    }
+                },
+                {
+                    s: {
+                        r: 1,
+                        c: 0
+                    },
+                    e: {
+                        r: 1,
+                        c: 6
+                    }
+                },
+                {
+                    s: {
+                        r: 3,
+                        c: 0
+                    },
+                    e: {
+                        r: 3,
+                        c: 6
+                    }
+                },
+                {
+                    s: {
+                        r: 4,
+                        c: 0
+                    },
+                    e: {
+                        r: 4,
+                        c: 6
+                    }
+                }
+            ];
+
+            // COLUMN WIDTHS
+            ws["!cols"] = [{
+                    wch: 6
+                },
+                {
+                    wch: 18
+                },
+                {
+                    wch: 35
+                },
+                {
+                    wch: 18
+                },
+                {
+                    wch: 18
+                },
+                {
+                    wch: 18
+                },
+                {
+                    wch: 22
+                }
+            ];
+
+            // PAGE SETUP
+            ws["!pageSetup"] = {
+                orientation: "landscape",
+                paperSize: 9,
+                fitToPage: true,
+                fitToWidth: 1,
+                fitToHeight: 0
+            };
+
+            ws["!margins"] = {
+                left: 0.3,
+                right: 0.3,
+                top: 0.5,
+                bottom: 0.5,
+                header: 0.2,
+                footer: 0.2
+            };
+
+            // STYLES
+            const range = XLSX.utils.decode_range(ws['!ref']);
+
+            for (let R = 0; R <= range.e.r; R++) {
+
+                for (let C = 0; C <= range.e.c; C++) {
+
+                    let cell = XLSX.utils.encode_cell({
+                        r: R,
+                        c: C
+                    });
+
+                    if (!ws[cell]) continue;
+
+                    ws[cell].s = {
+
+                        font: {
+                            name: "Calibri",
+                            sz: 11
+                        },
+
+                        alignment: {
+                            vertical: "center",
+                            horizontal: "left"
+                        },
+
+                        border: {
+                            top: {
+                                style: "thin",
+                                color: {
+                                    rgb: "D9D9D9"
+                                }
+                            },
+                            bottom: {
+                                style: "thin",
+                                color: {
+                                    rgb: "D9D9D9"
+                                }
+                            },
+                            left: {
+                                style: "thin",
+                                color: {
+                                    rgb: "D9D9D9"
+                                }
+                            },
+                            right: {
+                                style: "thin",
+                                color: {
+                                    rgb: "D9D9D9"
+                                }
+                            }
+                        }
+
+                    };
+
+                }
+
+            }
+
+            // TITLE
+            ws["A1"].s = {
+                font: {
+                    bold: true,
+                    sz: 20,
+                    color: {
+                        rgb: "1F4E78"
+                    }
+                },
+                alignment: {
+                    horizontal: "center"
+                }
+            };
+
+            ws["A2"].s = {
+                font: {
+                    bold: true,
+                    sz: 13
+                },
+                alignment: {
+                    horizontal: "center"
+                }
+            };
+
+            ws["A4"].s = {
+                font: {
+                    italic: true
+                }
+            };
+
+            ws["A5"].s = {
+                font: {
+                    italic: true
+                }
+            };
+
+            // HEADER STYLE
+            for (let c = 0; c < 7; c++) {
+
+                let cell = XLSX.utils.encode_cell({
+                    r: 6,
+                    c: c
+                });
+
+                ws[cell].s = {
+
+                    font: {
+                        bold: true,
+                        color: {
+                            rgb: "FFFFFF"
+                        }
+                    },
+
+                    fill: {
+                        fgColor: {
+                            rgb: "212529"
+                        }
+                    },
+
+                    alignment: {
+                        horizontal: "center",
+                        vertical: "center"
+                    },
+
+                    border: {
+                        top: {
+                            style: "thin"
+                        },
+                        bottom: {
+                            style: "thin"
+                        },
+                        left: {
+                            style: "thin"
+                        },
+                        right: {
+                            style: "thin"
+                        }
+                    }
+
+                };
+
+            }
+
+            // MONEY FORMAT
+            for (let r = 7; r < sheetData.length; r++) {
+
+                ["D", "E"].forEach(function(col) {
+
+                    let cell = col + (r + 1);
+
+                    if (ws[cell]) {
+
+                        ws[cell].z = '"₱"#,##0.00';
+
+                        ws[cell].s.alignment = {
+                            horizontal: "right"
+                        };
+
+                    }
+
+                });
+
+            }
+
+            // FREEZE HEADER
+            ws["!freeze"] = {
+                xSplit: 0,
+                ySplit: 7
+            };
+
+            XLSX.utils.book_append_sheet(wb, ws, "Fully Paid Loans");
+
+            XLSX.writeFile(
+                wb,
+                "Fully_Paid_Loans_Report.xlsx"
+            );
+
+        });
+
+
+
+        $('#btnExcel').click(async function () {
+
+    let startDate = $('#startDate').val() || "All";
+    let endDate = $('#endDate').val() || "All";
+
+    let workbook = new ExcelJS.Workbook();
+    workbook.creator = "Loan Management System";
+    workbook.created = new Date();
+
+    let sheet = workbook.addWorksheet("Released Loans");
+
+    //==========================================
+    // Page Setup
+    //==========================================
+    sheet.pageSetup = {
+        orientation: "landscape",
+        paperSize: 9,
+        fitToPage: true,
+        fitToWidth: 1
+    };
+
+    //==========================================
+    // Title
+    //==========================================
+    sheet.mergeCells('A1:G1');
+    sheet.getCell('A1').value = "RELEASED LOANS REPORT";
+    sheet.getCell('A1').font = {
+        size: 20,
+        bold: true,
+        color: { argb: 'FFFFFFFF' }
+    };
+    sheet.getCell('A1').alignment = {
+        horizontal: 'center',
+        vertical: 'middle'
+    };
+    sheet.getCell('A1').fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: '16376C' }
+    };
+    sheet.getRow(1).height = 30;
+
+    sheet.mergeCells('A2:G2');
+    sheet.getCell('A2').value = "LOAN MANAGEMENT SYSTEM";
+    sheet.getCell('A2').font = {
+        size: 14,
+        bold: true,
+        color: { argb: 'FFFFFFFF' }
+    };
+    sheet.getCell('A2').alignment = {
+        horizontal: 'center'
+    };
+    sheet.getCell('A2').fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: '16376C' }
+    };
+    sheet.getRow(2).height = 24;
+
+    //==========================================
+    // Report Information
+    //==========================================
+    sheet.getCell('A4').value = "Generated:";
+    sheet.getCell('B4').value = new Date().toLocaleString();
+
+    sheet.getCell('A5').value = "Release Date:";
+    sheet.getCell('B5').value = startDate + " to " + endDate;
+
+    sheet.getCell('A4').font = { bold: true };
+    sheet.getCell('A5').font = { bold: true };
+
+    //==========================================
+    // Get Data
+    //==========================================
+    let totalAmount = 0;
+    let totalLoans = 0;
+
+    table.rows({ search: 'applied' }).every(function () {
+
+        let d = this.data();
+
+        totalLoans++;
+
+        totalAmount += parseFloat(d.loan_amount);
+
+    });
+
+    //==========================================
+    // Summary
+    //==========================================
+    sheet.getCell('A7').value = "Total Loans";
+    sheet.getCell('B7').value = totalLoans;
+
+    sheet.getCell('D7').value = "Total Released Amount";
+    sheet.getCell('E7').value = totalAmount;
+
+    sheet.getCell('E7').numFmt = '"₱"#,##0.00';
+
+    sheet.getCell('A7').font = { bold: true };
+    sheet.getCell('D7').font = { bold: true };
+
+    //==========================================
+    // Table Header
+    //==========================================
+    let headerRow = 9;
+
+    sheet.addRow([]);
+
+    sheet.getRow(headerRow).values = [
+        "#",
+        "Release Date",
+        "Reference No",
+        "Borrower",
+        "Loan Amount",
+        "Loan Plan",
+        "Interest"
+    ];
+
+    let header = sheet.getRow(headerRow);
+
+    header.font = {
+        bold: true,
+        color: { argb: 'FFFFFFFF' }
+    };
+
+    header.alignment = {
+        horizontal: 'center',
+        vertical: 'middle'
+    };
+
+    header.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: '16376C' }
+    };
+
+    //==========================================
+    // Table Data
+    //==========================================
+    let rowNo = 1;
+
+    table.rows({ search: 'applied' }).every(function () {
+
+        let d = this.data();
+
+        let row = sheet.addRow([
+            rowNo++,
+            d.release_date,
+            d.ref_no,
+            d.borrower_name,
+            parseFloat(d.loan_amount),
+            d.loan_plan,
+            d.interest_rate + "%"
+        ]);
+
+        row.getCell(5).numFmt = '"₱"#,##0.00';
+
+    });
+
+    //==========================================
+    // Borders
+    //==========================================
+    sheet.eachRow(function (row) {
+
+        row.eachCell(function (cell) {
+
+            cell.border = {
+                top: {
+                    style: 'thin'
+                },
+                left: {
+                    style: 'thin'
+                },
+                bottom: {
+                    style: 'thin'
+                },
+                right: {
+                    style: 'thin'
+                }
+            };
+
+        });
+
+    });
+
+    //==========================================
+    // Auto Width
+    //==========================================
+    sheet.columns.forEach(column => {
+
+        let maxLength = 15;
+
+        column.eachCell({ includeEmpty: true }, cell => {
+
+            let value = cell.value ? cell.value.toString() : "";
+
+            if (value.length > maxLength)
+                maxLength = value.length;
+
+        });
+
+        column.width = maxLength + 5;
+
+    });
+
+    //==========================================
+    // Freeze Header
+    //==========================================
+    sheet.views = [{
+        state: 'frozen',
+        ySplit: headerRow
+    }];
+
+    //==========================================
+    // Download
+    //==========================================
+    let buffer = await workbook.xlsx.writeBuffer();
+
+    saveAs(
+        new Blob([buffer], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        }),
+        "Released_Loans_Report.xlsx"
+    );
+
+});
+
+
+
 
     });
 
