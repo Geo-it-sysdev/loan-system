@@ -397,6 +397,7 @@
 
 
 
+
     $(document).on('click', '.btn-print-receipt', function() {
 
         let fullname = $('#view_fullname').val();
@@ -406,162 +407,125 @@
         let datePayment = $(this).data('date-payment');
         let collector = $(this).data('collector');
         let paymentMethod = $(this).data('payment-method');
+
         let amountPaid = parseFloat($(this).data('payment-amount') || 0);
         let remainingBalance = parseFloat($(this).data('remaining-balance') || 0);
         let penalty = parseFloat($(this).data('penalty') || 0);
 
-        let win = window.open('', '', 'width=500,height=600');
+        let htmlContent = `
+    <html>
+    <head>
+        <title>Payment Receipt</title>
 
-        win.document.write(`
-        <html>
-        <head>
-            <title>Payment Receipt</title>
+        <style>
+            @page {
+                size: 80mm 100mm;
+                margin: 3mm;
+            }
 
-             <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+            }
 
-                @page{
-                    size:80mm 100mm;
-                    margin:3mm;
-                }
+            .receipt {
+                width: 100%;
+                border: 1px solid #000;
+                padding: 5mm;
+                box-sizing: border-box;
+            }
 
-                body{
-                    font-family:Arial,sans-serif;
-                    margin:0;
-                    padding:0;
-                }
+            h3 {
+                text-align: center;
+                margin: 0 0 5px;
+                font-size: 12px;
+            }
 
-                .receipt{
-                    width:100%;
-                    border:1px solid #000;
-                    padding:5mm;
-                    box-sizing:border-box;
-                    page-break-after:always;
-                }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 10px;
+            }
 
-                h3{
-                    text-align:center;
-                    margin:0 0 5px;
-                    font-size:12px;
-                }
+            td {
+                padding: 2px 0;
+            }
 
-                table{
-                    width:100%;
-                    border-collapse:collapse;
-                    font-size:10px;
-                }
+            .right {
+                text-align: right;
+            }
 
-                td{
-                    padding:2px 0;
-                }
+            .line {
+                border-top: 1px dashed #000;
+                margin: 5px 0;
+            }
 
-                .right{
-                    text-align:right;
-                }
+            .signature {
+                text-align: center;
+                margin-top: 10px;
+                font-size: 10px;
+            }
+        </style>
+    </head>
 
-                .line{
-                    border-top:1px dashed #000;
-                    margin:5px 0;
-                }
+    <body>
+        <div class="receipt">
 
-                .signature{
-                    text-align:center;
-                    margin-top:10px;
-                    font-size:10px;
-                }
+            <h3>PAYMENT RECEIPT</h3>
 
-            </style>
-        </head>
+            <table>
+                <tr><td>Borrower</td><td class="right">${fullname}</td></tr>
+                <tr><td>Reference No</td><td class="right">${refNo}</td></tr>
+                <tr><td>Payment No</td><td class="right">${paymentNo}</td></tr>
+                <tr><td>Date Payment</td><td class="right">${datePayment}</td></tr>
+                <tr><td>Collector</td><td class="right">${collector}</td></tr>
+                <tr><td>Method</td><td class="right">${paymentMethod}</td></tr>
+            </table>
 
-        <body>
+            <div class="line"></div>
 
-            <div class="receipt">
+            <table>
+                <tr>
+                    <td>Amount Paid</td>
+                    <td class="right">P ${amountPaid.toLocaleString('en-PH', { minimumFractionDigits: 2 })}</td>
+                </tr>
+                <tr>
+                    <td>Penalty</td>
+                    <td class="right">P ${penalty.toLocaleString('en-PH', { minimumFractionDigits: 2 })}</td>
+                </tr>
+                <tr>
+                    <td>Remaining</td>
+                    <td class="right">P ${remainingBalance.toLocaleString('en-PH', { minimumFractionDigits: 2 })}</td>
+                </tr>
+            </table>
 
-                <h3>PAYMENT RECEIPT</h3>
+            <div class="line"></div>
 
-                <table>
-                    <tr>
-                        <td>Borrower</td>
-                        <td class="right">${fullname}</td>
-                    </tr>
-
-                    <tr>
-                        <td>Reference No</td>
-                        <td class="right">${refNo}</td>
-                    </tr>
-
-                    <tr>
-                        <td>Payment No</td>
-                        <td class="right">${paymentNo}</td>
-                    </tr>
-
-                    <tr>
-                        <td>Date Payment</td>
-                        <td class="right">${datePayment}</td>
-                    </tr>
-
-                    <tr>
-                        <td>Collector</td>
-                        <td class="right">${collector}</td>
-                    </tr>
-
-                    <tr>
-                        <td>Method</td>
-                        <td class="right">${paymentMethod}</td>
-                    </tr>
-                </table>
-
-                <div class="line"></div>
-
-                <table>
-                    <tr>
-                        <td>Amount Paid</td>
-                        <td class="right">
-                            ₱ ${amountPaid.toLocaleString('en-PH', {
-                                minimumFractionDigits: 2
-                            })}
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>Penalty</td>
-                        <td class="right">
-                            ₱ ${penalty.toLocaleString('en-PH', {
-                                minimumFractionDigits: 2
-                            })}
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>Remaining</td>
-                        <td class="right">
-                            ₱ ${remainingBalance.toLocaleString('en-PH', {
-                                minimumFractionDigits: 2
-                            })}
-                        </td>
-                    </tr>
-                </table>
-
-                <div class="line"></div>
-
-                <div class="signature">
-                     <center>
-                    ___________________<br>
-                    Authorized Signature
-                </center>
-                </div>
-
+            <div class="signature">
+                ___________________<br>
+                Authorized Signature
             </div>
 
-        </body>
-        </html>
-    `);
+        </div>
+    </body>
+    </html>
+    `;
 
-        win.document.close();
+        let blob = new Blob([htmlContent], {
+            type: 'text/html'
+        });
+        let blobUrl = URL.createObjectURL(blob);
+
+        let win = window.open(blobUrl, '_blank');
+
+        win.onload = function() {
+            win.focus();
+            win.print();
+        };
 
         setTimeout(() => {
-            win.print();
-            // win.close();
-        }, 500);
-
+            URL.revokeObjectURL(blobUrl);
+        }, 10000);
     });
     </script>

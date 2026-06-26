@@ -144,10 +144,23 @@ class ReportController extends CI_Controller {
     }
 
 
-    public function payment_collection()
+  public function payment_collection()
     {
+        $startDate = $this->input->post('startDate');
+        $endDate   = $this->input->post('endDate');
+
+        $where = "";
+
+        if (!empty($startDate) && !empty($endDate)) {
+            $where = "WHERE DATE(p.date_payment) BETWEEN '$startDate' AND '$endDate'";
+        } elseif (!empty($startDate)) {
+            $where = "WHERE DATE(p.date_payment) >= '$startDate'";
+        } elseif (!empty($endDate)) {
+            $where = "WHERE DATE(p.date_payment) <= '$endDate'";
+        }
+
         $query = $this->db->query("
-            SELECT 
+            SELECT
                 p.id,
                 p.payment_no,
                 p.id AS receipt_no,
@@ -179,7 +192,9 @@ class ReportController extends CI_Controller {
             INNER JOIN tbl_loan l ON l.id = p.loan_id
             INNER JOIN tbl_borrower b ON b.id = p.borrower_id
 
-            ORDER BY p.id ASC
+            $where
+
+            ORDER BY p.date_payment DESC
         ");
 
         echo json_encode([

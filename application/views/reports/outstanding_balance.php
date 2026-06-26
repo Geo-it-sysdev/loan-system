@@ -33,7 +33,15 @@
 
                     <div class="card shadow-sm">
                         <div class="card-body">
+                            <div class="d-flex justify-content-end mb-3 gap-2">
+                                <button type="button" id="btnExcel" class="btn btn-success btn-sm">
+                                    <i class="ri-file-excel-2-fill me-1"></i> Generate Excel
+                                </button>
 
+                                <button type="button" id="btnPDF" class="btn btn-danger btn-sm">
+                                    <i class="ri-file-pdf-2-fill me-1"></i> Generate PDF
+                                </button>
+                            </div>
 
                             <div class="table-responsive">
 
@@ -163,7 +171,7 @@
     <script>
     $(document).ready(function() {
 
-        $('#OutstandingTable').DataTable({
+        var outstandingTable = $('#OutstandingTable').DataTable({
             processing: true,
             responsive: true,
             destroy: true,
@@ -232,7 +240,416 @@
             ]
         });
 
+
+
+
+        // PDF
+        $('#btnPDF').on('click', function() {
+
+            const {
+                jsPDF
+            } = window.jspdf;
+
+            const doc = new jsPDF({
+                orientation: "landscape",
+                unit: "mm",
+                format: [330.2, 215.9]
+            });
+
+            // HEADER
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(22);
+            doc.text("OUTSTANDING LOANS REPORT", 165, 15, {
+                align: "center"
+            });
+
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(12);
+            doc.text("Loan Management System", 165, 22, {
+                align: "center"
+            });
+
+            doc.line(8, 28, 322, 28);
+
+            doc.setFontSize(9);
+            doc.text("Generated : " + new Date().toLocaleString(), 8, 34);
+
+            // DATA
+            let rows = [];
+
+            let totalBalance = 0;
+            let totalPaid = 0;
+            let totalRemaining = 0;
+
+            outstandingTable.rows().every(function() {
+
+                let d = this.data();
+
+                totalBalance += parseFloat(d.total_balance) || 0;
+                totalPaid += parseFloat(d.total_paid) || 0;
+                totalRemaining += parseFloat(d.remaining_balance) || 0;
+
+                rows.push([
+                    d.ref_no,
+                    d.borrower_name,
+                    "P " + (parseFloat(d.total_balance) || 0).toLocaleString(
+                        undefined, {
+                            minimumFractionDigits: 2
+                        }),
+                    "P " + (parseFloat(d.total_paid) || 0).toLocaleString(undefined, {
+                        minimumFractionDigits: 2
+                    }),
+                    "P " + (parseFloat(d.remaining_balance) || 0).toLocaleString(
+                        undefined, {
+                            minimumFractionDigits: 2
+                        }),
+                    d.next_due_date
+                ]);
+
+            });
+
+            // MAIN TABLE
+            doc.autoTable({
+
+                startY: 40,
+
+                head: [
+                    [
+                        "Reference No.",
+                        "Borrower Name",
+                        "Total Balance",
+                        "Total Paid",
+                        "Remaining Balance",
+                        "Next Due Date"
+                    ]
+                ],
+
+                body: rows,
+
+
+
+                theme: "grid",
+
+                showFoot: "lastPage",
+
+                margin: {
+                    left: 8,
+                    right: 8
+                },
+
+                styles: {
+                    fontSize: 9,
+                    cellPadding: 2.5
+                },
+
+                headStyles: {
+                    fillColor: [33, 37, 41],
+                    textColor: 255,
+                    fontStyle: "bold",
+                    halign: "center"
+                },
+
+                footStyles: {
+                    fillColor: [255, 255, 255],
+                    textColor: [0, 0, 0],
+                    fontStyle: "bold",
+                    halign: "center",
+                    lineWidth: 0
+                },
+
+                alternateRowStyles: {
+                    fillColor: [245, 245, 245]
+                },
+
+                columnStyles: {
+                    0: {
+                        halign: "center"
+                    },
+                    1: {
+                        halign: "left"
+                    },
+                    2: {
+                        halign: "right"
+                    },
+                    3: {
+                        halign: "right"
+                    },
+                    4: {
+                        halign: "right"
+                    },
+                    5: {
+                        halign: "center"
+                    }
+                }
+
+            });
+
+
+            // OPEN PDF
+            const blob = doc.output("blob");
+            window.open(URL.createObjectURL(blob));
+
+        });
+
+
+        // Excel
+        $('#btnExcel').on('click', function() {
+
+            let wb = XLSX.utils.book_new();
+
+            let ws_data = [];
+
+            // HEADER
+            ws_data.push(["OUTSTANDING LOANS REPORT"]);
+            ws_data.push(["Loan Management System"]);
+            ws_data.push(["Generated : " + new Date().toLocaleString()]);
+            ws_data.push([]);
+
+            // COLUMN HEADERS
+            ws_data.push([
+                "Reference No.",
+                "Borrower Name",
+                "Total Balance",
+                "Total Paid",
+                "Remaining Balance",
+                "Next Due Date"
+            ]);
+
+            let totalBalance = 0;
+            let totalPaid = 0;
+            let totalRemaining = 0;
+
+            // DATA
+            outstandingTable.rows().every(function() {
+
+                let d = this.data();
+
+                totalBalance += parseFloat(d.total_balance) || 0;
+                totalPaid += parseFloat(d.total_paid) || 0;
+                totalRemaining += parseFloat(d.remaining_balance) || 0;
+
+                ws_data.push([
+                    d.ref_no,
+                    d.borrower_name,
+                    parseFloat(d.total_balance),
+                    parseFloat(d.total_paid),
+                    parseFloat(d.remaining_balance),
+                    d.next_due_date
+                ]);
+
+            });
+
+            let ws = XLSX.utils.aoa_to_sheet(ws_data);
+            let lastRow = ws_data.length;
+
+            // MERGED CELLS
+            ws["!merges"] = [{
+                    s: {
+                        r: 0,
+                        c: 0
+                    },
+                    e: {
+                        r: 0,
+                        c: 5
+                    }
+                },
+                {
+                    s: {
+                        r: 1,
+                        c: 0
+                    },
+                    e: {
+                        r: 1,
+                        c: 5
+                    }
+                },
+                {
+                    s: {
+                        r: 2,
+                        c: 0
+                    },
+                    e: {
+                        r: 2,
+                        c: 5
+                    }
+                }
+            ];
+
+            // COLUMN WIDTHS
+            ws["!cols"] = [{
+                    wch: 20
+                },
+                {
+                    wch: 35
+                },
+                {
+                    wch: 18
+                },
+                {
+                    wch: 18
+                },
+                {
+                    wch: 20
+                },
+                {
+                    wch: 18
+                }
+            ];
+
+            // TITLE STYLE
+            ws["A1"].s = {
+                font: {
+                    bold: true,
+                    sz: 18
+                },
+                alignment: {
+                    horizontal: "center"
+                }
+            };
+
+            ws["A2"].s = {
+                font: {
+                    bold: true,
+                    sz: 12
+                },
+                alignment: {
+                    horizontal: "center"
+                }
+            };
+
+            ws["A3"].s = {
+                font: {
+                    italic: true
+                }
+            };
+
+            // HEADER STYLE
+            for (let c = 0; c <= 5; c++) {
+
+                let cell = XLSX.utils.encode_cell({
+                    r: 4,
+                    c: c
+                });
+
+                if (ws[cell]) {
+
+                    ws[cell].s = {
+
+                        font: {
+                            bold: true,
+                            color: {
+                                rgb: "FFFFFF"
+                            }
+                        },
+
+                        fill: {
+                            fgColor: {
+                                rgb: "212529"
+                            }
+                        },
+
+                        alignment: {
+                            horizontal: "center",
+                            vertical: "center"
+                        },
+
+                        border: {
+                            top: {
+                                style: "thin"
+                            },
+                            bottom: {
+                                style: "thin"
+                            },
+                            left: {
+                                style: "thin"
+                            },
+                            right: {
+                                style: "thin"
+                            }
+                        }
+
+                    };
+
+                }
+
+            }
+
+
+            // BODY STYLE
+            for (let r = 5; r < lastRow; r++) {
+
+                for (let c = 0; c <= 5; c++) {
+
+                    let ref = XLSX.utils.encode_cell({
+                        r: r,
+                        c: c
+                    });
+
+                    if (ws[ref]) {
+
+                        ws[ref].s = {
+                            border: {
+                                top: {
+                                    style: "thin"
+                                },
+                                bottom: {
+                                    style: "thin"
+                                },
+                                left: {
+                                    style: "thin"
+                                },
+                                right: {
+                                    style: "thin"
+                                }
+                            },
+                            alignment: {
+                                vertical: "center",
+                                horizontal: (c >= 2 && c <= 4) ? "right" : "center"
+                            }
+                        };
+
+                    }
+
+                }
+
+            }
+
+            // CURRENCY FORMAT
+            for (let r = 5; r < lastRow; r++) {
+
+                [2, 3, 4].forEach(function(col) {
+
+                    let ref = XLSX.utils.encode_cell({
+                        r: r,
+                        c: col
+                    });
+
+                    if (ws[ref]) {
+
+                        ws[ref].z = '"₱" #,##0.00';
+
+                    }
+
+                });
+
+            }
+
+
+
+            // EXPORT
+            XLSX.utils.book_append_sheet(wb, ws, "Outstanding Loans");
+
+            XLSX.writeFile(wb, "Outstanding_Loans_Report.xlsx");
+
+        });
+
+
+
+
     });
+
+
+
 
 
     $(document).on('click', '.btn-view', function() {
@@ -385,6 +802,7 @@
 
 
 
+
     $(document).on('click', '.btn-print-receipt', function() {
 
         let fullname = $('#view_fullname').val();
@@ -394,162 +812,125 @@
         let datePayment = $(this).data('date-payment');
         let collector = $(this).data('collector');
         let paymentMethod = $(this).data('payment-method');
+
         let amountPaid = parseFloat($(this).data('payment-amount') || 0);
         let remainingBalance = parseFloat($(this).data('remaining-balance') || 0);
         let penalty = parseFloat($(this).data('penalty') || 0);
 
-        let win = window.open('', '', 'width=500,height=600');
+        let htmlContent = `
+    <html>
+    <head>
+        <title>Payment Receipt</title>
 
-        win.document.write(`
-        <html>
-        <head>
-            <title>Payment Receipt</title>
+        <style>
+            @page {
+                size: 80mm 100mm;
+                margin: 3mm;
+            }
 
-             <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+            }
 
-                @page{
-                    size:80mm 100mm;
-                    margin:3mm;
-                }
+            .receipt {
+                width: 100%;
+                border: 1px solid #000;
+                padding: 5mm;
+                box-sizing: border-box;
+            }
 
-                body{
-                    font-family:Arial,sans-serif;
-                    margin:0;
-                    padding:0;
-                }
+            h3 {
+                text-align: center;
+                margin: 0 0 5px;
+                font-size: 12px;
+            }
 
-                .receipt{
-                    width:100%;
-                    border:1px solid #000;
-                    padding:5mm;
-                    box-sizing:border-box;
-                    page-break-after:always;
-                }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 10px;
+            }
 
-                h3{
-                    text-align:center;
-                    margin:0 0 5px;
-                    font-size:12px;
-                }
+            td {
+                padding: 2px 0;
+            }
 
-                table{
-                    width:100%;
-                    border-collapse:collapse;
-                    font-size:10px;
-                }
+            .right {
+                text-align: right;
+            }
 
-                td{
-                    padding:2px 0;
-                }
+            .line {
+                border-top: 1px dashed #000;
+                margin: 5px 0;
+            }
 
-                .right{
-                    text-align:right;
-                }
+            .signature {
+                text-align: center;
+                margin-top: 10px;
+                font-size: 10px;
+            }
+        </style>
+    </head>
 
-                .line{
-                    border-top:1px dashed #000;
-                    margin:5px 0;
-                }
+    <body>
+        <div class="receipt">
 
-                .signature{
-                    text-align:center;
-                    margin-top:10px;
-                    font-size:10px;
-                }
+            <h3>PAYMENT RECEIPT</h3>
 
-            </style>
-        </head>
+            <table>
+                <tr><td>Borrower</td><td class="right">${fullname}</td></tr>
+                <tr><td>Reference No</td><td class="right">${refNo}</td></tr>
+                <tr><td>Payment No</td><td class="right">${paymentNo}</td></tr>
+                <tr><td>Date Payment</td><td class="right">${datePayment}</td></tr>
+                <tr><td>Collector</td><td class="right">${collector}</td></tr>
+                <tr><td>Method</td><td class="right">${paymentMethod}</td></tr>
+            </table>
 
-        <body>
+            <div class="line"></div>
 
-            <div class="receipt">
+            <table>
+                <tr>
+                    <td>Amount Paid</td>
+                    <td class="right">P ${amountPaid.toLocaleString('en-PH', { minimumFractionDigits: 2 })}</td>
+                </tr>
+                <tr>
+                    <td>Penalty</td>
+                    <td class="right">P ${penalty.toLocaleString('en-PH', { minimumFractionDigits: 2 })}</td>
+                </tr>
+                <tr>
+                    <td>Remaining</td>
+                    <td class="right">P ${remainingBalance.toLocaleString('en-PH', { minimumFractionDigits: 2 })}</td>
+                </tr>
+            </table>
 
-                <h3>PAYMENT RECEIPT</h3>
+            <div class="line"></div>
 
-                <table>
-                    <tr>
-                        <td>Borrower</td>
-                        <td class="right">${fullname}</td>
-                    </tr>
-
-                    <tr>
-                        <td>Reference No</td>
-                        <td class="right">${refNo}</td>
-                    </tr>
-
-                    <tr>
-                        <td>Payment No</td>
-                        <td class="right">${paymentNo}</td>
-                    </tr>
-
-                    <tr>
-                        <td>Date Payment</td>
-                        <td class="right">${datePayment}</td>
-                    </tr>
-
-                    <tr>
-                        <td>Collector</td>
-                        <td class="right">${collector}</td>
-                    </tr>
-
-                    <tr>
-                        <td>Method</td>
-                        <td class="right">${paymentMethod}</td>
-                    </tr>
-                </table>
-
-                <div class="line"></div>
-
-                <table>
-                    <tr>
-                        <td>Amount Paid</td>
-                        <td class="right">
-                            ₱ ${amountPaid.toLocaleString('en-PH', {
-                                minimumFractionDigits: 2
-                            })}
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>Penalty</td>
-                        <td class="right">
-                            ₱ ${penalty.toLocaleString('en-PH', {
-                                minimumFractionDigits: 2
-                            })}
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>Remaining</td>
-                        <td class="right">
-                            ₱ ${remainingBalance.toLocaleString('en-PH', {
-                                minimumFractionDigits: 2
-                            })}
-                        </td>
-                    </tr>
-                </table>
-
-                <div class="line"></div>
-
-                <div class="signature">
-                     <center>
-                    ___________________<br>
-                    Authorized Signature
-                </center>
-                </div>
-
+            <div class="signature">
+                ___________________<br>
+                Authorized Signature
             </div>
 
-        </body>
-        </html>
-    `);
+        </div>
+    </body>
+    </html>
+    `;
 
-        win.document.close();
+        let blob = new Blob([htmlContent], {
+            type: 'text/html'
+        });
+        let blobUrl = URL.createObjectURL(blob);
+
+        let win = window.open(blobUrl, '_blank');
+
+        win.onload = function() {
+            win.focus();
+            win.print();
+        };
 
         setTimeout(() => {
-            win.print();
-            // win.close();
-        }, 500);
-
+            URL.revokeObjectURL(blobUrl);
+        }, 10000);
     });
     </script>

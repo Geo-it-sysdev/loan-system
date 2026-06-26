@@ -658,7 +658,7 @@
                     .html('<i class="ri-add-line me-1"></i> Add Loan');
 
                 mode = "add";
-                 location.reload();
+                //  location.reload();
                 return false;
             }
 
