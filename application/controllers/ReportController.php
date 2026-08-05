@@ -25,6 +25,7 @@ class ReportController extends CI_Controller {
                     ' ',
                     b.lastname
                 ) AS borrower_name,
+                 b.contact_no,
 
                 DATE_ADD(
                     l.effective_date,

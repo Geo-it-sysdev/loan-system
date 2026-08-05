@@ -50,6 +50,7 @@
                                         <tr>
                                             <th>Reference Number</th>
                                             <th>Borrower Name</th>
+                                            <th>Contact No.</th>
                                             <th>Due Date</th>
                                             <th>Days Overdue</th>
                                             <th>Monthly Amortization</th>
@@ -90,6 +91,9 @@
                 },
                 {
                     data: "borrower_name"
+                },
+                {
+                    data: "contact_no"
                 },
                 {
                     data: "due_date",
@@ -180,6 +184,7 @@
                 rows.push([
                     d.ref_no,
                     d.borrower_name,
+                    d.contact_no,
                     d.due_date,
                     d.days_overdue,
                     "P " + parseFloat(d.monthly_payment).toLocaleString(undefined, {
@@ -207,6 +212,7 @@
                     [
                         "Reference No.",
                         "Borrower Name",
+                        "Contact No",
                         "Due Date",
                         "Days Overdue",
                         "Monthly Payment",
@@ -219,6 +225,7 @@
 
                 foot: [
                     [
+                        "",
                         "",
                         "",
                         "",
@@ -282,30 +289,34 @@
                     },
 
                     1: {
-                        cellWidth: 80
+                        cellWidth: 67
                     },
 
                     2: {
+                        cellWidth: 30
+                    },
+
+                    3: {
                         cellWidth: 32,
                         halign: "center"
                     },
 
-                    3: {
+                    4: {
                         cellWidth: 30,
                         halign: "center"
                     },
 
-                    4: {
+                    5: {
                         cellWidth: 40,
                         halign: "right"
                     },
 
-                    5: {
+                    6: {
                         cellWidth: 35,
                         halign: "right"
                     },
 
-                    6: {
+                    7: {
                         cellWidth: 40,
                         halign: "right"
                     }
@@ -349,19 +360,23 @@
         $('#btnExcel').on('click', function() {
 
             let wb = XLSX.utils.book_new();
-
             let ws_data = [];
 
-            // HEADER
+            // ==========================
+            // REPORT HEADER
+            // ==========================
             ws_data.push(["OVERDUE LOANS REPORT"]);
             ws_data.push(["Loan Management System"]);
-            ws_data.push(["Generated : " + new Date().toLocaleString()]);
+            ws_data.push(["Generated: " + new Date().toLocaleString()]);
             ws_data.push([]);
 
+            // ==========================
             // COLUMN HEADERS
+            // ==========================
             ws_data.push([
                 "Reference No.",
                 "Borrower Name",
+                "Contact No.",
                 "Due Date",
                 "Days Overdue",
                 "Monthly Payment",
@@ -371,27 +386,37 @@
 
             let grandTotal = 0;
 
-            // DATA
+            // ==========================
+            // TABLE DATA
+            // ==========================
             overdueTable.rows().every(function() {
 
                 let d = this.data();
 
-                grandTotal += parseFloat(d.total_due);
+                let monthlyPayment = parseFloat(d.monthly_payment) || 0;
+                let penalty = parseFloat(d.penalty) || 0;
+                let totalDue = parseFloat(d.total_due) || 0;
+
+                grandTotal += totalDue;
 
                 ws_data.push([
                     d.ref_no,
                     d.borrower_name,
+                    d.contact_no,
                     d.due_date,
                     d.days_overdue,
-                    parseFloat(d.monthly_payment),
-                    parseFloat(d.penalty),
-                    parseFloat(d.total_due)
+                    monthlyPayment,
+                    penalty,
+                    totalDue
                 ]);
 
             });
 
+            // ==========================
             // FOOTER
+            // ==========================
             ws_data.push([
+                "",
                 "",
                 "",
                 "",
@@ -401,9 +426,12 @@
                 grandTotal
             ]);
 
+            // Create worksheet
             let ws = XLSX.utils.aoa_to_sheet(ws_data);
 
-            // MERGE CELLS
+            // ==========================
+            // MERGE TITLE CELLS
+            // ==========================
             ws["!merges"] = [{
                     s: {
                         r: 0,
@@ -411,7 +439,7 @@
                     },
                     e: {
                         r: 0,
-                        c: 6
+                        c: 7
                     }
                 },
                 {
@@ -421,7 +449,7 @@
                     },
                     e: {
                         r: 1,
-                        c: 6
+                        c: 7
                     }
                 },
                 {
@@ -431,64 +459,79 @@
                     },
                     e: {
                         r: 2,
-                        c: 6
+                        c: 7
                     }
                 }
             ];
 
+            // ==========================
             // COLUMN WIDTHS
+            // ==========================
             ws["!cols"] = [{
                     wch: 20
-                },
+                }, // Reference
                 {
-                    wch: 35
-                },
+                    wch: 30
+                }, // Borrower
                 {
                     wch: 18
-                },
+                }, // Contact
+                {
+                    wch: 18
+                }, // Due Date
                 {
                     wch: 15
-                },
+                }, // Days Overdue
                 {
                     wch: 18
-                },
+                }, // Monthly Payment
                 {
                     wch: 18
-                },
+                }, // Penalty
                 {
                     wch: 18
-                }
+                } // Total Due
             ];
 
+            // ==========================
             // TITLE STYLE
-            ws["A1"].s = {
-                font: {
-                    bold: true,
-                    sz: 18
-                },
-                alignment: {
-                    horizontal: "center"
-                }
-            };
+            // ==========================
+            if (ws["A1"]) {
+                ws["A1"].s = {
+                    font: {
+                        bold: true,
+                        sz: 18
+                    },
+                    alignment: {
+                        horizontal: "center"
+                    }
+                };
+            }
 
-            ws["A2"].s = {
-                font: {
-                    bold: true,
-                    sz: 12
-                },
-                alignment: {
-                    horizontal: "center"
-                }
-            };
+            if (ws["A2"]) {
+                ws["A2"].s = {
+                    font: {
+                        bold: true,
+                        sz: 12
+                    },
+                    alignment: {
+                        horizontal: "center"
+                    }
+                };
+            }
 
-            ws["A3"].s = {
-                font: {
-                    italic: true
-                }
-            };
+            if (ws["A3"]) {
+                ws["A3"].s = {
+                    font: {
+                        italic: true
+                    }
+                };
+            }
 
+            // ==========================
             // HEADER STYLE
-            for (let c = 0; c <= 6; c++) {
+            // ==========================
+            for (let c = 0; c <= 7; c++) {
 
                 let cell = XLSX.utils.encode_cell({
                     r: 4,
@@ -498,25 +541,21 @@
                 if (ws[cell]) {
 
                     ws[cell].s = {
-
                         font: {
                             bold: true,
                             color: {
                                 rgb: "FFFFFF"
                             }
                         },
-
                         fill: {
                             fgColor: {
                                 rgb: "212529"
                             }
                         },
-
                         alignment: {
                             horizontal: "center",
                             vertical: "center"
                         },
-
                         border: {
                             top: {
                                 style: "thin"
@@ -531,61 +570,62 @@
                                 style: "thin"
                             }
                         }
-
                     };
 
                 }
 
             }
 
+            // ==========================
             // BODY STYLE
+            // ==========================
             let lastRow = ws_data.length;
 
             for (let r = 5; r < lastRow; r++) {
 
-                for (let c = 0; c <= 6; c++) {
+                for (let c = 0; c <= 7; c++) {
 
                     let ref = XLSX.utils.encode_cell({
                         r: r,
                         c: c
                     });
 
-                    if (ws[ref]) {
+                    if (!ws[ref]) continue;
 
-                        ws[ref].s = {
-
-                            border: {
-                                top: {
-                                    style: "thin"
-                                },
-                                bottom: {
-                                    style: "thin"
-                                },
-                                left: {
-                                    style: "thin"
-                                },
-                                right: {
-                                    style: "thin"
-                                }
+                    ws[ref].s = {
+                        border: {
+                            top: {
+                                style: "thin"
                             },
-
-                            alignment: {
-                                vertical: "center",
-                                horizontal: (c >= 4 ? "right" : "left")
+                            bottom: {
+                                style: "thin"
+                            },
+                            left: {
+                                style: "thin"
+                            },
+                            right: {
+                                style: "thin"
                             }
-
-                        };
-
-                    }
+                        },
+                        alignment: {
+                            vertical: "center",
+                            horizontal: (c >= 4 ? "right" : "left")
+                        }
+                    };
 
                 }
 
             }
 
-            // NUMBER FORMAT
+            // ==========================
+            // CURRENCY FORMAT
+            // F = Monthly Payment
+            // G = Penalty
+            // H = Total Due
+            // ==========================
             for (let r = 5; r < lastRow; r++) {
 
-                [4, 5, 6].forEach(function(col) {
+                [5, 6, 7].forEach(function(col) {
 
                     let ref = XLSX.utils.encode_cell({
                         r: r,
@@ -593,73 +633,69 @@
                     });
 
                     if (ws[ref]) {
-
-                        ws[ref].z = '"P" #,##0.00';
-
+                        ws[ref].z = '"₱" #,##0.00';
                     }
 
                 });
 
             }
 
+            // ==========================
             // GRAND TOTAL STYLE
+            // ==========================
             let totalRow = lastRow - 1;
 
-            ["F", "G"].forEach(function(col) {
+            ["G", "H"].forEach(function(col) {
 
                 let ref = col + (totalRow + 1);
 
-                if (ws[ref]) {
+                if (!ws[ref]) return;
 
-                    ws[ref].s = {
-
-                        font: {
-                            bold: true,
-                            color: {
-                                rgb: "FFFFFF"
-                            }
-                        },
-
-                        fill: {
-                            fgColor: {
-                                rgb: "212529"
-                            }
-                        },
-
-                        alignment: {
-                            horizontal: "right"
-                        },
-
-                        border: {
-                            top: {
-                                style: "thin"
-                            },
-                            bottom: {
-                                style: "thin"
-                            },
-                            left: {
-                                style: "thin"
-                            },
-                            right: {
-                                style: "thin"
-                            }
+                ws[ref].s = {
+                    font: {
+                        bold: true,
+                        color: {
+                            rgb: "FFFFFF"
                         }
-
-                    };
-
-                }
+                    },
+                    fill: {
+                        fgColor: {
+                            rgb: "212529"
+                        }
+                    },
+                    alignment: {
+                        horizontal: "right"
+                    },
+                    border: {
+                        top: {
+                            style: "thin"
+                        },
+                        bottom: {
+                            style: "thin"
+                        },
+                        left: {
+                            style: "thin"
+                        },
+                        right: {
+                            style: "thin"
+                        }
+                    }
+                };
 
             });
 
-            ws["G" + (totalRow + 1)].z = '"P" #,##0.00';
+            if (ws["H" + (totalRow + 1)]) {
+                ws["H" + (totalRow + 1)].z = '"₱" #,##0.00';
+            }
 
+            // ==========================
             // EXPORT
+            // ==========================
             XLSX.utils.book_append_sheet(wb, ws, "Overdue Loans");
 
             XLSX.writeFile(wb, "Overdue_Loans_Report.xlsx");
 
         });
-
 
 
 

@@ -15,7 +15,7 @@ class AdminController extends CI_Controller {
     }
 
     // Dashboard
-   public function get_dashboard_stats()
+    public function get_dashboard_stats()
     {
         // Total Borrowers
         $total_borrowers = $this->db->count_all('tbl_borrower');
@@ -35,12 +35,60 @@ class AdminController extends CI_Controller {
         $this->db->where('status', 'Fully');
         $total_paid = $this->db->count_all_results();
 
+        // ============================
+        // Total Capital (Loan Amount)
+        // ============================
+        $total_capital = $this->db
+            ->select('SUM(CAST(loan_amount AS DECIMAL(15,2))) AS total')
+            ->get('tbl_loan')
+            ->row()
+            ->total;
+
+        // ============================
+        // Total Interest
+        // ============================
+        $total_interest = $this->db
+            ->select('SUM(CAST(unearned_interest AS DECIMAL(15,2))) AS total')
+            ->get('tbl_loan')
+            ->row()
+            ->total;
+
+        // ============================
+        // Total Earned
+        // (Fully Paid Loans)
+        // ============================
+        $total_earned = $this->db
+            ->select('SUM(CAST(unearned_interest AS DECIMAL(15,2))) AS total')
+            ->where('status', 'Fully')
+            ->get('tbl_loan')
+            ->row()
+            ->total;
+
+        // ============================
+        // Total Unearned
+        // (Pending, Released, Partial)
+        // ============================
+        $total_unearned = $this->db
+            ->select('SUM(CAST(unearned_interest AS DECIMAL(15,2))) AS total')
+            ->where_in('status', ['Pending', 'Released', 'Partial'])
+            ->get('tbl_loan')
+            ->row()
+            ->total;
+
         echo json_encode([
             'status' => true,
-            'total_borrowers' => $total_borrowers,
-            'total_release' => $total_release,
+
+            // Existing
+            'total_borrowers'   => $total_borrowers,
+            'total_release'     => $total_release,
             'remaining_balance' => $remaining_balance,
-            'total_paid' => $total_paid
+            'total_paid'        => $total_paid,
+
+            // New
+            'total_capital'     => number_format($total_capital ?: 0, 2),
+            'total_interest'    => number_format($total_interest ?: 0, 2),
+            'total_earned'      => number_format($total_earned ?: 0, 2),
+            'total_unearned'    => number_format($total_unearned ?: 0, 2),
         ]);
     }
 

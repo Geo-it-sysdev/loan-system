@@ -633,7 +633,7 @@
         });
 
 
-        // FORM SUBMIT (ADD / EDIT / VIEW )
+        // FORM SUBMIT (ADD / EDIT / VIEW)
         $(document).on('submit', '#BorrowerForm', function(e) {
 
             e.preventDefault();
@@ -658,7 +658,6 @@
                     .html('<i class="ri-add-line me-1"></i> Add Loan');
 
                 mode = "add";
-                //  location.reload();
                 return false;
             }
 
@@ -666,70 +665,105 @@
                 "<?= base_url('update_loan') ?>" :
                 "<?= base_url('save_loan') ?>";
 
-            $.ajax({
-                url: url,
-                type: "POST",
-                data: $(this).serialize(),
-                dataType: "json",
+            // Confirmation before saving
+            Swal.fire({
+                title: (mode === "edit") ?
+                    "Are you sure you want to update this?" :
+                    "Are you sure you want to add this?",
+                text: "Please confirm your action.",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: "#0d6efd",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes",
+                cancelButtonText: "Cancel",
+                reverseButtons: true
+            }).then((result) => {
 
-                success: function(res) {
+                if (!result.isConfirmed) {
+                    return;
+                }
 
-                    if (res.status) {
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: $('#BorrowerForm').serialize(),
+                    dataType: "json",
 
-                        Swal.fire({
-                            icon: 'success',
-                            title: (mode === "edit") ?
-                                'Loan Updated Successfully' :
-                                'Loan Added Successfully',
-                            timer: 1500,
-                            showConfirmButton: false
-                        });
+                    success: function(res) {
 
-                        // reload page after alert
-                       setTimeout(function() {
+                        if (res.status) {
 
-                        $('#BorrowerForm')[0].reset();
+                            Swal.fire({
+                                icon: 'success',
+                                title: (mode === "edit") ?
+                                    'Loan Updated Successfully' :
+                                    'Loan Added Successfully',
+                                timer: 1500,
+                                showConfirmButton: false
+                            });
 
-                        $('#loan_id').val('');
-                        $('#borrower_id').val('');
+                            setTimeout(function() {
 
-                        $('#BorrowerForm input').prop('readonly', false);
-                        $('#BorrowerForm select').prop('disabled', false);
+                                $('#BorrowerForm')[0].reset();
 
-                        $('[name="monthly_payment"]').prop('readonly', true);
-                        $('[name="unearned_interest"]').prop('readonly', true);
-                        $('[name="total_balance"]').prop('readonly', true);
+                                $('#loan_id').val('');
+                                $('#borrower_id').val('');
 
-                        // Restore button
-                        $('#btnSave')
-                            .removeClass('btn-danger btn-success')
-                            .addClass('btn-primary')
-                            .html('<i class="ri-add-line me-1"></i> Add Loan');
+                                $('#BorrowerForm input').prop('readonly',
+                                    false);
+                                $('#BorrowerForm select').prop('disabled',
+                                    false);
 
-                        mode = "add";
+                                $('[name="monthly_payment"]').prop(
+                                    'readonly', true);
+                                $('[name="unearned_interest"]').prop(
+                                    'readonly', true);
+                                $('[name="total_balance"]').prop('readonly',
+                                    true);
 
-                        $('#LoanTable').DataTable().ajax.reload(null, false);
+                                $('#btnSave')
+                                    .removeClass('btn-danger btn-success')
+                                    .addClass('btn-primary')
+                                    .html(
+                                        '<i class="ri-add-line me-1"></i> Add Loan'
+                                        );
 
-                        refreshEffectiveDate();
+                                mode = "add";
 
-                    }, 1500);
-                    } else {
+                                $('#LoanTable').DataTable().ajax.reload(
+                                    null, false);
+
+                                refreshEffectiveDate();
+
+                            }, 1500);
+
+                        } else {
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: res.message || 'Something went wrong'
+                            });
+
+                        }
+
+                    },
+
+                    error: function() {
+
                         Swal.fire({
                             icon: 'error',
-                            title: 'Error',
-                            text: res.message || 'Something went wrong'
+                            title: 'Server Error',
+                            text: 'Please try again later'
                         });
-                    }
-                },
 
-                error: function() {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Server Error',
-                        text: 'Please try again later'
-                    });
-                }
+                    }
+
+                });
+
             });
+
         });
 
 
@@ -933,7 +967,9 @@
         today.setMonth(today.getMonth() + 1);
 
         const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const
+        \
+         month = String(today.getMonth() + 1).padStart(2, '0');
         const day = String(today.getDate()).padStart(2, '0');
 
         $('#effective_date').val(`${year}-${month}-${day}`);
