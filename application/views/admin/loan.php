@@ -633,6 +633,7 @@
         });
 
 
+        // FORM SUBMIT (ADD / EDIT / VIEW )
         // FORM SUBMIT (ADD / EDIT / VIEW)
         $(document).on('submit', '#BorrowerForm', function(e) {
 
@@ -765,6 +766,7 @@
             });
 
         });
+        
 
 
         // VIEW LOAN
@@ -967,9 +969,7 @@
         today.setMonth(today.getMonth() + 1);
 
         const year = today.getFullYear();
-        const
-        \
-         month = String(today.getMonth() + 1).padStart(2, '0');
+        const month = String(today.getMonth() + 1).padStart(2, '0');
         const day = String(today.getDate()).padStart(2, '0');
 
         $('#effective_date').val(`${year}-${month}-${day}`);
