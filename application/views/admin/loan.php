@@ -669,8 +669,8 @@
             // Confirmation before saving
             Swal.fire({
                 title: (mode === "edit") ?
-                    "Are you sure you want to update this?" :
-                    "Are you sure you want to add this?",
+                    "Are you sure you want to update this Loan?" :
+                    "Are you sure you want to add this Loan?",
                 text: "Please confirm your action.",
                 icon: "question",
                 showCancelButton: true,
@@ -766,7 +766,7 @@
             });
 
         });
-        
+
 
 
         // VIEW LOAN
