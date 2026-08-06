@@ -873,22 +873,23 @@ class AdminController extends CI_Controller {
         date_default_timezone_set('Asia/Manila');
 
         $data = array(
-            'borrower_id'        => $this->input->post('borrower_id'),
-            'loan_purpose'       => $this->input->post('loan_purpose'),
+            'borrower_id'            => $this->input->post('borrower_id'),
+            'added_by'  => $this->session->userdata('id'),
+            'loan_purpose'           => $this->input->post('loan_purpose'),
 
-            'co_maker'           => $this->input->post('co_maker_name'),
-            'co_maker_contact'   => $this->input->post('co_maker_contact'),
-            'relationship'       => $this->input->post('relationship'),
-            'collateral'         => $this->input->post('collateral'),
-            'loan_plan'          => $this->input->post('loan_plan'),
-            'effective_date'     => $this->input->post('effective_date'),
-            'loan_amount'        => str_replace(',', '', $this->input->post('principal_amount')),
-            'interest_rate'      => $this->input->post('interest_rate'),
-            'monthly_payment'    => $this->input->post('monthly_payment'),
-            'unearned_interest'  => $this->input->post('unearned_interest'),
-            'total_balance'      => $this->input->post('total_balance'),
-            'date_created'       => date('Y-m-d H:i:s'),
-            'status'       => 'Pending'
+            'co_maker'               => $this->input->post('co_maker_name'),
+            'co_maker_contact'       => $this->input->post('co_maker_contact'),
+            'relationship'           => $this->input->post('relationship'),
+            'collateral'             => $this->input->post('collateral'),
+            'loan_plan'              => $this->input->post('loan_plan'),
+            'effective_date'         => $this->input->post('effective_date'),
+            'loan_amount'            => str_replace(',', '', $this->input->post('principal_amount')),
+            'interest_rate'          => $this->input->post('interest_rate'),
+            'monthly_payment'        => $this->input->post('monthly_payment'),
+            'unearned_interest'      => $this->input->post('unearned_interest'),
+            'total_balance'          => $this->input->post('total_balance'),
+            'date_created'           => date('Y-m-d H:i:s'),
+            'status'                 => 'Pending'
         );
 
         $insert = $this->db->insert('tbl_loan', $data);
@@ -952,19 +953,25 @@ class AdminController extends CI_Controller {
         $id = $this->input->post('loan_id');
 
         $data = [
-            'borrower_id'        => $this->input->post('borrower_id'),
-            'loan_purpose'       => $this->input->post('loan_purpose'),
-            'co_maker'           => $this->input->post('co_maker_name'),
-            'co_maker_contact'   => $this->input->post('co_maker_contact'),
-            'relationship'       => $this->input->post('relationship'),
-            'collateral'         => $this->input->post('collateral'),
-            'loan_plan'         => $this->input->post('loan_plan'),
-            'effective_date'    => $this->input->post('effective_date'),
-            'loan_amount'       => str_replace(',', '', $this->input->post('principal_amount')),
-            'interest_rate'     => $this->input->post('interest_rate'),
-            'monthly_payment'   => $this->input->post('monthly_payment'),
-            'unearned_interest' => $this->input->post('unearned_interest'),
-            'total_balance'     => $this->input->post('total_balance')
+            'borrower_id'             => $this->input->post('borrower_id'),
+            'loan_purpose'            => $this->input->post('loan_purpose'),
+            'co_maker'                => $this->input->post('co_maker_name'),
+            'co_maker_contact'        => $this->input->post('co_maker_contact'),
+            'relationship'            => $this->input->post('relationship'),
+            'collateral'              => $this->input->post('collateral'),
+            'loan_plan'               => $this->input->post('loan_plan'),
+            'effective_date'          => $this->input->post('effective_date'),
+            'loan_amount'             => str_replace(',', '', $this->input->post('principal_amount')),
+            'interest_rate'           => $this->input->post('interest_rate'),
+            'monthly_payment'         => $this->input->post('monthly_payment'),
+            'unearned_interest'       => $this->input->post('unearned_interest'),
+            'total_balance'           => $this->input->post('total_balance'),
+
+            // Logged-in user
+            'updated_by' => $this->session->userdata('id'),
+
+            // Optional: update timestamp
+            'date_updated'            => date('Y-m-d H:i:s')
         ];
 
         $this->db->where('id', $id);

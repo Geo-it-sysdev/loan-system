@@ -634,7 +634,6 @@
 
 
         // FORM SUBMIT (ADD / EDIT / VIEW )
-        // FORM SUBMIT (ADD / EDIT / VIEW)
         $(document).on('submit', '#BorrowerForm', function(e) {
 
             e.preventDefault();
