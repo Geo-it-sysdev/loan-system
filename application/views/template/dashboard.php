@@ -161,13 +161,13 @@
                                     </a>
 
                                     <ul class="dropdown-menu dropdown-menu-end" id="yearDropdown">
-                                        <?php for ($year = date('Y'); $year >= 2025; $year--) : ?>
-                                        <li>
-                                            <a class="dropdown-item year-filter <?= $year == date('Y') ? 'active' : '' ?>"
-                                                href="#" data-year="<?= $year; ?>">
-                                                <?= $year; ?>
-                                            </a>
-                                        </li>
+                                        <?php for ($year = date('Y'); $year >= 2025; $year--): ?>
+                                            <li>
+                                                <a class="dropdown-item year-filter <?= $year == date('Y') ? 'active' : '' ?>"
+                                                    href="#" data-year="<?= $year; ?>">
+                                                    <?= $year; ?>
+                                                </a>
+                                            </li>
                                         <?php endfor; ?>
                                     </ul>
                                 </div>
@@ -186,27 +186,27 @@
                         <div class="col-md-6">
                             <div class="card card-animate">
                                 <div class="card-body">
-                                        <div class="d-flex justify-content-between">
-                                            <div>
-                                                <p class="fw-medium text-muted mb-0">Total Capital</p>
-                                                <h2 class="mt-4 ff-secondary fw-semibold">
-                                                    <span class="counter-value" data-target-capital>0</span>
-                                                </h2>
-                                                <p class="mb-0 text-muted">
-                                                    <span class="badge bg-light text-secondary mb-0">
-                                                        <i class="ri-bank-line align-middle"></i> total
-                                                        capital
-                                                    </span>
-                                                </p>
-                                            </div>
-                                            <div>
-                                                <div class="avatar-sm flex-shrink-0">
-                                                    <span class="avatar-title bg-secondary-subtle rounded-circle fs-2">
-                                                        <i class="ri-bank-line text-secondary"></i>
-                                                    </span>
-                                                </div>
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <p class="fw-medium text-muted mb-0">Total Capital</p>
+                                            <h2 class="mt-4 ff-secondary fw-semibold">
+                                                <span class="counter-value" data-target-capital>0</span>
+                                            </h2>
+                                            <p class="mb-0 text-muted">
+                                                <span class="badge bg-light text-secondary mb-0">
+                                                    <i class="ri-bank-line align-middle"></i> total
+                                                    capital
+                                                </span>
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <div class="avatar-sm flex-shrink-0">
+                                                <span class="avatar-title bg-secondary-subtle rounded-circle fs-2">
+                                                    <i class="ri-bank-line text-secondary"></i>
+                                                </span>
                                             </div>
                                         </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -214,27 +214,27 @@
                         <div class="col-md-6">
                             <div class="card card-animate">
                                 <div class="card-body">
-                                        <div class="d-flex justify-content-between">
-                                            <div>
-                                                <p class="fw-medium text-muted mb-0">Total Interest</p>
-                                                <h2 class="mt-4 ff-secondary fw-semibold">
-                                                    <span class="counter-value" data-target-interest>0</span>
-                                                </h2>
-                                                <p class="mb-0 text-muted">
-                                                    <span class="badge bg-light text-primary mb-0">
-                                                        <i class="ri-percent-line align-middle"></i> total
-                                                        interest
-                                                    </span>
-                                                </p>
-                                            </div>
-                                            <div>
-                                                <div class="avatar-sm flex-shrink-0">
-                                                    <span class="avatar-title bg-primary-subtle rounded-circle fs-2">
-                                                        <i class="ri-percent-line text-primary"></i>
-                                                    </span>
-                                                </div>
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <p class="fw-medium text-muted mb-0">Total Interest</p>
+                                            <h2 class="mt-4 ff-secondary fw-semibold">
+                                                <span class="counter-value" data-target-interest>0</span>
+                                            </h2>
+                                            <p class="mb-0 text-muted">
+                                                <span class="badge bg-light text-primary mb-0">
+                                                    <i class="ri-percent-line align-middle"></i> total
+                                                    interest
+                                                </span>
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <div class="avatar-sm flex-shrink-0">
+                                                <span class="avatar-title bg-primary-subtle rounded-circle fs-2">
+                                                    <i class="ri-percent-line text-primary"></i>
+                                                </span>
                                             </div>
                                         </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -242,6 +242,7 @@
                         <div class="col-md-6">
                             <div class="card card-animate">
                                 <div class="card-body">
+                                    <a href="<?= base_url('Fully-Paid') ?>" class="text-decoration-none">
                                         <div class="d-flex justify-content-between">
                                             <div>
                                                 <p class="fw-medium text-muted mb-0">Total Earned (Fully Paid)</p>
@@ -263,6 +264,7 @@
                                                 </div>
                                             </div>
                                         </div>
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -270,27 +272,27 @@
                         <div class="col-md-6">
                             <div class="card card-animate">
                                 <div class="card-body">
-                                        <div class="d-flex justify-content-between">
-                                            <div>
-                                                <p class="fw-medium text-muted mb-0">Total Unearned</p>
-                                                <h2 class="mt-4 ff-secondary fw-semibold">
-                                                    <span class="counter-value" data-target-unearned>0</span>
-                                                </h2>
-                                                <p class="mb-0 text-muted">
-                                                    <span class="badge bg-light text-warning mb-0">
-                                                        <i class="ri-hourglass-line align-middle"></i> total
-                                                        unearned
-                                                    </span>
-                                                </p>
-                                            </div>
-                                            <div>
-                                                <div class="avatar-sm flex-shrink-0">
-                                                    <span class="avatar-title bg-warning-subtle rounded-circle fs-2">
-                                                        <i class="ri-hourglass-line text-warning"></i>
-                                                    </span>
-                                                </div>
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <p class="fw-medium text-muted mb-0">Total Unearned</p>
+                                            <h2 class="mt-4 ff-secondary fw-semibold">
+                                                <span class="counter-value" data-target-unearned>0</span>
+                                            </h2>
+                                            <p class="mb-0 text-muted">
+                                                <span class="badge bg-light text-warning mb-0">
+                                                    <i class="ri-hourglass-line align-middle"></i> total
+                                                    unearned
+                                                </span>
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <div class="avatar-sm flex-shrink-0">
+                                                <span class="avatar-title bg-warning-subtle rounded-circle fs-2">
+                                                    <i class="ri-hourglass-line text-warning"></i>
+                                                </span>
                                             </div>
                                         </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -304,62 +306,62 @@
 
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
-$(document).ready(function() {
+    $(document).ready(function () {
 
-    function loadDashboardStats() {
-        $.ajax({
-            url: "<?= base_url('get_dashboard_stats') ?>",
-            type: "GET",
-            dataType: "json",
-            success: function(res) {
-                if (res.status) {
+        function loadDashboardStats() {
+            $.ajax({
+                url: "<?= base_url('get_dashboard_stats') ?>",
+                type: "GET",
+                dataType: "json",
+                success: function (res) {
+                    if (res.status) {
 
-                    $('[data-target-borrowers]').text(res.total_borrowers);
-                    $('[data-target-release]').text(res.total_release);
-                    $('[data-target-remaining]').text(res.remaining_balance);
-                    $('[data-target-paid]').text(res.total_paid);
-                    $('[data-target-capital]').text(res.total_capital);
-                    $('[data-target-interest]').text(res.total_interest);
-                    $('[data-target-earned]').text(res.total_earned);
-                    $('[data-target-unearned]').text(res.total_unearned);
+                        $('[data-target-borrowers]').text(res.total_borrowers);
+                        $('[data-target-release]').text(res.total_release);
+                        $('[data-target-remaining]').text(res.remaining_balance);
+                        $('[data-target-paid]').text(res.total_paid);
+                        $('[data-target-capital]').text(res.total_capital);
+                        $('[data-target-interest]').text(res.total_interest);
+                        $('[data-target-earned]').text(res.total_earned);
+                        $('[data-target-unearned]').text(res.total_unearned);
+                    }
                 }
-            }
-        });
-    }
+            });
+        }
 
-    loadDashboardStats();
+        loadDashboardStats();
 
-});
-
+    });
 
 
 
 
 
 
-document.addEventListener("DOMContentLoaded", function() {
 
-    function formatPeso(value) {
-        return "₱ " + Number(value).toLocaleString("en-PH", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        });
-    }
+    document.addEventListener("DOMContentLoaded", function () {
 
-    var chart = new ApexCharts(
-        document.querySelector("#balance-overview-chart"), {
+        function formatPeso(value) {
+            return "₱ " + Number(value).toLocaleString("en-PH", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        var chart = new ApexCharts(
+            document.querySelector("#balance-overview-chart"), {
             series: [{
-                    name: "Total Invest",
-                    data: []
-                },
-                {
-                    name: "Total Income",
-                    data: []
-                },
-                {
-                    name: "Unearned Income",
-                    data: []
-                }
+                name: "Total Invest",
+                data: []
+            },
+            {
+                name: "Total Income",
+                data: []
+            },
+            {
+                name: "Unearned Income",
+                data: []
+            }
             ],
             chart: {
                 height: 250,
@@ -385,36 +387,36 @@ document.addEventListener("DOMContentLoaded", function() {
             },
             tooltip: {
                 y: {
-                    formatter: function(val) {
+                    formatter: function (val) {
                         return formatPeso(val);
                     }
                 }
             },
             yaxis: {
                 labels: {
-                    formatter: function(val) {
+                    formatter: function (val) {
                         return formatPeso(val);
                     }
                 }
             },
             colors: ['#0d6efd', '#198754', '#fd7e14']
         }
-    );
+        );
 
-    chart.render();
+        chart.render();
 
-    function loadRevenue(year) {
+        function loadRevenue(year) {
 
-        $.ajax({
-            url: "<?= base_url('get_revenue_chart') ?>",
-            type: "GET",
-            data: {
-                year: year
-            },
-            dataType: "json",
-            success: function(response) {
+            $.ajax({
+                url: "<?= base_url('get_revenue_chart') ?>",
+                type: "GET",
+                data: {
+                    year: year
+                },
+                dataType: "json",
+                success: function (response) {
 
-                chart.updateSeries([{
+                    chart.updateSeries([{
                         name: "Total Invest",
                         data: response.invest
                     },
@@ -426,29 +428,29 @@ document.addEventListener("DOMContentLoaded", function() {
                         name: "Unearned Income",
                         data: response.unearned
                     }
-                ]);
-            },
-            error: function(xhr) {
-                console.log(xhr.responseText);
-            }
+                    ]);
+                },
+                error: function (xhr) {
+                    console.log(xhr.responseText);
+                }
+            });
+        }
+
+        loadRevenue(<?= date('Y'); ?>);
+
+        $(document).on('click', '.year-filter', function (e) {
+
+            e.preventDefault();
+
+            $('.year-filter').removeClass('active');
+            $(this).addClass('active');
+
+            let year = $(this).data('year');
+
+            $('#selectedYear').text(year);
+
+            loadRevenue(year);
         });
-    }
 
-    loadRevenue(<?= date('Y'); ?>);
-
-    $(document).on('click', '.year-filter', function(e) {
-
-        e.preventDefault();
-
-        $('.year-filter').removeClass('active');
-        $(this).addClass('active');
-
-        let year = $(this).data('year');
-
-        $('#selectedYear').text(year);
-
-        loadRevenue(year);
     });
-
-});
 </script>
