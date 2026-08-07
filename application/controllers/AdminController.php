@@ -216,7 +216,7 @@ class AdminController extends CI_Controller {
 
             $config['upload_path']   = $upload_path;
 
-            $config['allowed_types'] = 'jpg|jpeg|png|gif|webp|bmp|heic|heif';
+            $config['allowed_types'] = 'jpg|jpeg|png|webp|bmp|heic|heif';
 
             $config['max_size']      = 20480;
 
@@ -344,7 +344,7 @@ class AdminController extends CI_Controller {
 
             $config['upload_path']   = $upload_path;
 
-            $config['allowed_types'] = 'jpg|jpeg|png|gif|webp|bmp|heic|heif';
+            $config['allowed_types'] = 'jpg|jpeg|png|webp|bmp|heic|heif';
 
             $config['max_size']      = 20480;
 
@@ -577,15 +577,13 @@ class AdminController extends CI_Controller {
         if (!empty($_FILES['photo']['name'])) {
 
             $config['upload_path']   = FCPATH . 'assets/borrower/';
-            $config['allowed_types'] = 'jpg|jpeg|png|gif|webp|bmp';
+            $config['allowed_types'] = 'jpg|jpeg|png|webp|bmp';
             $config['max_size']      = 10240;
             $config['overwrite']     = TRUE;
             $config['remove_spaces'] = TRUE;
 
-            // Get uploaded file extension
             $extension = strtolower(pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION));
 
-            // Save as firstname_lastname.extension
             $config['file_name'] = $filename . '.' . $extension;
 
             $this->upload->initialize($config);
@@ -708,7 +706,6 @@ class AdminController extends CI_Controller {
 
         if (!empty($_FILES['photo']['name'])) {
 
-            // Remove old photo
             if (
                 !empty($borrower->photo) &&
                 $borrower->photo != 'assets/borrower/default.png'
@@ -721,7 +718,6 @@ class AdminController extends CI_Controller {
                 }
             }
 
-            // Remove any existing file with same borrower name
             foreach (glob(FCPATH . "assets/borrower/{$filename}.*") as $file) {
                 if (is_file($file)) {
                     unlink($file);
@@ -731,7 +727,7 @@ class AdminController extends CI_Controller {
             $extension = strtolower(pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION));
 
             $config['upload_path']   = FCPATH . 'assets/borrower/';
-            $config['allowed_types'] = 'jpg|jpeg|png|gif|webp|bmp';
+            $config['allowed_types'] = 'jpg|jpeg|png|webp|bmp';
             $config['max_size']      = 10240;
             $config['file_name']     = $filename . '.' . $extension;
             $config['overwrite']     = TRUE;
