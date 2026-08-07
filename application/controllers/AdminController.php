@@ -1432,7 +1432,7 @@ class AdminController extends CI_Controller {
             'borrower_id'    => $this->input->post('borrower_id'),
             'ref_no'         => $this->input->post('reference_number'),
             'payment_no'     => $payment_no, 
-            'collected_by'      => $this->session->userdata('fullname'),
+            'collector'      => $this->session->userdata('fullname'),
 
             'payment_amount' => $payment_amount,
             'penalty'        => $penalty_amount,

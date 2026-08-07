@@ -1,6 +1,6 @@
 <!-- removeNotificationModal -->
 <div id="removeNotificationModal" class="modal fade zoomIn" tabindex="-1" aria-hidden="true">
-   
+
 </div><!-- /.modal -->
 <!-- ========== App Menu ========== -->
 <div class="app-menu navbar-menu">
@@ -109,7 +109,14 @@
                             <li class="nav-item">
                                 <a href="<?= site_url('Overdue-Loans') ?>"
                                     class="nav-link <?= ($current_page == 'Overdue-Loans') ? 'text-secondary' : '' ?>">
+
                                     Overdue Loans
+
+                                    <span class="badge bg-danger"
+                                        style="display: inline-block !important; visibility: visible !important; opacity: 1 !important;">
+                                        +<?= (int)$overdue_count ?>
+                                    </span>
+
                                 </a>
                             </li>
 

@@ -9,11 +9,19 @@
             <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0">Dashboard</h4>
+
+                        <div>
+                            <h4 class="mb-sm-0" style="text-transform: none;">
+                                Welcome, <?= ucwords(strtolower(trim($this->session->userdata('fullname')))); ?> ツ
+                            </h4>
+                            <div id="quote" class="mt-2 text-muted fst-italic"></div>
+                        </div>
 
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
+                                <li class="breadcrumb-item">
+                                    <a href="<?= site_url('Dashboard'); ?>">Home</a>
+                                </li>
                                 <li class="breadcrumb-item active">Dashboard</li>
                             </ol>
                         </div>
@@ -162,12 +170,12 @@
 
                                     <ul class="dropdown-menu dropdown-menu-end" id="yearDropdown">
                                         <?php for ($year = date('Y'); $year >= 2025; $year--): ?>
-                                            <li>
-                                                <a class="dropdown-item year-filter <?= $year == date('Y') ? 'active' : '' ?>"
-                                                    href="#" data-year="<?= $year; ?>">
-                                                    <?= $year; ?>
-                                                </a>
-                                            </li>
+                                        <li>
+                                            <a class="dropdown-item year-filter <?= $year == date('Y') ? 'active' : '' ?>"
+                                                href="#" data-year="<?= $year; ?>">
+                                                <?= $year; ?>
+                                            </a>
+                                        </li>
                                         <?php endfor; ?>
                                     </ul>
                                 </div>
@@ -306,62 +314,62 @@
 
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
-    $(document).ready(function () {
+$(document).ready(function() {
 
-        function loadDashboardStats() {
-            $.ajax({
-                url: "<?= base_url('get_dashboard_stats') ?>",
-                type: "GET",
-                dataType: "json",
-                success: function (res) {
-                    if (res.status) {
+    function loadDashboardStats() {
+        $.ajax({
+            url: "<?= base_url('get_dashboard_stats') ?>",
+            type: "GET",
+            dataType: "json",
+            success: function(res) {
+                if (res.status) {
 
-                        $('[data-target-borrowers]').text(res.total_borrowers);
-                        $('[data-target-release]').text(res.total_release);
-                        $('[data-target-remaining]').text(res.remaining_balance);
-                        $('[data-target-paid]').text(res.total_paid);
-                        $('[data-target-capital]').text(res.total_capital);
-                        $('[data-target-interest]').text(res.total_interest);
-                        $('[data-target-earned]').text(res.total_earned);
-                        $('[data-target-unearned]').text(res.total_unearned);
-                    }
+                    $('[data-target-borrowers]').text(res.total_borrowers);
+                    $('[data-target-release]').text(res.total_release);
+                    $('[data-target-remaining]').text(res.remaining_balance);
+                    $('[data-target-paid]').text(res.total_paid);
+                    $('[data-target-capital]').text(res.total_capital);
+                    $('[data-target-interest]').text(res.total_interest);
+                    $('[data-target-earned]').text(res.total_earned);
+                    $('[data-target-unearned]').text(res.total_unearned);
                 }
-            });
-        }
-
-        loadDashboardStats();
-
-    });
-
-
-
-
-
-
-
-    document.addEventListener("DOMContentLoaded", function () {
-
-        function formatPeso(value) {
-            return "₱ " + Number(value).toLocaleString("en-PH", {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
-        }
-
-        var chart = new ApexCharts(
-            document.querySelector("#balance-overview-chart"), {
-            series: [{
-                name: "Total Invest",
-                data: []
-            },
-            {
-                name: "Total Income",
-                data: []
-            },
-            {
-                name: "Unearned Income",
-                data: []
             }
+        });
+    }
+
+    loadDashboardStats();
+
+});
+
+
+
+
+
+
+
+document.addEventListener("DOMContentLoaded", function() {
+
+    function formatPeso(value) {
+        return "₱ " + Number(value).toLocaleString("en-PH", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    }
+
+    var chart = new ApexCharts(
+        document.querySelector("#balance-overview-chart"), {
+            series: [{
+                    name: "Total Invest",
+                    data: []
+                },
+                {
+                    name: "Total Income",
+                    data: []
+                },
+                {
+                    name: "Unearned Income",
+                    data: []
+                }
             ],
             chart: {
                 height: 250,
@@ -387,36 +395,36 @@
             },
             tooltip: {
                 y: {
-                    formatter: function (val) {
+                    formatter: function(val) {
                         return formatPeso(val);
                     }
                 }
             },
             yaxis: {
                 labels: {
-                    formatter: function (val) {
+                    formatter: function(val) {
                         return formatPeso(val);
                     }
                 }
             },
             colors: ['#0d6efd', '#198754', '#fd7e14']
         }
-        );
+    );
 
-        chart.render();
+    chart.render();
 
-        function loadRevenue(year) {
+    function loadRevenue(year) {
 
-            $.ajax({
-                url: "<?= base_url('get_revenue_chart') ?>",
-                type: "GET",
-                data: {
-                    year: year
-                },
-                dataType: "json",
-                success: function (response) {
+        $.ajax({
+            url: "<?= base_url('get_revenue_chart') ?>",
+            type: "GET",
+            data: {
+                year: year
+            },
+            dataType: "json",
+            success: function(response) {
 
-                    chart.updateSeries([{
+                chart.updateSeries([{
                         name: "Total Invest",
                         data: response.invest
                     },
@@ -428,29 +436,99 @@
                         name: "Unearned Income",
                         data: response.unearned
                     }
-                    ]);
-                },
-                error: function (xhr) {
-                    console.log(xhr.responseText);
-                }
-            });
-        }
-
-        loadRevenue(<?= date('Y'); ?>);
-
-        $(document).on('click', '.year-filter', function (e) {
-
-            e.preventDefault();
-
-            $('.year-filter').removeClass('active');
-            $(this).addClass('active');
-
-            let year = $(this).data('year');
-
-            $('#selectedYear').text(year);
-
-            loadRevenue(year);
+                ]);
+            },
+            error: function(xhr) {
+                console.log(xhr.responseText);
+            }
         });
+    }
 
+    loadRevenue(<?= date('Y'); ?>);
+
+    $(document).on('click', '.year-filter', function(e) {
+
+        e.preventDefault();
+
+        $('.year-filter').removeClass('active');
+        $(this).addClass('active');
+
+        let year = $(this).data('year');
+
+        $('#selectedYear').text(year);
+
+        loadRevenue(year);
     });
+
+});
+
+const quotes = [
+    "Choose joy every day. 😊",
+    "Happiness is a choice, not a result. 🌈",
+    "Spread kindness and happiness wherever you go. 💖",
+    "Do what makes your soul smile. ✨",
+    "Find happiness in the little things. 🌸",
+    "Smile more, worry less. 😄",
+    "Be the reason someone feels happy today. 💛",
+    "Happiness grows when you share it. 🤝",
+    "Let go of what you can’t control and embrace what you can. 🍃",
+    "Gratitude turns what we have into enough. 🙏",
+    "Laugh often, love much, live well. 😂❤️",
+    "A happy heart makes a happy life. 💓",
+    "Happiness is homemade. 🏡",
+    "Focus on what makes you feel alive. 🔥",
+    "Don’t wait for happiness—create it. 🛠️",
+    "Surround yourself with positive vibes. 🌟",
+    "Celebrate small victories every day. 🎉",
+    "Live simply, love deeply, laugh loudly. 😆",
+    "Find beauty in every day. 🌺",
+    "Happiness starts with you. 🫵",
+    "Let your smile change the world, but don’t let the world change your smile. 😊",
+    "Choose happiness, no matter the circumstances. 🌤️",
+    "Joy is the simplest form of gratitude. 💫",
+    "Be happy with what you have while working for what you want. 🎯",
+    "Life is better when you’re laughing. 😂",
+    "Happiness is not a destination, it’s a way of life. 🛤️",
+    "Find joy in the journey. 🚶‍♂️",
+    "Stay close to what makes you happy. 💞",
+    "Create a life you don’t need a vacation from. 🏖️",
+    "Happiness is contagious—pass it on. 😄",
+    "Wake up with a thankful heart and a happy mind. 🌅",
+    "Happiness is found when you stop comparing. 🚫",
+    "Fill your day with moments that matter. ⏳",
+    "Choose peace, love, and happiness every day. ☮️❤️",
+    "Be happy in the moment—it’s all you really have. ⏱️",
+    "Cultivate happiness through kindness and compassion. 🌿",
+    "Happiness comes from within, not from outside things. 🧘",
+    "Let your happiness be your truth. 💬",
+    "The secret to happiness is freedom, and the secret to freedom is courage. 🕊️",
+    "Embrace the little joys life offers. 🎈",
+    "Be mindful, be present, be happy. 🧠",
+    "Happiness blooms from gratitude and love. 🌼",
+    "Do more of what makes you happy. 🎨",
+    "Positive thoughts lead to a happy life. 🌞",
+    "Happiness is a journey, not a race. 🏃",
+    "Surround yourself with those who lift you higher. 🚀",
+    "Find joy in every sunrise and peace in every sunset. 🌄🌇",
+    "Be kind, be happy, be you. 💕",
+    "Happiness is a warm heart and an open mind. 💗",
+    "Choose happiness even when it’s hard. 💪",
+    "Smile at the little things and the big things will smile back. 😁"
+
+];
+
+let index = 0;
+const quoteEl = document.getElementById('quote');
+
+function showQuote() {
+    quoteEl.style.opacity = 0;
+    setTimeout(() => {
+        quoteEl.textContent = quotes[index];
+        quoteEl.style.opacity = 1;
+        index = (index + 1) % quotes.length;
+    }, 500);
+}
+
+showQuote();
+setInterval(showQuote, 7000);
 </script>

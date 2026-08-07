@@ -71,8 +71,8 @@
                                             <th>Reference No.</th>
                                             <th>Borrower Name</th>
                                             <th>Amount Paid</th>
-                                            <th>Principal Paid</th>
-                                            <th>Interest Paid</th>
+                                            <!-- <th>Principal Paid</th>
+                                            <th>Interest Paid</th> -->
                                             <th>Penalty Paid</th>
                                             <th>Collected By</th>
                                         </tr>
@@ -132,20 +132,20 @@
                 </span>`;
                     }
                 },
-                {
-                    data: "principal_paid",
-                    render: function(data) {
-                        return parseFloat(data).toLocaleString(undefined, {
-                            minimumFractionDigits: 2
-                        });
-                    }
-                },
-                {
-                    data: "interest_paid",
-                    render: function(data) {
-                        return parseFloat(data).toFixed(2);
-                    }
-                },
+                // {
+                //     data: "principal_paid",
+                //     render: function(data) {
+                //         return parseFloat(data).toLocaleString(undefined, {
+                //             minimumFractionDigits: 2
+                //         });
+                //     }
+                // },
+                // {
+                //     data: "interest_paid",
+                //     render: function(data) {
+                //         return parseFloat(data).toFixed(2);
+                //     }
+                // },
                 {
                     data: "penalty",
                     render: function(data) {

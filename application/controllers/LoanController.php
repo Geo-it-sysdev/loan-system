@@ -10,6 +10,7 @@ class LoanController extends CI_Controller {
         parent::__construct();
 
         $this->load->library('session');
+		$this->load->model('LoanModel');
         $this->load->helper('url');
         if (!$this->session->userdata('logged_in')) {
             redirect('LoginController/login');
@@ -17,11 +18,12 @@ class LoanController extends CI_Controller {
         }
     }
 
-
 	public function dashboard()
 	{
+		$data['overdue_count'] = $this->LoanModel->get_overdue_count();
+		
 		$this->load->view('template/header');
-		$this->load->view('template/sidebar');
+		$this->load->view('template/sidebar', $data);
 		$this->load->view('template/dashboard');
 		$this->load->view('template/footer');
 	}
@@ -31,8 +33,10 @@ class LoanController extends CI_Controller {
 		if ($this->session->userdata('role') !== 'Admin') {
 			redirect('Dashboard'); 
 		}
+		$data['overdue_count'] = $this->LoanModel->get_overdue_count();
+
 		$this->load->view('template/header');
-		$this->load->view('template/sidebar');
+		$this->load->view('template/sidebar', $data);
 		$this->load->view('admin/collector');
 		$this->load->view('template/footer');
 	}
@@ -42,79 +46,99 @@ class LoanController extends CI_Controller {
 		if ($this->session->userdata('role') !== 'Admin') {
 			redirect('Dashboard'); 
 		}
+		$data['overdue_count'] = $this->LoanModel->get_overdue_count();
+
 		$this->load->view('template/header');
-		$this->load->view('template/sidebar');
+		$this->load->view('template/sidebar', $data);
 		$this->load->view('admin/interest_rates');
 		$this->load->view('template/footer');
 	}
 	
 	public function borrowers()
 	{
+		$data['overdue_count'] = $this->LoanModel->get_overdue_count();
+
 		$this->load->view('template/header');
-		$this->load->view('template/sidebar');
+		$this->load->view('template/sidebar', $data);
 		$this->load->view('admin/borrowers');
 		$this->load->view('template/footer');
 	}
 
 	public function loan()
 	{
+		$data['overdue_count'] = $this->LoanModel->get_overdue_count();
+
 		$this->load->view('template/header');
-		$this->load->view('template/sidebar');
+		$this->load->view('template/sidebar', $data);
 		$this->load->view('admin/loan');
 		$this->load->view('template/footer');
 	}
 
 	public function payment()
 	{
+		$data['overdue_count'] = $this->LoanModel->get_overdue_count();
+		
 		$this->load->view('template/header');
-		$this->load->view('template/sidebar');
+		$this->load->view('template/sidebar', $data);
 		$this->load->view('admin/payment');
 		$this->load->view('template/footer');
 	}
 
 	public function overdue_Loans()
 	{
+		$data['overdue_count'] = $this->LoanModel->get_overdue_count();
+
 		$this->load->view('template/header');
-		$this->load->view('template/sidebar');
+		$this->load->view('template/sidebar', $data);
 		$this->load->view('reports/overdue_Loans');
 		$this->load->view('template/footer');
 	}
 
 	public function outstanding_balance()
 	{
+		$data['overdue_count'] = $this->LoanModel->get_overdue_count();
+
 		$this->load->view('template/header');
-		$this->load->view('template/sidebar');
+		$this->load->view('template/sidebar', $data);
 		$this->load->view('reports/outstanding_balance');
 		$this->load->view('template/footer');
 	}
 
 	public function payment_collection()
 	{
+		$data['overdue_count'] = $this->LoanModel->get_overdue_count();
+
 		$this->load->view('template/header');
-		$this->load->view('template/sidebar');
+		$this->load->view('template/sidebar', $data);
 		$this->load->view('reports/payment_collection');
 		$this->load->view('template/footer');
 	}
 	public function fully_paid()
 	{
+		$data['overdue_count'] = $this->LoanModel->get_overdue_count();
+
 		$this->load->view('template/header');
-		$this->load->view('template/sidebar');
+		$this->load->view('template/sidebar', $data);
 		$this->load->view('reports/fully_paid');
 		$this->load->view('template/footer');
 	}
 
 	public function loan_release()
 	{
+		$data['overdue_count'] = $this->LoanModel->get_overdue_count();
+
 		$this->load->view('template/header');
-		$this->load->view('template/sidebar');
+		$this->load->view('template/sidebar', $data);
 		$this->load->view('reports/loan_release');
 		$this->load->view('template/footer');
 	}
 
 	public function monthly_collection()
 	{
+		$data['overdue_count'] = $this->LoanModel->get_overdue_count();
+
 		$this->load->view('template/header');
-		$this->load->view('template/sidebar');
+		$this->load->view('template/sidebar', $data);
 		$this->load->view('reports/monthly_collection');
 		$this->load->view('template/footer');
 	}
@@ -122,8 +146,10 @@ class LoanController extends CI_Controller {
 
 	public function profile()
 	{
+		$data['overdue_count'] = $this->LoanModel->get_overdue_count();
+
 		$this->load->view('template/header');
-		$this->load->view('template/sidebar');
+		$this->load->view('template/sidebar', $data);
 		$this->load->view('template/profile');
 		$this->load->view('template/footer');
 	}

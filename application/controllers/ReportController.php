@@ -83,6 +83,7 @@ class ReportController extends CI_Controller {
     }
 
 
+
     public function outstanding_loans()
     {
         $query = $this->db->query("
@@ -112,10 +113,9 @@ class ReportController extends CI_Controller {
 
                 DATE_ADD(
                     l.effective_date,
-                    INTERVAL (
-                        FLOOR(
-                            IFNULL(SUM(p.payment_amount), 0) / NULLIF(CAST(l.monthly_payment AS DECIMAL(12,2)), 0)
-                        ) + 1
+                    INTERVAL FLOOR(
+                        IFNULL(SUM(p.payment_amount), 0) /
+                        NULLIF(CAST(l.monthly_payment AS DECIMAL(12,2)), 0)
                     ) MONTH
                 ) AS next_due_date
 
