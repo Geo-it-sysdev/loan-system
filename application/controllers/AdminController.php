@@ -10,7 +10,7 @@ class AdminController extends CI_Controller {
         $this->load->database();
         $this->load->library('upload');
         if (!$this->session->userdata('logged_in')) {
-            redirect('LoginController/logout');
+            redirect('logout');
         }
     }
 
@@ -78,13 +78,10 @@ class AdminController extends CI_Controller {
         echo json_encode([
             'status' => true,
 
-            // Existing
             'total_borrowers'   => $total_borrowers,
             'total_release'     => $total_release,
             'remaining_balance' => $remaining_balance,
             'total_paid'        => $total_paid,
-
-            // New
             'total_capital'     => number_format($total_capital ?: 0, 2),
             'total_interest'    => number_format($total_interest ?: 0, 2),
             'total_earned'      => number_format($total_earned ?: 0, 2),
