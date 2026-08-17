@@ -152,10 +152,12 @@
                     </div>
                 </div>
             </div>
+
+            
             <div class="row">
 
                 <div class="col-lg-6">
-                    <div class="card h-100">
+                    <div class="card h-55">
                         <div class="card-header">
                             <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
                                 <h4 class="card-title mb-0">Revenue</h4>
@@ -305,8 +307,40 @@
                             </div>
                         </div>
 
+
+                         <div class="col-md-6">
+                            <div class="card card-animate">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <p class="fw-medium text-muted mb-0">Total Penalty</p>
+                                            <h2 class="mt-4 ff-secondary fw-semibold">
+                                                <span class="counter-value" data-target-penalty>0</span>
+                                            </h2>
+                                            <p class="mb-0 text-muted">
+                                                <span class="badge bg-light text-danger mb-0">
+                                                    <i class="ri-spam-2-line align-middle"></i> Total
+                                                     Penalties Collected
+                                                </span>
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <div class="avatar-sm flex-shrink-0">
+                                                <span class="avatar-title bg-danger-subtle rounded-circle fs-2">
+                                                  <i class="ri-spam-2-line text-danger"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
@@ -332,6 +366,7 @@ $(document).ready(function() {
                     $('[data-target-interest]').text(res.total_interest);
                     $('[data-target-earned]').text(res.total_earned);
                     $('[data-target-unearned]').text(res.total_unearned);
+                    $('[data-target-penalty]').text(res.total_penalty);
                 }
             }
         });
@@ -372,7 +407,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             ],
             chart: {
-                height: 250,
+                height: 210,
                 type: 'bar',
                 toolbar: {
                     show: false

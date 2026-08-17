@@ -75,6 +75,16 @@ class AdminController extends CI_Controller {
             ->row()
             ->total;
 
+
+        // ============================
+        // Total Penalty
+        // ============================
+       $total_penalty = $this->db
+            ->select('SUM(CAST(penalty AS DECIMAL(15,2))) AS total')
+            ->get('tbl_payment')
+            ->row()
+            ->total;
+
         echo json_encode([
             'status' => true,
 
@@ -86,6 +96,7 @@ class AdminController extends CI_Controller {
             'total_interest'    => number_format($total_interest ?: 0, 2),
             'total_earned'      => number_format($total_earned ?: 0, 2),
             'total_unearned'    => number_format($total_unearned ?: 0, 2),
+            'total_penalty'     => number_format($total_penalty ?: 0, 2)
         ]);
     }
 
