@@ -1,12 +1,8 @@
-<!-- removeNotificationModal -->
 <div id="removeNotificationModal" class="modal fade zoomIn" tabindex="-1" aria-hidden="true">
 
-</div><!-- /.modal -->
-<!-- ========== App Menu ========== -->
+</div>
 <div class="app-menu navbar-menu">
-    <!-- LOGO -->
     <div class="navbar-brand-box">
-        <!-- Dark Logo-->
         <a href="<?php echo base_url('Dashboard'); ?>" class="logo logo-dark">
             <span class="logo-sm">
                 <img src="<?php echo base_url('assets/images/GeonLoan.png'); ?>" alt="" height="22" />
@@ -16,7 +12,6 @@
                     style="width: 180px;">
             </span>
         </a>
-        <!-- Light Logo-->
         <a href="<?php echo base_url('Dashboard'); ?>" class="logo logo-light">
             <span class="logo-sm">
                 <img src="<?php echo base_url('assets/images/GeonLoan.png'); ?>" alt="" height="22" />
@@ -40,48 +35,79 @@
             <ul class="navbar-nav" id="navbar-nav">
                 <li class="menu-title"><span data-key="t-menu">Menu </span></li>
 
+             
                 <li class="nav-item">
-                    <a class="nav-link menu-link <?= ($this->uri->segment(1) == 'Dashboard') ? 'text-secondary' : ''; ?>"
-                        href="<?= base_url('Dashboard'); ?>">
-                        <i class="ri-apps-2-fill"></i> Dashboard
+                    <a class="nav-link menu-link <?php echo (uri_string() === 'Dashboard') ? 'active' : ''; ?>"
+                        href="<?php echo base_url('Dashboard'); ?>">
+                        <i class="ri-apps-2-fill"></i> <span data-key="t-dashboards">Dashboard</span>
                     </a>
+                    <div class="collapse" id="users">
+                        <ul class="nav nav-sm flex-column">
+                        </ul>
+                    </div>
                 </li>
 
                 <?php if ($this->session->userdata('role') == 'Admin') : ?>
                 <li class="nav-item">
-                    <a class="nav-link menu-link <?= ($this->uri->segment(1) == 'Collector') ? 'text-secondary' : ''; ?>"
-                        href="<?= base_url('Collector'); ?>">
-                        <i class="ri-user-settings-fill"></i> Collector
+                    <a class="nav-link menu-link <?php echo (uri_string() === 'Collector') ? 'active' : ''; ?>"
+                        href="<?php echo base_url('Collector'); ?>">
+                        <i class="ri-user-settings-fill"></i> <span data-key="t-dashboards">Collector</span>
                     </a>
+                    <div class="collapse" id="users">
+                        <ul class="nav nav-sm flex-column">
+                        </ul>
+                    </div>
                 </li>
 
+
                 <li class="nav-item">
-                    <a class="nav-link menu-link <?= ($this->uri->segment(1) == 'Interest-Rates') ? 'text-secondary' : ''; ?>"
-                        href="<?= base_url('Interest-Rates'); ?>">
-                        <i class="ri-percent-fill"></i> Interest Rates
+                    <a class="nav-link menu-link <?php echo (uri_string() === 'Interest-Rates') ? 'active' : ''; ?>"
+                        href="<?php echo base_url('Interest-Rates'); ?>">
+                        <i class="ri-percent-fill"></i> <span data-key="t-dashboards">Interest Rates</span>
                     </a>
+                    <div class="collapse" id="users">
+                        <ul class="nav nav-sm flex-column">
+                        </ul>
+                    </div>
                 </li>
                 <?php endif; ?>
 
-                <li class="nav-item">
-                    <a class="nav-link menu-link <?= ($this->uri->segment(1) == 'Borrowers') ? 'text-secondary' : ''; ?>"
-                        href="<?= base_url('Borrowers'); ?>">
-                        <i class="ri-group-fill"></i> Borrowers
-                    </a>
-                </li>
+
 
                 <li class="nav-item">
-                    <a class="nav-link menu-link <?= ($this->uri->segment(1) == 'Loan') ? 'text-secondary' : ''; ?>"
-                        href="<?= base_url('Loan'); ?>">
-                        <i class="ri-hand-coin-line"></i> Loan
+                    <a class="nav-link menu-link <?php echo (uri_string() === 'Borrowers') ? 'active' : ''; ?>"
+                        href="<?php echo base_url('Borrowers'); ?>">
+                        <i class="ri-group-fill"></i> <span data-key="t-dashboards">Borrowers</span>
                     </a>
+                    <div class="collapse" id="users">
+                        <ul class="nav nav-sm flex-column">
+                        </ul>
+                    </div>
                 </li>
 
+
                 <li class="nav-item">
-                    <a class="nav-link menu-link <?= ($this->uri->segment(1) == 'Payment') ? 'text-secondary' : ''; ?>"
-                        href="<?= base_url('Payment'); ?>">
-                        <i class="ri-secure-payment-line"></i> Payment
+                    <a class="nav-link menu-link <?php echo (uri_string() === 'Loan') ? 'active' : ''; ?>"
+                        href="<?php echo base_url('Loan'); ?>">
+                        <i class="ri-hand-coin-line"></i> <span data-key="t-dashboards">Loan</span>
                     </a>
+                    <div class="collapse" id="users">
+                        <ul class="nav nav-sm flex-column">
+                        </ul>
+                    </div>
+                </li>
+
+
+
+                <li class="nav-item">
+                    <a class="nav-link menu-link <?php echo (uri_string() === 'Payment') ? 'active' : ''; ?>"
+                        href="<?php echo base_url('Payment'); ?>">
+                        <i class="ri-secure-payment-line"></i> <span data-key="t-dashboards">Payment</span>
+                    </a>
+                    <div class="collapse" id="users">
+                        <ul class="nav nav-sm flex-column">
+                        </ul>
+                    </div>
                 </li>
 
 
@@ -155,18 +181,24 @@
                                 </a>
                             </li>
 
+                            <li class="nav-item">
+                                <a class="nav-link menu-link <?php echo (uri_string() === 'VanManifest/about_us') ? 'active' : ''; ?>"
+                                    href="<?php echo base_url('VanManifest/about_us'); ?>">
+                                    <i class="ri-information-fill"></i> <span data-key="t-dashboards">About Us </span>
+                                </a>
+                                <div class="collapse" id="users">
+                                    <ul class="nav nav-sm flex-column">
+                                    </ul>
+                                </div>
+                            </li>
+
                         </ul>
                     </div>
                 </li>
 
-
             </ul>
         </div>
-        <!-- Sidebar -->
     </div>
 
     <div class="sidebar-background"></div>
 </div>
-<!-- Left Sidebar End -->
-<!-- Vertical Overlay-->
-<div class="vertical-overlay"></div>
